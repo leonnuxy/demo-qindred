@@ -15,6 +15,7 @@ use App\Models\Event;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -22,6 +23,16 @@ use Illuminate\Support\Str;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable, HasFactory, HasUuids;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            // Automatically verify email for now
+            $user->email_verified_at = now();
+        });
+    }
 
     /**
      * Primary key is UUID and not auto-increment.
