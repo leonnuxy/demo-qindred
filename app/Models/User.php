@@ -29,7 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         parent::boot();
 
         static::creating(function ($user) {
-            // Automatically verify email for now
+            // Auto verify all emails for now
             $user->email_verified_at = now();
         });
     }
