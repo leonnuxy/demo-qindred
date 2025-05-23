@@ -17,8 +17,9 @@ class DashboardTest extends TestCase
 
     public function test_authenticated_users_can_visit_the_dashboard()
     {
-        $user = User::factory()->create();
-        $user->markEmailAsVerified();          // ← add this line
+        $user = User::factory()->create([
+            'setup_completed' => true
+        ]);
         $this->actingAs($user);
 
         $this->get('/dashboard')->assertOk();
