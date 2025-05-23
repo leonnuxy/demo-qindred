@@ -62,13 +62,31 @@ const mainNavItems = [
 const footerNavItems = [
     {
         title: 'Help & Support',
-        href: '/help',
+        href: '',
         icon: BookOpen,
     },
     {
-        title: 'Documentation',
-        href: '/docs',
+        title: 'About Us',
+        href: '',
         icon: Folder,
+    },
+    {
+        // Contact Us
+        title: 'Contact Us',
+        href: '',
+        icon: UserRound,
+    },
+    {
+        // Privacy Policy
+        title: 'Privacy Policy',
+        href: '',
+        icon: Settings,
+    },
+    {
+        // Terms of Service
+        title: 'Terms of Service',
+        href: '',
+        icon: LayoutPanelTop,
     },
 ];
 
@@ -122,7 +140,7 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto hidden md:block" />
-                <NavUser />
+                {/* <NavUser /> */}
             </SidebarFooter>
         </Sidebar>
     );

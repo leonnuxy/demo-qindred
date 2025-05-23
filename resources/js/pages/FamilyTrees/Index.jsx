@@ -51,11 +51,21 @@ export default function Index({ familyTrees }) {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="My Family Trees" />
 
-      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree">
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree relative">
+        {/* Add blur overlay */}
+        <div className="absolute inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/30 z-50 flex items-center justify-center">
+          <div className="text-4xl font-bold text-qindred-green-900 dark:text-qindred-green-500">
+            Coming Soon
+          </div>
+        </div>
+
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-qindred-green-900 dark:text-qindred-green-500">My Family Trees</h1>
           <Link href={route('family-trees.create')}>
-            <Button className="flex items-center gap-1 bg-qindred-green-600 hover:bg-qindred-green-700 text-white">
+            <Button
+              className="flex items-center gap-1 text-white"
+              style={{ backgroundColor: 'rgb(49,166,61)' }}
+            >
               <Plus size={20} /> New Family Tree
             </Button>
           </Link>
