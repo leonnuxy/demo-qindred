@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["resources/js/*"]
+        },
+        "jsx": "react",
+        "target": "esnext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true
+    },
+    "exclude": ["node_modules", "public", "vendor"]
+}
