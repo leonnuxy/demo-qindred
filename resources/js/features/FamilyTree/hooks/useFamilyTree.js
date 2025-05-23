@@ -40,7 +40,7 @@ export function useFamilyTree(initialTreeData, currentUserId) {
     } finally {
       setIsLoading(false);
     }
-  }, [initialTreeData, currentUserId]);
+  }, [initialTreeData, currentUserId, markCurrentUser]);
   
   /**
    * Helper function to mark the current user in the tree data

@@ -1,4 +1,5 @@
 import { useForm } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 
 export default function useSetupForm() {
     const { data, setData, post, processing, errors, reset } = useForm({
