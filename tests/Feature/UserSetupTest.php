@@ -15,6 +15,8 @@ class UserSetupTest extends TestCase
     {
         // Create a fresh user (the seeder may have marked everyone as setup_complete)
         $user = User::factory()->create([
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'setup_completed' => false,
         ]);
 

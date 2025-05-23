@@ -23,11 +23,16 @@ class ProfileUpdateTest extends TestCase
 
     public function test_profile_information_can_be_updated()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'first_name' => 'Test',
+            'last_name' => 'User'
+        ]);
 
         $response = $this
             ->actingAs($user)
             ->patch('/settings/profile', [
+                'first_name' => 'Test',
+                'last_name' => 'User',
                 'name' => 'Test User',
                 'email' => 'test@example.com',
             ]);

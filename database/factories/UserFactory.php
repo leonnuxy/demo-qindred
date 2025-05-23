@@ -27,7 +27,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        // pick a random existing gender, or null if none
+        return [
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'password' => static::$password ??= Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'setup_completed' => true,
+        ];
         $gender = Gender::inRandomOrder()->first()?->id;
 
         return [
