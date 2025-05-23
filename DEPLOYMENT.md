@@ -7,6 +7,7 @@
 - Composer
 - npm
 - Git
+- Web server (Apache/Nginx)
 
 ## Environment Setup
 
@@ -16,20 +17,20 @@
    cd qindred
    ```
 
-2. Copy the environment file:
+2. Install dependencies:
    ```bash
-   cp .env.example .env
-   ```
-
-3. Install dependencies:
-   ```bash
-   composer install
+   composer install --no-dev --optimize-autoloader
    npm install
    ```
 
-4. Generate application key:
+3. Configure environment:
+   - Copy production.env.template to .env
+   - Update the values with your production settings
+   - Generate application key: `php artisan key:generate`
+
+4. Build frontend assets:
    ```bash
-   php artisan key:generate
+   npm run build
    ```
 
 5. Set up the database:
@@ -37,69 +38,56 @@
    php artisan migrate
    ```
 
-## Local Development
+## Manual Deployment
 
-1. Start the development server:
+1. Set up your web server (Apache/Nginx) to point to the `/public` directory
+
+2. Configure PHP-FPM (if using)
+
+3. Set proper permissions:
    ```bash
-   php artisan serve
+   chmod -R 775 storage bootstrap/cache
+   chown -R www-data:www-data storage bootstrap/cache
    ```
 
-2. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-
-## Production Deployment
-
-### Environment Variables
-
-Ensure the following environment variables are set in your production environment:
-
-- `APP_ENV=production`
-- `APP_DEBUG=false`
-- `APP_KEY` (generated using `php artisan key:generate`)
-- Database credentials
-- Any third-party service credentials
-
-### Deployment Steps
-
-1. Build frontend assets:
-   ```bash
-   npm run build
-   ```
-
-2. Optimize Laravel:
+4. Optimize Laravel:
    ```bash
    php artisan config:cache
    php artisan route:cache
    php artisan view:cache
    ```
 
-3. Set proper permissions:
-   ```bash
-   chmod -R 775 storage bootstrap/cache
-   ```
+## Automated Deployment via GitHub Actions
 
-### Deployment Using GitHub Actions
+The project includes a GitHub Actions workflow that:
+1. Builds the application
+2. Creates a deployment artifact
+3. Makes it available for download
 
-The project includes GitHub Actions workflows for automated deployment:
+To use automated deployment:
 
-1. The `ci.yml` workflow runs on every push and pull request to main and develop branches:
-   - Runs PHP tests
-   - Runs ESLint
-   - Builds frontend assets
+1. Set up GitHub Secrets:
+   - `ENV_FILE`: Your complete production .env file
 
-2. The `deploy.yml` workflow runs on pushes to the main branch:
-   - Builds the application
-   - Deploys to the production environment
+2. Set up GitHub Environments:
+   - Create a "production" environment
+   - Add appropriate protection rules
 
-### Required Secrets
+3. When code is pushed to main:
+   - Workflow will create a build artifact
+   - Download and extract the artifact on your server
+   - Update your web server configuration if needed
 
-Set the following secrets in your GitHub repository:
+## Deployment Checklist
 
-- `ENV_FILE`: Your complete production .env file
-- `DIGITALOCEAN_ACCESS_TOKEN`: Your DigitalOcean API token
-- `DIGITALOCEAN_APP_ID`: Your DigitalOcean App ID
+Before deploying:
+- [ ] Update APP_ENV to 'production'
+- [ ] Set APP_DEBUG to 'false'
+- [ ] Configure proper logging
+- [ ] Set up proper database credentials
+- [ ] Configure mail settings
+- [ ] Update APP_URL to your domain
+- [ ] Set secure CORS settings if needed
 
 ## Troubleshooting
 
@@ -108,6 +96,7 @@ Set the following secrets in your GitHub repository:
 1. **Storage Permission Issues**
    ```bash
    chmod -R 775 storage bootstrap/cache
+   chown -R www-data:www-data storage bootstrap/cache
    ```
 
 2. **Cache Issues**
@@ -120,37 +109,15 @@ Set the following secrets in your GitHub repository:
 3. **Database Issues**
    ```bash
    php artisan migrate:status
-   php artisan migrate:fresh --seed
    ```
 
-### Health Checks
+### Health Check
 
-1. Verify the application is running:
-   ```bash
-   curl https://your-domain.com/health
-   ```
-
-2. Check Laravel logs:
-   ```bash
-   tail -f storage/logs/laravel.log
-   ```
-
-## Rollback Procedure
-
-1. Identify the last working deployment
-2. Use Git to revert to the last known good commit
-3. Run deployment workflow
-4. Verify application functionality
-
-## Monitoring
-
-- Set up application monitoring using Laravel Telescope
-- Configure error tracking (e.g., Sentry)
-- Set up server monitoring (e.g., New Relic)
+Visit `/api/health` to verify the application status.
 
 ## Support
 
-For deployment issues or questions, please:
-1. Check the logs in storage/logs
+For deployment issues:
+1. Check the logs in `storage/logs`
 2. Review the GitHub Actions workflow runs
 3. Create an issue in the repository
