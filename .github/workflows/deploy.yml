@@ -46,12 +46,16 @@ jobs:
     
     - name: Create Build Artifact
       run: |
+        # Create directories if they don't exist
+        mkdir -p storage/framework/{sessions,views,cache}
+        mkdir -p bootstrap/cache
+        
+        # Create the build artifact
         tar -czf build.tar.gz \
           app/ \
           bootstrap/ \
           config/ \
           database/ \
-          lang/ \
           public/ \
           resources/ \
           routes/ \
@@ -60,7 +64,8 @@ jobs:
           .env \
           artisan \
           composer.json \
-          package.json
+          package.json \
+          composer.lock
     
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
