@@ -1,0 +1,51 @@
+name: Deploy Qindred
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, json, hash, openssl
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install Dependencies
+      run: |
+        composer install --no-dev --optimize-autoloader
+        npm ci
+    
+    - name: Build Frontend
+      run: npm run build
+    
+    - name: Configure Environment
+      run: |
+        echo "${{ secrets.ENV_FILE }}" > .env
+        php artisan key:generate
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+    
+    # Add deployment steps here based on your hosting provider
+    # Example for Digital Ocean App Platform:
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    
+    - name: Deploy to Digital Ocean
+      run: doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }}

@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\FamilyTreeMemberController;
 use App\Http\Controllers\API\InvitationController as APIInvitationController;
+use App\Http\Controllers\HealthController;
+
+// Health check endpoint - no authentication required
+Route::get('/health', HealthController::class);
 
 // For development, we'll allow access without authentication
 // TODO: Add proper API authentication in production
