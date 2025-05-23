@@ -53,9 +53,12 @@ class RegisteredUserController extends Controller
     // If you require email verification:
     // return to_route('verification.notice');
 
-    // Otherwise, log in immediately:
-    Auth::login($user);
-    return to_route('dashboard');
+    // Otherwise, log in immediately and redirect to setup:
+    Auth::guard('web')->login($user);
+
+    $request->session()->regenerate();
+
+    return redirect('/setup');
 }
 
 }

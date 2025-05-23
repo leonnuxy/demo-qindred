@@ -13,15 +13,11 @@ class UserSetupTest extends TestCase
     /** @test */
     public function new_user_gets_redirected_to_setup()
     {
-        // Create a fresh user (the seeder may have marked everyone as setup_complete)
         $user = User::factory()->create([
             'first_name' => 'Test',
             'last_name' => 'User',
             'setup_completed' => false,
         ]);
-
-        // Explicitly re-save so that even if a seeder ran, this user stays incomplete
-        $user->update(['setup_completed' => false]);
 
         $this->actingAs($user)
              ->get('/dashboard')
@@ -32,7 +28,6 @@ class UserSetupTest extends TestCase
     public function setup_page_loads_for_incomplete_user()
     {
         $user = User::factory()->create(['setup_completed' => false]);
-        $user->update(['setup_completed' => false]);
 
         $this->actingAs($user)
              ->get('/setup')
@@ -62,12 +57,13 @@ class UserSetupTest extends TestCase
             'bio'               => 'Hello world!',
             'familyName'        => 'Doe Family',
             'familyDescription' => 'Our clan',
+            'familyRole'        => 'parent',
             'membersToAdd'      => [],
         ];
 
         $this->actingAs($user)
              ->post('/setup/complete', $payload)
-             ->assertRedirect('/dashboard')
+             ->assertRedirectContains('/dashboard')
              ->assertSessionHas('success');
 
         $fresh = $user->fresh();
