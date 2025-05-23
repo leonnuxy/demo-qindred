@@ -10,9 +10,12 @@ use App\Services\FamilyTreeService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class FamilyTreeController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(protected FamilyTreeService $trees) {}
 
     /** Show list of trees (web) */
@@ -59,7 +62,7 @@ class FamilyTreeController extends Controller
             );
 
             return redirect()
-                ->route('family-trees.show', $tree->id)
+                ->route('family-trees.show', ['family_tree' => $tree->id])
                 ->with('success', 'Family tree created successfully!');
         } catch (\Exception $e) {
             Log::error("Creating tree failed: {$e->getMessage()}");
@@ -148,7 +151,7 @@ class FamilyTreeController extends Controller
             ]);
 
             return redirect()
-                ->route('family-trees.show',$familyTree->id)
+                ->route('family-trees.show', ['family_tree' => $familyTree->id])
                 ->with('success','Family tree updated!');
         } catch (\Exception $e) {
             Log::error("Updating tree failed: {$e->getMessage()}");

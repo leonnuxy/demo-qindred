@@ -1,5 +1,6 @@
 import React from 'react';
 import { InvitationItem } from './InvitationItem';
+import { InvitationPlaceholder } from './InvitationPlaceholder';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 export function InvitationList({ items = [], type }) {
@@ -7,16 +8,24 @@ export function InvitationList({ items = [], type }) {
   
   return (
     <Card className="invitations-section">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+      <CardHeader className="invitations-section-header">
+        <CardTitle className="invitations-section-title">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         {!items || items.length === 0 ? (
-          <div className="invitations-empty-state">
-            {type === 'incoming' 
-              ? 'You don\'t have any pending invitations.'
-              : 'You haven\'t sent any invitations yet.'}
-          </div>
+          type === 'incoming' ? (
+            // Show placeholders for received invitations
+            <div className="invitations-placeholder-list">
+              <InvitationPlaceholder variant="default" />
+              <InvitationPlaceholder variant="narrow" />
+              <InvitationPlaceholder variant="default" />
+            </div>
+          ) : (
+            // For outgoing invitations, show the empty state message
+            <div className="invitations-empty-state">
+              You haven't sent any invitations yet.
+            </div>
+          )
         ) : (
           <div className="invitations-list">
             {items.map((item) => (

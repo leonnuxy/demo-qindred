@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-// Remove HasUuids if you want standard auto-incrementing integer IDs
-// use Illuminate\Database\Eloquent\Concerns\HasUuids; 
-use Illuminate\Database\Eloquent\Factories\HasFactory; // Assuming you might use factories
+use App\Enums\RelationshipType;
+use Illuminate\Database\Eloquent\Concerns\HasUuids; 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class UserRelationship extends Model
 {
@@ -27,6 +28,18 @@ class UserRelationship extends Model
         'created_at'        => 'datetime',
         'updated_at'        => 'datetime',
     ];
+
+    /**
+     * Boot method to generate UUID on creating.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {

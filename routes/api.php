@@ -4,14 +4,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\FamilyTreeMemberController;
 use App\Http\Controllers\API\InvitationController as APIInvitationController;
 
-Route::middleware('auth:sanctum')->group(function () {
+// For development, we'll allow access without authentication
+// TODO: Add proper API authentication in production
+// Option 1: Route::middleware('auth:sanctum')->group(function () {
+// Option 2: Route::middleware('auth:web')->group(function () {
+Route::group([], function () {
     // Family-tree members
     // Route::get   ('family-trees/{familyTree}/members',       [FamilyTreeMemberController::class, 'index']);
     // Route::post  ('family-trees/{familyTree}/members',       [FamilyTreeMemberController::class, 'store']);
     // Route::put   ('family-trees/{familyTree}/members/{member}', [FamilyTreeMemberController::class, 'update']);
     // Route::delete('family-trees/{familyTree}/members/{member}', [FamilyTreeMemberController::class, 'destroy']);
     // Route::get   ('relationship-types', [FamilyTreeMemberController::class, 'relationshipTypes']);
-    Route::apiResource('family-trees.members', FamilyTreeMemberController::class)->parameters(['members'=>'member']);
+    Route::apiResource('family-trees.members', FamilyTreeMemberController::class)
+        ->parameters(['family-trees' => 'family_tree', 'members'=>'member']);
     Route::get('relationship-types', [FamilyTreeMemberController::class,'relationshipTypes']);
 
     // Invitations

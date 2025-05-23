@@ -198,7 +198,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     // Additional relationship helpers for family-tree context
     protected function getRelatedUsersInTree(
-        int $familyTreeId,
+        $familyTreeId,
         RelationshipType $type,
         bool $asSubject = true
     ) {
@@ -212,25 +212,25 @@ class User extends Authenticatable implements MustVerifyEmail
         return self::whereIn('id', $query->pluck('user_id'));
     }
 
-    public function fatherInTree(int $familyTreeId)
+    public function fatherInTree($familyTreeId)
     {
         return $this->getRelatedUsersInTree($familyTreeId, RelationshipType::FATHER, false)
                     ->first();
     }
 
-    public function motherInTree(int $familyTreeId)
+    public function motherInTree($familyTreeId)
     {
         return $this->getRelatedUsersInTree($familyTreeId, RelationshipType::MOTHER, false)
                     ->first();
     }
 
-    public function spousesInTree(int $familyTreeId)
+    public function spousesInTree($familyTreeId)
     {
         return $this->getRelatedUsersInTree($familyTreeId, RelationshipType::SPOUSE)
                     ->get();
     }
 
-    public function childrenInTree(int $familyTreeId)
+    public function childrenInTree($familyTreeId)
     {
         return $this->getRelatedUsersInTree($familyTreeId, RelationshipType::CHILD)
                     ->get();

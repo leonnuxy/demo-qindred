@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class FamilyTreeService
 {
-    public function getTreeForDisplay(int $familyTreeId, ?string $perspectiveUserId = null): array
+    public function getTreeForDisplay(string $familyTreeId, ?string $perspectiveUserId = null): array
     {
         $tree = FamilyTree::find($familyTreeId);
         if (! $tree) {
@@ -37,11 +37,12 @@ class FamilyTreeService
             Log::warning("No root for tree {$familyTreeId}");
             return ['error' => 'Could not determine a root user.'];
         }
-
-        return $this->mapNodeRecursive($rootUser, $familyTreeId, []);
+        // start with an empty “seen” list in a variable so we can pass it by reference
+        $seen = [];
+        return $this->mapNodeRecursive($rootUser, $familyTreeId, $seen);
     }
 
-    protected function mapNodeRecursive(User $user, int $treeId, array &$seen): array
+    protected function mapNodeRecursive(User $user, string $treeId, array &$seen): array
     {
         if (in_array($user->id, $seen)) {
             return ['id'=>$user->id, 'name'=>$user->name,'note'=>'circular ref'];
@@ -96,61 +97,170 @@ class FamilyTreeService
         });
     }
 
-    public function addDirectMember(int $treeId, array $m): array
+    public function addDirectMember(string $treeId, array $m): array
     {
         $me = Auth::user();
+        
+        if (!$me) {
+            Log::warning("Attempted to add direct member without authentication");
+        }
+        
         return DB::transaction(function() use($treeId,$m,$me){
             // Use the relationshipToUser or relationshipToMe field (for backward compatibility)
             $relationshipType = $m['relationshipToUser'] ?? $m['relationshipToMe'] ?? null;
             
-            $u = User::create([
-                'id'                 => Str::uuid(),
-                'first_name'         => $m['firstName'],
-                'last_name'          => $m['lastName'],
-                'date_of_birth'      => $m['dateOfBirth'] ?? null,
-                'date_of_death'      => ($m['isDeceased'] ?? false) ? ($m['dateOfDeath'] ?? null) : null,
-                'email'              => 'placeholder-'.Str::uuid().'@local',
-                'password'           => null,
-                'is_placeholder'     => true,
-                'email_verified_at'  => now(),
-                'role'               => 'user',
-                'status'             => ($m['isDeceased'] ?? false) ? 'deceased' : 'active',
+            // Log the inputs for debugging
+            Log::info("Adding direct member", [
+                'tree_id' => $treeId,
+                'relationship' => $relationshipType,
+                'email' => $m['email'] ?? null,
             ]);
+            
+            // First, check if this is an existing user (based on valid email)
+            $existingUser = null;
+            if (!empty($m['email']) && filter_var($m['email'], FILTER_VALIDATE_EMAIL)) {
+                $existingUser = User::where('email', $m['email'])->first();
+                if ($existingUser) {
+                    Log::info("Found existing user", ['id' => $existingUser->id, 'email' => $existingUser->email]);
+                }
+            }
+            
+            // If it's the logged-in user, use that
+            if ($existingUser && $existingUser->id === $me->id) {
+                $u = $existingUser;
+                $isNewUser = false;
+            } 
+            // For any other email match, use that user
+            else if ($existingUser) {
+                $u = $existingUser;
+                $isNewUser = false;
+            } 
+            // Otherwise create a new placeholder user
+            else {
+                try {
+                    $u = User::create([
+                        'id'                 => Str::uuid(), // Generate UUID
+                        'first_name'         => $m['firstName'],
+                        'last_name'          => $m['lastName'],
+                        'date_of_birth'      => $m['dateOfBirth'] ?? null,
+                        'date_of_death'      => ($m['isDeceased'] ?? false) ? ($m['dateOfDeath'] ?? null) : null,
+                        'email'              => !empty($m['email']) && filter_var($m['email'], FILTER_VALIDATE_EMAIL) 
+                            ? $m['email'] 
+                            : 'placeholder-'.Str::uuid().'@local',
+                        'password'           => bcrypt(Str::random(32)), // Generate a random secure password
+                        'is_placeholder'     => true,
+                        'email_verified_at'  => now(),
+                        'role'               => 'user',
+                        'status'             => ($m['isDeceased'] ?? false) ? 'deceased' : 'active',
+                    ]);
+                    
+                    Log::info("Created new user", ['id' => $u->id, 'email' => $u->email]);
+                    $isNewUser = true;
+                } catch (\Exception $e) {
+                    Log::error("Failed to create user", ['error' => $e->getMessage()]);
+                    throw $e;
+                }
+            }
 
-            FamilyMember::create([
-                'family_tree_id' => $treeId,
-                'user_id'        => $u->id,
-                'role'           => $relationshipType,
-            ]);
+            // Only create the family member record if it doesn't exist
+            $existingMember = FamilyMember::where('family_tree_id', $treeId)
+                ->where('user_id', $u->id)
+                ->first();
+                
+            if (!$existingMember) {
+                // Log user ID for debugging
+                Log::info("Creating family member", [
+                    'tree_id' => $treeId,
+                    'user_id' => $u->id,
+                    'role' => $relationshipType,
+                ]);
+                
+                try {
+                    FamilyMember::create([
+                        'family_tree_id' => (string)$treeId,
+                        'user_id'        => (string)$u->id,
+                        'role'           => (string)$relationshipType,
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error("Failed to create family member", [
+                        'tree_id' => $treeId,
+                        'user_id' => $u->id,
+                        'role' => $relationshipType,
+                        'error' => $e->getMessage(),
+                    ]);
+                    throw $e;
+                }
+            }
 
             /** store relationship both ways **/
             if ($rel = RelationshipType::tryFrom($relationshipType)) {
-                UserRelationship::create([
-                    'family_tree_id'   => $treeId,
-                    'user_id'          => $me->id,
-                    'related_user_id'  => $u->id,
-                    'relationship_type'=> $rel->value,
-                ]);
-                UserRelationship::create([
-                    'family_tree_id'   => $treeId,
-                    'user_id'          => $u->id,
-                    'related_user_id'  => $me->id,
-                    'relationship_type'=> $rel->getReciprocal()->value,
-                ]);
+                // Only create relationships if the current user is authenticated and not the same as the target user
+                if ($me && $me->id !== $u->id) {
+                    // Create primary relationship (me to other) if it doesn't exist
+                    $existingRel1 = UserRelationship::where('family_tree_id', $treeId)
+                        ->where('user_id', $me->id)
+                        ->where('related_user_id', $u->id)
+                        ->first();
+                        
+                    if (!$existingRel1) {
+                        try {
+                            UserRelationship::create([
+                                'family_tree_id'   => (string)$treeId,
+                                'user_id'          => (string)$me->id,
+                                'related_user_id'  => (string)$u->id,
+                                'relationship_type'=> $rel->value,
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error("Failed to create primary relationship", [
+                                'error' => $e->getMessage(),
+                                'user_id' => $me->id,
+                                'related_user_id' => $u->id,
+                            ]);
+                            // Continue without throwing to allow other operations
+                        }
+                    }
+                    
+                    // Create reciprocal relationship (other to me) if it doesn't exist
+                    $existingRel2 = UserRelationship::where('family_tree_id', $treeId)
+                        ->where('user_id', $u->id)
+                        ->where('related_user_id', $me->id)
+                        ->first();
+                        
+                    if (!$existingRel2) {
+                        try {
+                            UserRelationship::create([
+                                'family_tree_id'   => (string)$treeId,
+                                'user_id'          => (string)$u->id,
+                                'related_user_id'  => (string)$me->id,
+                                'relationship_type'=> $rel->getReciprocal()->value,
+                            ]);
+                        } catch (\Exception $e) {
+                            Log::error("Failed to create reciprocal relationship", [
+                                'error' => $e->getMessage(),
+                                'user_id' => $u->id,
+                                'related_user_id' => $me->id,
+                            ]);
+                            // Continue without throwing
+                        }
+                    }
+                }
             }
 
-            $this->logActivity($treeId, "Added {$u->name} directly");
+            // Only log if a new member was created or associated
+            $actionText = $isNewUser ? "Added new member {$u->name} directly" : "Associated existing user {$u->name} with the family tree";
+            $this->logActivity($treeId, $actionText);
+            
             return [
                 'id' => $u->id,
                 'firstName'=> $u->first_name,
                 'lastName' => $u->last_name,
-                'relationshipToUser'=> $m['relationshipToUser'],
-                'isPlaceholder'=> true,
+                'relationshipToUser'=> $relationshipType,
+                'isPlaceholder'=> $u->is_placeholder ?? false,
             ];
         });
     }
 
-    public function inviteMember(int $treeId, array $m): array
+    public function inviteMember(string $treeId, array $m): array
     {
         $inv = \App\Models\Invitation::create([
             'family_tree_id'   => $treeId,
@@ -167,32 +277,66 @@ class FamilyTreeService
         ];
     }
 
-    public function updateMember(int $treeId, string $memberId, array $m): array
+    public function updateMember(string $treeId, string $memberId, array $m): array
     {
-        $u = User::findOrFail($memberId);
-        $u->update([
-            'first_name'    => $m['firstName'],
-            'last_name'     => $m['lastName'],
-            'date_of_birth' => $m['dateOfBirth'] ?? null,
-            'date_of_death' => $m['isDeceased'] ? $m['dateOfDeath'] : null,
+        // Log the inputs for debugging
+        Log::info("Updating member", [
+            'tree_id' => $treeId,
+            'member_id' => $memberId,
+            'data' => $m
         ]);
+        
+        try {
+            $u = User::findOrFail($memberId);
+            $u->update([
+                'first_name'    => $m['firstName'],
+                'last_name'     => $m['lastName'],
+                'date_of_birth' => $m['dateOfBirth'] ?? null,
+                'date_of_death' => $m['isDeceased'] ? $m['dateOfDeath'] : null,
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Failed to update user", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+        }
 
-        if ($rel = RelationshipType::tryFrom($m['relationshipToUser'])) {
-            UserRelationship::updateOrCreate(
-                ['family_tree_id'=>$treeId,'user_id'=>Auth::id(),'related_user_id'=>$u->id],
-                ['relationship_type'=>$rel->value]
-            );
-            UserRelationship::updateOrCreate(
-                ['family_tree_id'=>$treeId,'user_id'=>$u->id,'related_user_id'=>Auth::id()],
-                ['relationship_type'=>$rel->getReciprocal()->value]
-            );
+        $me = Auth::user();
+        
+        if ($rel = RelationshipType::tryFrom($m['relationshipToUser']) && $me) {
+            try {
+                UserRelationship::updateOrCreate(
+                    [
+                        'family_tree_id' => (string)$treeId,
+                        'user_id' => (string)$me->id,
+                        'related_user_id' => (string)$u->id
+                    ],
+                    ['relationship_type' => $rel->value]
+                );
+                
+                UserRelationship::updateOrCreate(
+                    [
+                        'family_tree_id' => (string)$treeId,
+                        'user_id' => (string)$u->id,
+                        'related_user_id' => (string)$me->id
+                    ],
+                    ['relationship_type' => $rel->getReciprocal()->value]
+                );
+            } catch (\Exception $e) {
+                Log::error("Failed to update relationships", [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                // Continue even if relationship update fails
+            }
         }
 
         $this->logActivity($treeId, "Updated {$u->name}");
         return ['id'=>$u->id,'firstName'=>$u->first_name,'lastName'=>$u->last_name];
     }
 
-    public function deleteMember(int $treeId, string $memberId): bool
+    public function deleteMember(string $treeId, string $memberId): bool
     {
         DB::transaction(function() use($treeId,$memberId){
             UserRelationship::where('family_tree_id',$treeId)
@@ -209,7 +353,7 @@ class FamilyTreeService
         return true;
     }
 
-    public function getFamilyMembers(int $treeId): array
+    public function getFamilyMembers(string $treeId): array
     {
         $me = Auth::user();
         return FamilyMember::with('user.gender')
@@ -229,7 +373,7 @@ class FamilyTreeService
             ->all();
     }
 
-    protected function logActivity(int $treeId, string $msg): void
+    protected function logActivity(string $treeId, string $msg): void
     {
         FamilyTree::find($treeId)
             ->logs()

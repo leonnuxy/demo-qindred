@@ -44,7 +44,7 @@ export default function Edit({ familyTree }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    patch(route('family-trees.update', familyTree.id), {
+    patch(route('family-trees.update', { family_tree: familyTree.id }), {
       onSuccess: () => {
         toast({
           title: "Success",
@@ -84,7 +84,7 @@ export default function Edit({ familyTree }) {
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
         <div className="mb-6">
           <Link 
-            href={route('family-trees.show', familyTree.id)} 
+            href={route('family-trees.show', { family_tree: familyTree.id })} 
             className="flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
           >
             <ArrowLeft size={16} className="mr-2" />
@@ -168,7 +168,7 @@ export default function Edit({ familyTree }) {
             
             <CardFooter className="flex justify-end gap-3">
               <Link 
-                href={route('family-trees.show', familyTree.id)}
+                href={route('family-trees.show', { family_tree: familyTree.id })}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium shadow-sm"
               >
                 Cancel

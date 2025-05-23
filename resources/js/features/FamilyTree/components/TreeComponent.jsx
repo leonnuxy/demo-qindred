@@ -33,11 +33,12 @@ export default function TreeComponent({ initialData, onNodeClick }) {
     // Assign the x and y positions to each node
     treeLayout(root);
     
-    // Create a container for the tree
+    // Create a container for the tree with a smoother translation
     const g = svg.append("g")
-      .attr("transform", `translate(50, 50)`);
+      .attr("transform", `translate(50, 50)`)
+      .attr("class", "tree-container");
     
-    // Create links between nodes
+    // Create links between nodes with enhanced styling
     g.selectAll(".link")
       .data(root.links())
       .enter()
@@ -47,41 +48,60 @@ export default function TreeComponent({ initialData, onNodeClick }) {
         .x(d => d.y)  // Swap x and y for a horizontal tree
         .y(d => d.x))
       .attr("fill", "none")
-      .attr("stroke", "#ccc")
-      .attr("stroke-width", 1.5);
+      .attr("stroke", "var(--qindred-green-500)")
+      .attr("stroke-width", 1.5)
+      .attr("opacity", 0.8)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round");
     
-    // Create node groups
+    // Create node groups with interactive features
     const node = g.selectAll(".node")
       .data(root.descendants())
       .enter()
       .append("g")
       .attr("class", d => `node ${d.children ? "node--internal" : "node--leaf"}`)
       .attr("transform", d => `translate(${d.y}, ${d.x})`)
+      .attr("cursor", "pointer")
       .on("click", (event, d) => {
         if (onNodeClick) {
           onNodeClick(d.data);
         }
+      })
+      .on("mouseover", function() {
+        // Highlight node on hover
+        d3.select(this).select("circle")
+          .attr("stroke-width", d => d.data.currentUser ? 3.5 : 2)
+          .attr("filter", "drop-shadow(0 2px 3px rgba(0,0,0,0.2))");
+      })
+      .on("mouseout", function() {
+        // Reset styling on mouseout
+        d3.select(this).select("circle")
+          .attr("stroke-width", d => d.data.currentUser ? 3 : 1)
+          .attr("filter", "none");
       });
     
-    // Add circles for the nodes
+    // Add circles for the nodes with enhanced styling
     node.append("circle")
       .attr("r", 10)
-      .attr("fill", d => d.data.deceased ? "#ccc" : 
-        d.data.gender === "male" ? "#c0e3f2" : 
-        d.data.gender === "female" ? "#ffc0cb" : "#f8f8f8")
-      .attr("stroke", d => d.data.currentUser ? "#ff7700" : "#999")
-      .attr("stroke-width", d => d.data.currentUser ? 3 : 1);
+      .attr("fill", d => d.data.deceased ? "#f3f4f6" : 
+        d.data.gender === "male" ? "var(--qindred-green-400)" : 
+        d.data.gender === "female" ? "var(--qindred-green-500)" : "var(--qindred-green-100)")
+      .attr("stroke", d => d.data.currentUser ? "var(--qindred-green-900)" : "var(--qindred-green-700)")
+      .attr("stroke-width", d => d.data.currentUser ? 3 : 1)
+      .attr("transition", "all 0.2s ease-in-out");
     
-    // Add name labels to nodes
+    // Add name labels to nodes with improved styling
     node.append("text")
       .attr("dy", 3)
       .attr("x", d => d.children ? -15 : 15)
       .style("text-anchor", d => d.children ? "end" : "start")
       .text(d => `${d.data.firstName || ''} ${d.data.lastName || ''}`)
       .attr("font-size", "12px")
-      .attr("font-weight", d => d.data.currentUser ? "bold" : "normal");
+      .attr("font-weight", d => d.data.currentUser ? "bold" : "normal")
+      .attr("fill", d => d.data.currentUser ? "var(--qindred-green-900)" : "var(--qindred-green-800)")
+      .attr("filter", d => d.data.currentUser ? "drop-shadow(0 1px 1px rgba(0,0,0,0.1))" : "none");
     
-    // Add date labels to nodes
+    // Add date labels to nodes with subtle styling
     node.append("text")
       .attr("dy", 18)
       .attr("x", d => d.children ? -15 : 15)
@@ -95,7 +115,8 @@ export default function TreeComponent({ initialData, onNodeClick }) {
         return '';
       })
       .attr("font-size", "10px")
-      .attr("fill", "#777");
+      .attr("fill", "var(--qindred-green-600)")
+      .attr("opacity", 0.8);
     
   }, [initialData, dimensions, onNodeClick]);
   
@@ -120,7 +141,7 @@ export default function TreeComponent({ initialData, onNodeClick }) {
   }, []);
 
   return (
-    <div className="w-full h-full min-h-[400px] overflow-auto">
+    <div className="w-full h-full min-h-[400px] overflow-auto bg-qindred-green-50/30 dark:bg-qindred-green-900/5 rounded-lg p-4">
       <svg 
         ref={svgRef} 
         width={dimensions.width} 

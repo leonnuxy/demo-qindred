@@ -68,13 +68,13 @@ export function SendInvitationForm({ familyTrees = [], relationshipTypes = [] })
   
   return (
     <Card className="invitations-section">
-      <CardHeader>
-        <CardTitle>Send New Invitation</CardTitle>
+      <CardHeader className="invitations-section-header">
+        <CardTitle className="invitations-section-title">Send New Invitation</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="send-invitation-form">
           <div className="form-group">
-            <Label htmlFor="family-tree">Family Tree *</Label>
+            <Label htmlFor="family-tree" className="form-label">Family Tree *</Label>
             <Select
               value={selectedTree}
               onValueChange={setSelectedTree}
@@ -102,7 +102,7 @@ export function SendInvitationForm({ familyTrees = [], relationshipTypes = [] })
           </div>
 
           <div className="form-group">
-            <Label htmlFor="invite-email">Email Address *</Label>
+            <Label htmlFor="invite-email" className="form-label">Email Address *</Label>
             <Input
               id="invite-email"
               type="email"
@@ -119,7 +119,7 @@ export function SendInvitationForm({ familyTrees = [], relationshipTypes = [] })
           </div>
 
           <div className="form-group">
-            <Label htmlFor="relationship-type">Relationship to You *</Label>
+            <Label htmlFor="relationship-type" className="form-label">Relationship to You *</Label>
             <Select
               value={data.relationship_type}
               onValueChange={(val) => setData('relationship_type', val)}
@@ -150,6 +150,7 @@ export function SendInvitationForm({ familyTrees = [], relationshipTypes = [] })
             <Button
               type="submit"
               disabled={processing || !selectedTree || !data.relationship_type || !data.email}
+              className="button-primary"
             >
               {processing ? 'Sending…' : 'Send Invitation'}
             </Button>

@@ -38,6 +38,30 @@ class UserSetupService
                 'creator_id'  => $user->id,
                 'privacy'     => 'private',
             ]);
+            
+            // Add the current user directly as a family member without creating a new user
+            try {
+                // Log for debugging
+                Log::info("Adding current user as family member", [
+                    'tree_id' => $tree->id,
+                    'user_id' => $user->id, 
+                    'role' => $data['familyRole'] ?? 'self'
+                ]);
+                
+                // Create family member record directly
+                \App\Models\FamilyMember::create([
+                    'family_tree_id' => (string)$tree->id,
+                    'user_id' => (string)$user->id,
+                    'role' => $data['familyRole'] ?? 'self',
+                ]);
+            } catch (\Exception $e) {
+                Log::error("Failed to add user as family member", [
+                    'user_id' => $user->id,
+                    'tree_id' => $tree->id,
+                    'error' => $e->getMessage()
+                ]);
+                // Continue with setup even if this fails
+            }
 
             // 3) Add members/invites
             foreach ($data['membersToAdd'] ?? [] as $m) {

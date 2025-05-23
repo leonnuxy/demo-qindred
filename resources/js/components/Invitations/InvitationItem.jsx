@@ -28,7 +28,9 @@ export function InvitationItem({ item, type }) {
           </>
         ) : (
           <>
-            <p className="invitation-email">{item.email}</p>
+            <p className="invitation-email">
+              {item.email}
+            </p>
             <p className="invitation-meta-text">
               For {item.familyTree?.name} on <time dateTime={item.created_at}>{formattedDate}</time>
             </p>
@@ -39,14 +41,14 @@ export function InvitationItem({ item, type }) {
       {type === 'incoming' && item.status === 'pending' ? (
         <div className="invitation-actions">
           <Button
-            className="button-base"
+            className="button-primary"
             onClick={() => handleAction('accept')}
             disabled={processing}
           >
             Accept
           </Button>
           <Button
-            className="button-base"
+            className="button-secondary"
             variant="outline"
             onClick={() => handleAction('decline')}
             disabled={processing}
@@ -61,7 +63,7 @@ export function InvitationItem({ item, type }) {
       ) : (
         <div className="invitation-actions">
           <Button
-            className="button-base"
+            className="button-secondary"
             variant="outline"
             size="sm"
             onClick={() => handleAction('resend')}
@@ -70,7 +72,7 @@ export function InvitationItem({ item, type }) {
             Resend
           </Button>
           <Button
-            className="button-base"
+            className="button-destructive"
             variant="destructive"
             size="sm"
             onClick={() => handleAction('cancel')}

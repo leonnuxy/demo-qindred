@@ -20,7 +20,7 @@ class FamilyTreeMemberController extends Controller
     public function index($familyTreeId)
     {
         return response()->json(
-            $this->trees->getFamilyMembers((int)$familyTreeId)
+            $this->trees->getFamilyMembers($familyTreeId)
         );
     }
 
@@ -29,24 +29,53 @@ class FamilyTreeMemberController extends Controller
      */
     public function store(Request $request, $familyTreeId)
     {
-        $data = $request->validate([
-            'firstName'         => 'required|string|max:255',
-            'lastName'          => 'required|string|max:255',
-            'dateOfBirth'       => 'nullable|date',
-            'dateOfDeath'       => 'nullable|date',
-            'isDeceased'        => 'required|boolean',
-            'relationshipToUser'=> 'required|string',
-            'addMode'           => 'required|in:direct,invite',
-            'email'             => 'nullable|email',
+        // Log the parameters for debugging
+        \Log::info('Store member request', [
+            'familyTreeId' => $familyTreeId,
+            'requestData' => $request->all()
         ]);
-
-        if ($data['addMode'] === 'direct') {
-            $member = $this->trees->addDirectMember((int)$familyTreeId, $data);
-        } else {
-            $member = $this->trees->inviteMember((int)$familyTreeId, $data);
+        
+        try {
+            $data = $request->validate([
+                'firstName'         => 'required|string|max:255',
+                'lastName'          => 'required|string|max:255',
+                'dateOfBirth'       => 'nullable|date',
+                'dateOfDeath'       => 'nullable|date',
+                'isDeceased'        => 'required|boolean',
+                'relationshipToUser'=> 'required|string',
+                'addMode'           => 'required|in:direct,invite',
+                'email'             => 'nullable|email',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'data' => $request->all()
+            ]);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         }
 
-        return response()->json($member, 201);
+        try {
+            if ($data['addMode'] === 'direct') {
+                $member = $this->trees->addDirectMember((string)$familyTreeId, $data);
+            } else {
+                $member = $this->trees->inviteMember((string)$familyTreeId, $data);
+            }
+            
+            return response()->json($member, 201);
+        } catch (\Exception $e) {
+            \Log::error('Failed to add member', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json(
+                ['error' => 'Failed to add member: ' . $e->getMessage()], 
+                500
+            );
+        }
     }
 
     /**
@@ -54,23 +83,53 @@ class FamilyTreeMemberController extends Controller
      */
     public function update(Request $request, $familyTreeId, $memberId)
     {
-        $data = $request->validate([
-            'id'                 => 'required|string',
-            'firstName'         => 'required|string|max:255',
-            'lastName'          => 'required|string|max:255',
-            'dateOfBirth'       => 'nullable|date',
-            'dateOfDeath'       => 'nullable|date',
-            'isDeceased'        => 'required|boolean',
-            'relationshipToUser'=> 'required|string',
+        // Log the parameters for debugging
+        \Log::info('Update member request', [
+            'familyTreeId' => $familyTreeId,
+            'memberId' => $memberId,
+            'requestData' => $request->all()
         ]);
+        
+        try {
+            $data = $request->validate([
+                'id'                => 'required|string',
+                'firstName'         => 'required|string|max:255',
+                'lastName'          => 'required|string|max:255',
+                'dateOfBirth'       => 'nullable|date',
+                'dateOfDeath'       => 'nullable|date',
+                'isDeceased'        => 'required|boolean',
+                'relationshipToUser'=> 'required|string',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'data' => $request->all()
+            ]);
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
 
-        $updated = $this->trees->updateMember(
-            (int)$familyTreeId,
-            $memberId,
-            $data
-        );
-
-        return response()->json($updated);
+        try {
+            $updated = $this->trees->updateMember(
+                (string)$familyTreeId,
+                (string)$memberId,
+                $data
+            );
+            
+            return response()->json($updated);
+        } catch (\Exception $e) {
+            \Log::error('Failed to update member', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json(
+                ['error' => 'Failed to update member: ' . $e->getMessage()], 
+                500
+            );
+        }
     }
 
     /**
@@ -78,7 +137,7 @@ class FamilyTreeMemberController extends Controller
      */
     public function destroy($familyTreeId, $memberId)
     {
-        $this->trees->deleteMember((int)$familyTreeId, $memberId);
+        $this->trees->deleteMember($familyTreeId, $memberId);
         return response()->noContent();
     }
 

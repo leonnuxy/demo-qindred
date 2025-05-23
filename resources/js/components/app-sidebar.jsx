@@ -48,8 +48,8 @@ const mainNavItems = [
     {
         title: 'Forest',
         href: route('forest'),
-        icon: LayoutPanelTop,
-        component: 'User/ForestPage'
+        icon: Users,
+        component: 'Forest/Index'
     },
     {
         title: 'Invitations',

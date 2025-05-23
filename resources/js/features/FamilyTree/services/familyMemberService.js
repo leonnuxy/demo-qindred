@@ -7,10 +7,16 @@ import axios from 'axios';
  */
 export async function getFamilyMembers(treeId) {
   try {
+    console.log(`Fetching family members for tree ${treeId}`);
     const response = await axios.get(`/api/family-trees/${treeId}/members`);
     return response.data;
   } catch (error) {
     console.error('Error fetching family members:', error);
+    // Log detailed error information for debugging
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+    }
     throw error;
   }
 }
@@ -23,10 +29,16 @@ export async function getFamilyMembers(treeId) {
  */
 export async function addFamilyMember(treeId, memberData) {
   try {
+    console.log(`Adding family member to tree ${treeId}`, memberData);
     const response = await axios.post(`/api/family-trees/${treeId}/members`, memberData);
     return response.data;
   } catch (error) {
     console.error('Error adding family member:', error);
+    // Log detailed error information for debugging
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+    }
     throw error;
   }
 }
@@ -40,10 +52,16 @@ export async function addFamilyMember(treeId, memberData) {
  */
 export async function updateFamilyMember(treeId, memberId, memberData) {
   try {
+    console.log(`Updating family member: ${memberId} in tree ${treeId}`);
     const response = await axios.put(`/api/family-trees/${treeId}/members/${memberId}`, memberData);
     return response.data;
   } catch (error) {
     console.error('Error updating family member:', error);
+    // Log detailed error information for debugging
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+    }
     throw error;
   }
 }

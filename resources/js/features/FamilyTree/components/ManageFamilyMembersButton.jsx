@@ -91,6 +91,7 @@ export default function ManageFamilyMembersButton({
   
   const handleUpdateMember = async (memberData) => {
     try {
+      console.log('Updating member:', memberData);
       const updatedMember = await updateFamilyMember(familyTreeId, memberData.id, memberData);
       
       setFamilyMembers(prev => 

@@ -35,7 +35,7 @@ export function NavMain({ items = [] }) {
 
   return (
     <SidebarGroup className="px-2 py-0">
-      <SidebarGroupLabel>Qindred Family Tree</SidebarGroupLabel>
+      <SidebarGroupLabel>Qindred Menu</SidebarGroupLabel>
 
       <SidebarMenu>
         {items.map((item) => (

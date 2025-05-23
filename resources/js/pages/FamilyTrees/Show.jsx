@@ -87,12 +87,12 @@ export default function Show({
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title={`Family Tree – ${familyTree?.name || 'Details'}`} />
 
-      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree">
         {/* Alerts Section */}
         <div className="alerts mb-6">
           {flash?.success && (
-            <div role="alert" className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-4 mb-4">
-              <p className="text-green-700 dark:text-green-300">{flash.success}</p>
+            <div role="alert" className="bg-qindred-green-50/50 dark:bg-qindred-green-900/20 border-l-4 border-qindred-green-500 p-4 mb-4">
+              <p className="text-qindred-green-700 dark:text-qindred-green-300">{flash.success}</p>
             </div>
           )}
           {flash?.error && (
@@ -113,23 +113,23 @@ export default function Show({
         </div>
 
         {/* Basic Info Section */}
-        <section className="mb-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <section className="mb-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-qindred-green-100 dark:border-qindred-green-800/30">
           <div className="mb-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-qindred-green-900 dark:text-qindred-green-500">
               {familyTree?.name || 'Family Tree Details'}
             </h1>
             {familyTree?.description && (
-              <p className="mt-2 text-gray-600 dark:text-gray-300">
+              <p className="mt-2 text-qindred-green-700 dark:text-qindred-green-300">
                 {familyTree.description}
               </p>
             )}
           </div>
           <div className="mb-6">
-            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-xs md:text-sm text-qindred-green-700/70 dark:text-qindred-green-400/70">
               Created: {familyTree?.created_at} | Your Role:{' '}
-              <span className="font-medium">{familyTree?.user_role_in_tree || 'Member'}</span>
+              <span className="font-medium text-qindred-green-800 dark:text-qindred-green-400">{familyTree?.user_role_in_tree || 'Member'}</span>
               {familyTree?.is_creator && (
-                <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-800/50 text-green-700 dark:text-green-300 text-xs font-semibold rounded-full">
+                <span className="ml-2 px-2 py-0.5 bg-qindred-green-100 dark:bg-qindred-green-800/50 text-qindred-green-700 dark:text-qindred-green-300 text-xs font-semibold rounded-full">
                   Creator
                 </span>
               )}
@@ -138,14 +138,14 @@ export default function Show({
               {familyTree?.id && (
                 <>
                   <Link
-                    href={route('family-trees.edit', { familyTree: familyTree.id })}
-                    className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium shadow-sm"
+                    href={route('family-trees.edit', { family_tree: familyTree.id })}
+                    className="inline-block px-4 py-2 bg-qindred-green-600 hover:bg-qindred-green-700 text-white rounded-md text-sm font-medium shadow-sm"
                   >
                     Edit Tree Details
                   </Link>
                   <Link
                     href={route('invitations.index')}
-                    className="inline-block px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium shadow-sm"
+                    className="inline-block px-4 py-2 bg-qindred-green-700 hover:bg-qindred-green-800 text-white rounded-md text-sm font-medium shadow-sm"
                   >
                     Manage Invitations
                   </Link>

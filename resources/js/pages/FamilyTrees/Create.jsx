@@ -74,14 +74,14 @@ export default function Create() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create New Family Tree" />
       
-      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-        <h1 className="text-3xl font-bold mb-6">Create New Family Tree</h1>
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree">
+        <h1 className="text-3xl font-bold mb-6 text-qindred-green-900 dark:text-qindred-green-500">Create New Family Tree</h1>
         
         <form onSubmit={handleSubmit}>
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>Tree Details</CardTitle>
-              <CardDescription>
+          <Card className="mb-8 border-qindred-green-100 dark:border-qindred-green-800/30">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-qindred-green-800 dark:text-qindred-green-500">Tree Details</CardTitle>
+              <CardDescription className="text-qindred-green-700/70 dark:text-qindred-green-600/70">
                 Enter the basic information for your family tree.
               </CardDescription>
             </CardHeader>
@@ -239,10 +239,15 @@ export default function Create() {
               variant="outline"
               onClick={() => window.history.back()}
               disabled={processing}
+              className="border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={processing}>
+            <Button 
+              type="submit" 
+              disabled={processing}
+              className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white"
+            >
               {processing ? 'Creating...' : 'Create Family Tree'}
             </Button>
           </div>

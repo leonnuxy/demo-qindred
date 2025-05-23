@@ -21,7 +21,7 @@ class FamilyTreeLogController extends Controller
             ]);
 
             return redirect()
-                ->route('family-trees.show',$familyTree->id)
+                ->route('family-trees.show', ['family_tree' => $familyTree->id])
                 ->with('success','Log added');
         } catch (\Exception $e) {
             Log::error($e->getMessage());

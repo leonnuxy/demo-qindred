@@ -20,6 +20,7 @@ class FamilyMember extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id', 
         'family_tree_id',
         'user_id',
         'role', // member, admin, viewer

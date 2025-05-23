@@ -315,19 +315,23 @@ export default function ManageFamilyMembersModal({
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         {/* Increased max-width for more space */}
-        <DialogContent className="max-w-4xl w-[90vw] md:w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8">
-          <DialogTitle className="text-2xl font-semibold text-gray-900 dark:text-gray-100">Manage Family Members</DialogTitle>
+        <DialogContent className="max-w-4xl w-[90vw] md:w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onInteractOutside={(e) => e.preventDefault()}>
+          <DialogTitle className="text-2xl font-semibold text-qindred-green-900 dark:text-qindred-green-400">Manage Family Members</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground mb-6">
             View, edit, or add members to your family tree.
           </DialogDescription>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`grid w-full mb-6 ${editingMember ? 'grid-cols-3' : 'grid-cols-2'} gap-1`}>
-              <TabsTrigger value="existing">Existing Members</TabsTrigger>
-              <TabsTrigger value="add">Add New Member</TabsTrigger>
+              <TabsTrigger value="existing" className="data-[state=active]:bg-qindred-green-50 data-[state=active]:text-qindred-green-900 dark:data-[state=active]:bg-qindred-green-900/30 dark:data-[state=active]:text-qindred-green-400">
+                Existing Members
+              </TabsTrigger>
+              <TabsTrigger value="add" className="data-[state=active]:bg-qindred-green-50 data-[state=active]:text-qindred-green-900 dark:data-[state=active]:bg-qindred-green-900/30 dark:data-[state=active]:text-qindred-green-400">
+                Add New Member
+              </TabsTrigger>
               {/* Conditional rendering for Edit tab trigger */}
               {editingMember && (
-                <TabsTrigger value="edit">
+                <TabsTrigger value="edit" className="data-[state=active]:bg-qindred-green-50 data-[state=active]:text-qindred-green-900 dark:data-[state=active]:bg-qindred-green-900/30 dark:data-[state=active]:text-qindred-green-400">
                   Edit: {editingMember.firstName}
                 </TabsTrigger>
               )}
@@ -335,18 +339,18 @@ export default function ManageFamilyMembersModal({
             
             <TabsContent value="existing" className="mt-0 outline-none ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               {familyMembers.length === 0 ? (
-                <div className="text-center py-10">
+                <div className="text-center py-10 bg-slate-50/50 dark:bg-slate-800/30 rounded-lg">
                   <p className="text-gray-500 dark:text-gray-400">No family members found in this tree.</p>
-                  <Button onClick={() => setActiveTab("add")} className="mt-4">
+                  <Button onClick={() => setActiveTab("add")} className="mt-4 bg-qindred-green-600 hover:bg-qindred-green-700 text-white">
                     Add First Member
                   </Button>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-[calc(70vh-200px)] overflow-y-auto pr-2">
                   {familyMembers.map(member => (
-                    <div key={member.id} className="border dark:border-gray-700 rounded-lg p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-md transition-shadow">
+                    <div key={member.id} className="border border-qindred-green-200 dark:border-qindred-green-800/30 rounded-lg p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-md hover:border-qindred-green-400 dark:hover:border-qindred-green-600/50 transition-all">
                       <div className="flex-grow">
-                        <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{member.firstName} {member.lastName}</h3>
+                        <h3 className="font-semibold text-lg text-qindred-green-900 dark:text-qindred-green-400">{member.firstName} {member.lastName}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Relationship to you: {availableRelationshipTypes.find(rt => rt.value === member.relationshipToUser)?.label || member.relationshipToUser || 'N/A'}
                         </p>
@@ -360,7 +364,8 @@ export default function ManageFamilyMembersModal({
                          {member.email && <p className="text-xs text-gray-500 dark:text-gray-500">Email: {member.email}</p>}
                       </div>
                       <div className="flex space-x-2 flex-shrink-0 self-start sm:self-center mt-2 sm:mt-0">
-                        <Button variant="outline" size="sm" onClick={() => startEditMember(member)}>Edit</Button>
+                        <Button variant="outline" size="sm" onClick={() => startEditMember(member)} 
+                                className="border-qindred-green-500 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 text-qindred-green-700 dark:text-qindred-green-500">Edit</Button>
                         <Button variant="destructive" size="sm" onClick={() => startDeleteMember(member)}>Delete</Button>
                       </div>
                     </div>
@@ -376,19 +381,31 @@ export default function ManageFamilyMembersModal({
                     type="button" 
                     variant={newMember.addMode === 'direct' ? 'default' : 'outline'} 
                     onClick={() => handleSelectChange('addMode', 'direct', setNewMember)}
-                    className="flex-1"
+                    className={`flex-1 ${newMember.addMode === 'direct' ? 'bg-qindred-green-600 hover:bg-qindred-green-700 text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
                   > Add Directly </Button>
                   <Button 
                     type="button" 
                     variant={newMember.addMode === 'invite' ? 'default' : 'outline'} 
                     onClick={() => handleSelectChange('addMode', 'invite', setNewMember)}
-                    className="flex-1"
+                    className={`flex-1 ${newMember.addMode === 'invite' ? 'bg-qindred-green-600 hover:bg-qindred-green-700 text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
                   > Invite by Email </Button>
                 </div>
                 {renderMemberFormFields(newMember, setNewMember, "new-")}
                 <div className="flex justify-end pt-6 space-x-3">
-                  <Button type="button" variant="outline" onClick={() => { setNewMember(initialNewMemberState); setActiveTab("existing"); }}>Cancel</Button>
-                  <Button type="button" onClick={handleAddNewMember} disabled={isLoading}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => { setNewMember(initialNewMemberState); setActiveTab("existing"); }}
+                    className="border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="button" 
+                    onClick={handleAddNewMember} 
+                    disabled={isLoading}
+                    className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white"
+                  >
                     {isLoading ? (newMember.addMode === 'invite' ? "Sending..." : "Adding...") : (newMember.addMode === 'invite' ? "Send Invite" : "Add Member")}
                   </Button>
                 </div>
@@ -403,8 +420,20 @@ export default function ManageFamilyMembersModal({
                   </h4>
                   {renderMemberFormFields(editingMember, setEditingMember, "edit-")}
                   <div className="flex justify-end pt-6 space-x-3">
-                    <Button type="button" variant="outline" onClick={cancelEdit}>Cancel</Button>
-                    <Button type="button" onClick={handleSaveEdit} disabled={isLoading}>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={cancelEdit}
+                      className="border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="button" 
+                      onClick={handleSaveEdit} 
+                      disabled={isLoading}
+                      className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white"
+                    >
                       {isLoading ? "Saving..." : "Save Changes"}
                     </Button>
                   </div>
@@ -416,7 +445,7 @@ export default function ManageFamilyMembersModal({
       </Dialog>
       
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent onInteractOutside={(e) => e.preventDefault()}>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>

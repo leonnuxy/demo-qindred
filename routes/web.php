@@ -5,6 +5,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\FamilyTreeController;
 use App\Http\Controllers\FamilyTreeLogController;
 use App\Http\Controllers\SetupController;
+use App\Http\Controllers\ForestController;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -37,6 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/invitations/{invitation}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
     Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');
     Route::post('/invitations/{invitation}/cancel', [InvitationController::class, 'cancel'])->name('invitations.cancel');
+    
+    // Forest route
+    Route::get('/forest', [ForestController::class, 'index'])->name('forest.index');
 });
 
 require __DIR__.'/settings.php';
