@@ -1,0 +1,146 @@
+/* resources/css/components/ui/button.css */
+
+/* Base button styling */
+.button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Corresponds to gap-2 */
+  white-space: nowrap;
+  border-radius: var(--radius-md); /* rounded-md */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  font-weight: 500; /* font-medium */
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms; /* transition-colors is typically 150ms */
+  outline: none;
+  border: 1px solid transparent; /* Base for variants like outline */
+}
+
+.button-base:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.button-base:focus-visible {
+  /* Using a simpler focus ring that relies on the --ring variable */
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+/* SVG icon styling within buttons */
+.button-base > svg {
+  pointer-events: none;
+  flex-shrink: 0;
+}
+/* Default size for SVG if not overridden by specific size classes */
+.button-base > svg:not([class*='size-']):not([class*='w-']):not([class*='h-']) {
+  width: 1rem;  /* size-4 */
+  height: 1rem; /* size-4 */
+}
+
+
+/* Variants */
+.button-variant-default {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--shadow-xs); /* Assuming --shadow-xs is defined or use a direct value */
+}
+.button-variant-default:hover {
+  background-color: oklch(from var(--primary) l calc(l * 0.9) c h); /* bg-primary/90 */
+}
+
+.button-variant-destructive {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground); /* Ensure this is light for dark destructive bg */
+  box-shadow: var(--shadow-xs);
+}
+.button-variant-destructive:hover {
+  background-color: oklch(from var(--destructive) l calc(l * 0.9) c h); /* bg-destructive/90 */
+}
+.button-variant-destructive:focus-visible {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px oklch(from var(--destructive) l calc(l + 0.1) c h / 0.4); /* ring-destructive/40 approx */
+}
+
+
+.button-variant-outline {
+  border-color: var(--input); /* Or var(--border) */
+  background-color: var(--background);
+  color: var(--foreground); /* Text color for outline button */
+  box-shadow: var(--shadow-xs);
+}
+.button-variant-outline:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.button-variant-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  box-shadow: var(--shadow-xs);
+}
+.button-variant-secondary:hover {
+  background-color: oklch(from var(--secondary) l calc(l * 0.92) c h); /* bg-secondary/80 */
+}
+
+.button-variant-ghost {
+  background-color: transparent;
+  color: var(--foreground); /* Or var(--primary) if ghost buttons should be primary colored */
+}
+.button-variant-ghost:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.button-variant-link {
+  background-color: transparent;
+  color: var(--primary);
+  text-underline-offset: 4px;
+}
+.button-variant-link:hover {
+  text-decoration: underline;
+}
+
+/* Sizes */
+.button-size-default {
+  height: 2.25rem; /* h-9 */
+  padding-left: 1rem;  /* px-4 */
+  padding-right: 1rem; /* px-4 */
+  /* py-2 is implicit due to height and line-height */
+}
+.button-size-default.has-svg { /* If button contains an SVG directly */
+    padding-left: 0.75rem; /* px-3 */
+}
+
+.button-size-sm {
+  height: 2rem; /* h-8 */
+  border-radius: var(--radius-md); /* rounded-md is default, sm might be smaller */
+  padding-left: 0.75rem;  /* px-3 */
+  padding-right: 0.75rem; /* px-3 */
+}
+.button-size-sm.has-svg {
+    padding-left: 0.625rem; /* px-2.5 */
+}
+
+.button-size-lg {
+  height: 2.5rem; /* h-10 (shadcn uses h-11) */
+  border-radius: var(--radius-md);
+  padding-left: 1.5rem;  /* px-6 */
+  padding-right: 1.5rem; /* px-6 */
+}
+.button-size-lg.has-svg {
+    padding-left: 1rem; /* px-4 */
+}
+
+.button-size-icon {
+  height: 2.25rem; /* size-9 */
+  width: 2.25rem;  /* size-9 */
+  padding: 0; /* Icons usually don't need padding if icon itself is sized */
+}
+.button-size-icon.has-svg > svg,
+.button-size-icon > svg { /* Ensure icon fills the button */
+    width: 1.25rem; /* size-5 example */
+    height: 1.25rem;
+}

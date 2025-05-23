@@ -1,0 +1,36 @@
+/* Qindred Sidebar Styling */
+
+:root {
+  --qindred-green-50: oklch(97.5% 0.04 151.711);
+  --qindred-green-100: oklch(95.0% 0.06 151.711);
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-700: oklch(50.0% 0.209 151.711);
+  --qindred-green-800: oklch(40.0% 0.209 151.711);
+  --qindred-gray-500: oklch(65.0% 0.02 151.711);
+}
+
+.sidebar-item-active {
+  background-color: var(--qindred-green-100);
+  color: var(--qindred-green-800);
+  font-weight: 500;
+}
+
+.sidebar-menu-button:hover {
+  background-color: var(--qindred-green-50);
+  color: var(--qindred-green-700);
+}
+
+/* Custom spacing for sidebar items */
+.sidebar-menu-section {
+  padding-bottom: 1rem;
+}
+
+/* Custom styling for sidebar headers */
+.sidebar-section-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--qindred-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+}

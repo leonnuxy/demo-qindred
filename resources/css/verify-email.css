@@ -1,0 +1,241 @@
+/* Verification Email specific styles */
+
+.verify-email-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 2rem;
+}
+
+.verify-email-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.verify-email-form {
+  width: 100%;
+}
+
+.verify-email-btn {
+  background-color: var(--primary) !important;
+  margin-top: 1rem;
+}
+
+.verify-email-btn:hover {
+  background-color: var(--qindred-green-700) !important;
+}
+
+.verify-email-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.verify-email-divider::before,
+.verify-email-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.verify-email-divider span {
+  margin: 0 0.5rem;
+  color: #64748b;
+}
+
+.logout-link {
+  display: block;
+  text-align: center;
+  font-weight: 500;
+  color: var(--primary) !important;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.logout-link:hover {
+  color: var(--qindred-green-700) !important;
+  text-decoration: underline;
+}
+
+/* Verification message */
+.verification-sent-message {
+  background-color: rgba(90, 147, 32, 0.1);
+  border-left: 4px solid var(--primary);
+  color: var(--primary);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.verify-email-logo-container {
+    margin-bottom: 1.5rem;
+    justify-items: center;
+}
+
+.verify-email-logo {
+  height: 3rem;
+}
+
+.verify-email-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.verify-email-desc {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.verify-email-success-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.verify-email-form {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.verify-email-button {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 60%;
+    background-color: #5a9320;
+    color: white;
+    border: none;
+}
+
+.verify-email-button:hover {
+  background-color: #4d7e1b;
+}
+
+.verify-email-button:disabled {
+  background: #a8a8a8;
+  cursor: not-allowed;
+}
+
+.verify-email-logout {
+    background-color: #e53e3e;
+    border: 1px solid #d1d5db;
+    margin-top: 10px;
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.verify-email-logout:hover {
+  background-color: #f3f4f6;
+}
+
+/* Verification Email specific styles */
+
+.verify-email-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem;
+}
+
+.verify-email-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.verify-email-btn {
+    background-color: #10B981 !important;
+    color: white !important;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    width: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.verify-email-btn:hover {
+    background-color: #059669 !important;
+}
+
+.verify-email-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--color-text-secondary);
+}
+
+.verify-email-divider::before,
+.verify-email-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.verify-email-divider span {
+    margin: 0 0.5rem;
+    color: #111827;
+}
+
+.logout-link {
+    display: block;
+    text-align: center;
+    font-weight: 500;
+    color: #10B981 !important;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    color: #059669 !important;
+    text-decoration: underline;
+}
+
+/* Fix for dark mode */
+.dark .verify-email-btn {
+    background-color: #10B981 !important;
+}
+
+.dark .verify-email-btn:hover {
+    background-color: #059669 !important;
+}
+
+.dark .logout-link {
+    color: #10B981 !important;
+}
+
+.dark .logout-link:hover {
+    color: #34D399 !important;
+}
+
+/* Fix for the verification message */
+.verification-sent-message {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-left: 4px solid #10B981;
+    color: #10B981;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    width: 100%;
+}
+
+.dark .verification-sent-message {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34D399;
+}

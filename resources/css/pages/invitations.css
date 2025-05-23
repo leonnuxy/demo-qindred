@@ -1,0 +1,212 @@
+/* resources/css/pages/invitations.css */
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Qindred Green palette overrides for the Invitations page
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.invitations-page-container {
+  /* define the qindred greens */
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(72.3% 0.219 149.579);
+  --qindred-green-600: oklch(62.7% 0.194 149.214);
+  --qindred-green-700: oklch(52.7% 0.154 150.069);
+  --qindred-green-800: oklch(44.8% 0.119 151.328);
+  --qindred-green-900: oklch(39.3% 0.095 152.535);
+
+  /* override the component primitives */
+  --primary: var(--qindred-green-600);
+  --primary-foreground: oklch(1 0 0); /* white text */
+  --ring: var(--qindred-green-500);
+}
+
+/* Container */
+.invitations-page-container {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+@media (min-width: 640px) {
+  .invitations-page-container {
+    padding: 1.5rem 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .invitations-page-container {
+    padding: 1.5rem 2rem;
+  }
+}
+
+/* Main page container */
+.invitations-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Section/Card */
+.invitations-section {
+  margin-bottom: 1.5rem;
+  /* Card component already handles bg, shadow, rounding */
+}
+
+/* Flash messages */
+.flash {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+.flash-success {
+  background-color: hsl(var(--success) / 0.2);
+  border: 1px solid hsl(var(--success));
+  color: hsl(var(--success-foreground));
+}
+.flash-error {
+  background-color: hsl(var(--destructive) / 0.2);
+  border: 1px solid hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+}
+/* Backward compatibility */
+.invitations-flash-message {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+.invitations-flash-message.success {
+  background-color: oklch(from var(--primary) l 0.95 c h);
+  color: oklch(from var(--primary) l 0.3 c h);
+}
+.invitations-flash-message.error {
+  background-color: oklch(from var(--destructive) l 0.95 c h);
+  color: oklch(from var(--destructive) l 0.4 c h);
+}
+
+/* Received & Outgoing List */
+.invitations-list > * + * {
+  margin-top: 1rem;
+}
+.invitations-list-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+@media (min-width: 640px) {
+  .invitations-list-item {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.invitation-details {
+  flex-grow: 1;
+  margin-bottom: 0.75rem;
+}
+@media (min-width: 640px) {
+  .invitation-details {
+    margin-bottom: 0;
+  }
+}
+
+.invitation-family-name,
+.invitation-email {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.invitation-meta-text {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* Buttons & Status */
+.invitation-actions {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: center;
+}
+@media (min-width: 640px) {
+  .invitation-actions {
+    width: auto;
+  }
+}
+.invitation-actions .button-base {
+  flex-grow: 1;
+}
+@media (min-width: 640px) {
+  .invitation-actions .button-base {
+    flex-grow: 0;
+  }
+}
+
+.invitation-status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.invitation-status-badge.accepted {
+  background-color: oklch(from var(--primary) l 0.9 c h);
+  color: oklch(from var(--primary) l 0.4 c h);
+}
+.invitation-status-badge.declined {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* Empty State */
+.invitations-empty-state {
+  text-align: center;
+  padding: 2rem 0;
+  color: var(--muted-foreground);
+}
+
+/* Send Invitation Form — now full-width */
+.send-invitation-form {
+  /* max-width: 32rem; */
+  /* margin: 0 auto; */
+  width: 100%;
+}
+.send-invitation-form > * + * {
+  margin-top: 1rem;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+.form-label {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+.form-input,
+.form-select-trigger {
+  width: 100%;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+.form-error-message {
+  color: var(--destructive);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Make sure the trigger is a flex container (it already is via your UI component) */
+.form-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Force the placeholder/value element to grow and be left-aligned */
+.form-select-trigger > :first-child {
+  flex: 1;
+  text-align: left;
+}

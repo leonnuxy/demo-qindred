@@ -1,0 +1,81 @@
+/* — Simplified Footer Styles — */
+.site-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 1rem; /* Further reduced vertical padding */
+}
+
+.simple-footer {
+  padding-bottom: 5px; /* Remove padding for simple footer */
+  border-top: none;
+  width: 50%;
+}
+
+.footer-wrapper {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  /* Removed padding, handled by site-footer */
+}
+
+/* Remove grid layout for content */
+.footer-content {
+  /* display: grid; */ /* No longer needed */
+  /* grid-template-columns: 1fr; */
+  /* gap: 2rem; */
+}
+
+/* Remove section styles */
+.footer-section {
+  /* margin-top: 1rem; */
+  /* margin-bottom: 1rem; */
+}
+
+.footer-heading {
+  /* display: none; /* Hide headings */
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.75rem; /* Further reduced gap (vertical horizontal) */
+  margin-top: 0;
+  margin-bottom: 0.75rem; /* Reduced space before copyright */
+}
+
+.footer-link {
+  font-size: 0.75rem; /* Even smaller font size (text-xs equivalent) */
+  color: #6b7280;
+  text-decoration: none;
+}
+.footer-link:hover {
+  color: #111827;
+  text-decoration: underline; /* Add underline on hover */
+}
+
+.footer-bottom {
+  border-top: none; /* Remove the extra border */
+  padding-top: 0; /* Remove top padding */
+  text-align: center; /* Center copyright */
+  /* display: block; */ /* No longer needed */
+}
+
+.copyright {
+  font-size: 0.75rem; /* Even smaller font size (text-xs equivalent) */
+  color: #9ca3af;
+  margin: 0; /* Remove default paragraph margin */
+}
+
+/* Remove social links styles if not used */
+.social-links {
+  /* display: flex; */
+  /* gap: 1.5rem; */
+}
+
+/* Remove media query overrides if simplified layout works */
+/* @media (min-width: 768px) { ... } */
+
+/* Remove Simple Footer & Auth Page styles if not relevant */
+/* .simple-footer { ... } */
+/* .login-container, .signup-container { ... } */
+/* .login-content { ... } */

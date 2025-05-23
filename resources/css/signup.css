@@ -1,0 +1,240 @@
+/* 
+ * DEPRECATED: This file is deprecated and will be removed in a future update.
+ * Please use register.css instead.
+ * 
+ * src/features/Auth/styles/signup.css 
+ */
+
+/* first, bring in your shared base styles */
+@import './auth-shared.css';
+
+/* ————————————————————————————————
+   1. Container & Panels
+   ———————————————————————————————— */
+.signup-image-panel {
+  border-top-right-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+}
+.signup-form-panel {
+  border-top-left-radius: 1.5rem;
+  border-bottom-left-radius: 1.5rem;
+}
+
+/* ————————————————————————————————
+   2. Card (Modal) Size & Padding
+   ———————————————————————————————— */
+.signup-card {
+  composes: auth-card;       /* your base card from auth-shared.css */
+  max-width: 500px;          /* wider */
+  padding: 2.5rem 2rem;      /* a bit more breathing room */
+  gap: 0.75rem;              /* consistent vertical gaps */
+}
+
+/* ————————————————————————————————
+   3. Title & Description
+   ———————————————————————————————— */
+.signup-form-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+.signup-form-description {
+  font-size: 0.925rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.auth-image-heading{
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  padding-top: 1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* ————————————————————————————————
+   4. Labels & Inputs
+   ———————————————————————————————— */
+.signup-label {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+/* modern input look */
+.signup-input {
+  width: 100%;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;      /* rounder corners */
+  background: #fafafa;        /* subtle off‑white */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.signup-input:focus {
+  outline: none;
+  border-color: #5a9320;
+  box-shadow: 0 0 0 3px rgba(90,147,32,0.2);
+}
+
+/* ————————————————————————————————
+   5. Name Row (First + Last)
+   ———————————————————————————————— */
+.name-row {
+  display: flex;
+  gap: 1rem;
+}
+.name-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ————————————————————————————————
+   6. Password Strength Indicator
+   ———————————————————————————————— */
+.password-strength {
+  display: flex;
+  gap: 4px;
+  margin: 0.25rem 0 0.75rem;
+}
+.strength-bar {
+  flex: 1;
+  height: 4px;
+  background-color: #e5e7eb;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+.strength-bar.active {
+  background-color: #5a9320;
+}
+
+/* ————————————————————————————————
+   7. Divider “or”
+   ———————————————————————————————— */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+.divider span {
+  padding: 0 0.75rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* ————————————————————————————————
+   8. Google Button (secondary)
+   ———————————————————————————————— */
+.auth-google-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+.auth-google-btn:hover {
+  background-color: #e5e7eb;
+}
+
+/* ————————————————————————————————
+   9. Terms Checkbox
+   ———————————————————————————————— */
+.terms-agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+  color: #374151;
+}
+.terms-agreement input[type="checkbox"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  appearance: none;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  position: relative;
+}
+.terms-agreement input[type="checkbox"]:checked {
+  background-color: #5a9320;
+  border-color: #5a9320;
+}
+.terms-agreement input[type="checkbox"]:checked::after {
+  content: '✔';
+  position: absolute;
+  top: 0.1rem;
+  left: 0.25rem;
+  font-size: 0.75rem;
+  color: #fff;
+}
+.terms-agreement .terms-link {
+  color: #5a9320;
+  text-decoration: underline;
+}
+
+/* ————————————————————————————————
+   10. Create Account Button
+   ———————————————————————————————— */
+.signup-btn {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #5a9320;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.signup-btn:hover {
+  background-color: #4d7e1b;
+}
+
+/* ————————————————————————————————
+   11. Login Prompt
+   ———————————————————————————————— */
+.signup-login-prompt {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #4b5563;
+}
+.signup-login-prompt a {
+  margin-left: 0.25rem;
+  color: #5a9320;
+  font-weight: 500;
+  text-decoration: none;
+}
+.signup-login-prompt a:hover {
+  text-decoration: underline;
+}
+
+/* ————————————————————————————————
+   12. Error Messages
+   ———————————————————————————————— */
+.signup-error-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}

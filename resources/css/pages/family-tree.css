@@ -1,0 +1,246 @@
+/* family-tree.css */
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Variables and Theme
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree {
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(72.3% 0.219 149.579);
+  --qindred-green-600: oklch(62.7% 0.194 149.214);
+  --qindred-green-700: oklch(52.7% 0.154 150.069);
+  --qindred-green-800: oklch(44.8% 0.119 151.328);
+  --qindred-green-900: oklch(39.3% 0.095 152.535);
+
+  --primary: var(--qindred-green-600);
+  --primary-foreground: oklch(1 0 0);
+  --ring: var(--qindred-green-500);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Layout & Container
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree {
+  @apply py-6 md:py-12;
+}
+
+.family-tree__container {
+  @apply w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  grid-template-areas: 
+    "alerts"
+    "info"
+    "tree"
+    "members"
+    "activity";
+}
+
+@media (min-width: 1024px) {
+  .family-tree__container {
+    grid-template-columns: 3fr 2fr;
+    grid-template-areas: 
+      "alerts alerts"
+      "info info"
+      "tree tree"
+      "members activity";
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .family-tree__container {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Header Section
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-header {
+  @apply bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10;
+}
+
+.family-tree-header__content {
+  @apply max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8;
+}
+
+.family-tree-header__wrapper {
+  @apply flex flex-col sm:flex-row justify-between items-start sm:items-center;
+}
+
+.family-tree-header__title {
+  @apply font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-2 sm:mb-0;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Alert Messages
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-alert {
+  @apply mb-4 p-4 rounded-md shadow-sm;
+  grid-area: alerts;
+}
+
+.family-tree-alert--success {
+  @apply bg-green-100 dark:bg-green-800/30 border border-green-300 dark:border-green-600 text-green-700 dark:text-green-200;
+}
+
+.family-tree-alert--error {
+  @apply bg-red-100 dark:bg-red-800/30 border border-red-300 dark:border-red-600 text-red-700 dark:text-red-200;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Tree Visualization
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.tree-section {
+  @apply bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm;
+}
+
+.tree-section__basic-info {
+  @apply mb-8;
+  grid-area: info;
+}
+
+.tree-section__tree {
+  grid-area: tree;
+  @apply mb-8;
+}
+
+.tree-viz {
+  @apply relative;
+}
+
+.tree-viz__controls {
+  @apply flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4;
+}
+
+.tree-viz__buttons {
+  @apply flex items-center space-x-1 sm:space-x-2 mt-2 sm:mt-0;
+}
+
+.tree-viz__zoom-text {
+  @apply text-sm w-12 text-center tabular-nums text-gray-700 dark:text-gray-300;
+}
+
+.tree-viz__container {
+  @apply overflow-auto border dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900/50;
+  height: 50vh;
+  min-height: 400px;
+  transform-origin: top left;
+  transition: transform 0.2s ease-out;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Members Section
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.members-section {
+  grid-area: members;
+  @apply bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm;
+}
+
+.members-section__header {
+  @apply flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6;
+}
+
+.members-section__title {
+  @apply text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 sm:mb-0;
+}
+
+.members-grid {
+  @apply grid gap-4;
+  /* auto-fit as many 200px-wide cards as will fit */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+/* Optional: style each member-card if using the above FamilyMemberList */
+.member-card {
+  @apply flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg;
+}
+
+.member-card__avatar {
+  @apply w-12 h-12 rounded-full object-cover;
+}
+
+.member-card__info {
+  @apply flex-1 overflow-hidden;
+}
+
+.member-card__name {
+  @apply font-medium text-gray-800 dark:text-gray-100 truncate;
+}
+
+.member-card__email,
+.member-card__role {
+  @apply text-sm text-gray-500 dark:text-gray-400 truncate;
+}
+
+.family-list {
+  display: flex;
+  flex-direction: column;
+  min-width: max-content;
+  gap: 1rem;
+}
+
+/* If you still want a responsive multi-column/layout at larger breakpoints, you can layer on media-queries here */
+@media (min-width: 640px) {
+  .family-list {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Activity Log
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.activity-log {
+  grid-area: activity;
+  @apply bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-sm;
+}
+
+.activity-log__header {
+  @apply text-xl font-semibold mb-4 border-b dark:border-gray-700 pb-2 text-gray-900 dark:text-gray-100;
+}
+
+.activity-log__form {
+  @apply mb-6 p-4 border dark:border-gray-700 rounded-lg dark:bg-gray-700/30 shadow-sm;
+}
+
+.activity-log__input {
+  @apply w-full border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-gray-100 mb-3;
+  min-height: 5rem;
+  resize: vertical;
+  border: none;
+  box-shadow: none;
+}
+
+.activity-log__entries {
+  @apply space-y-4 max-h-[600px] overflow-y-auto pr-2;
+}
+
+.activity-entry {
+  @apply p-4 border rounded-md dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30;
+}
+
+.activity-entry__header {
+  @apply flex items-center mb-2;
+}
+
+.activity-entry__avatar {
+  @apply w-10 h-10 rounded-full mr-3 object-cover flex-shrink-0;
+}
+
+.activity-entry__author {
+  @apply font-medium text-gray-800 dark:text-gray-100;
+}
+
+.activity-entry__time {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.activity-entry__content {
+  @apply mb-2 text-gray-700 dark:text-gray-300 whitespace-pre-wrap;
+}
+
+.activity-entry__actions {
+  @apply text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 flex items-center;
+}

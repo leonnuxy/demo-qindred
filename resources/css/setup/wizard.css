@@ -1,0 +1,361 @@
+/* Setup Wizard Styles
+   These styles are used for the user onboarding setup wizard
+*/
+
+/* Import base theme colors */
+:root {
+  /* Use the same Qindred green color variables from auth-shared.css */
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(72.3% 0.219 149.579);
+  --qindred-green-600: oklch(62.7% 0.194 149.214);
+  --qindred-green-700: oklch(52.7% 0.154 150.069);
+  --qindred-green-800: oklch(44.8% 0.119 151.328);
+  --qindred-green-900: oklch(39.3% 0.095 152.535);
+  
+  /* Use primary and related colors from auth-shared.css */
+  --primary: var(--qindred-green-600);
+  --primary-foreground: oklch(1 0 0);
+  --ring: var(--qindred-green-500);
+}
+
+/* Structure and Layout */
+.setup-container {
+  max-width: 56rem; /* 4xl = 56rem */
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 3rem; /* pb-12 = 3rem */
+  padding-top: 2rem; /* pt-8 = 2rem */
+}
+
+.setup-page {
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 0.5rem;
+  padding: 1.5rem; /* p-6 */
+}
+
+@media (min-width: 768px) {
+  .setup-page {
+    padding: 2rem; /* md:p-8 */
+  }
+}
+
+.setup-header {
+  margin-bottom: 1.5rem; /* mb-6 */
+  text-align: center;
+}
+
+.setup-step-content {
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+.setup-progress {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem; /* my-6 */
+}
+
+/* Typography */
+.setup-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: #111827; /* text-gray-900 */
+}
+
+@media (min-width: 768px) {
+  .setup-title {
+    font-size: 1.875rem;
+    line-height: 2.25rem; /* md:text-3xl */
+  }
+}
+
+.setup-subtitle {
+  color: #4B5563; /* text-gray-600 */
+  margin-top: 0.5rem; /* mt-2 */
+}
+
+.setup-step-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1F2937; /* text-gray-800 */
+}
+
+.setup-text {
+  color: #4B5563; /* text-gray-600 */
+}
+
+.setup-text-mb-6 {
+  margin-bottom: 1.5rem; /* mb-6 */
+}
+
+.setup-text-mb-8 {
+  margin-bottom: 2rem; /* mb-8 */
+}
+
+/* Form Elements */
+.setup-form-container {
+  margin-top: 1rem;
+}
+
+.setup-form-container > * + * {
+  margin-top: 1rem; /* space-y-4 */
+}
+
+.setup-form-section {
+  margin-bottom: 1.25rem; /* mb-5 */
+}
+
+.setup-form-section-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem; /* gap-4 */
+}
+
+@media (min-width: 768px) {
+  .setup-form-section-grid {
+    grid-template-columns: 1fr 1fr; /* md:grid-cols-2 */
+  }
+}
+
+.setup-form-label {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: #374151; /* text-gray-700 */
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.setup-form-input {
+  width: 100%; /* w-full */
+}
+
+.form-group {
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+/* Buttons */
+.setup-button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem; /* mt-6 */
+}
+
+.setup-button-container-mt-8 {
+  margin-top: 2rem; /* mt-8 */
+}
+
+.setup-button {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.setup-button-back {
+  color: #6B7280; /* text-gray-500 */
+}
+
+.setup-button-next {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0.375rem; /* rounded */
+  font-weight: 500;
+}
+
+.setup-button-next:hover {
+  background-color: var(--qindred-green-700);
+}
+
+.setup-button-next:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: var(--ring);
+  --tw-ring-offset-width: 2px;
+}
+
+.setup-button-large-padding {
+  padding-left: 1.5rem; /* px-6 */
+  padding-right: 1.5rem;
+  padding-top: 0.5rem; /* py-2 */
+  padding-bottom: 0.5rem;
+}
+
+/* Completion Screen */
+.complete-step {
+  text-align: center;
+  padding-top: 2rem; /* py-8 */
+  padding-bottom: 2rem;
+}
+
+/* Verification Step */
+.verification-container {
+  margin-bottom: 2rem;
+}
+
+.verification-section {
+  border: 1px solid #E5E7EB; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  padding: 1rem; /* p-4 */
+}
+
+.verification-heading {
+  font-weight: 500;
+  color: #1F2937; /* text-gray-800 */
+  margin-bottom: 0.75rem; /* mb-3 */
+}
+
+.verification-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem; /* gap-y-2 gap-x-4 */
+}
+
+.verification-label {
+  color: #6B7280; /* text-gray-500 */
+  font-weight: 500;
+}
+
+.verification-value {
+  color: #1F2937; /* text-gray-800 */
+}
+
+/* Family Member Items */
+.family-member-item {
+  border: 1px solid #E5E7EB; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  background-color: #F9FAFB; /* bg-gray-50 */
+}
+
+.family-member-email {
+  color: #1F2937; /* text-gray-800 */
+}
+
+/* Welcome Step Specific Styles */
+.welcome-step {
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.welcome-logo {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.welcome-features {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.welcome-feature {
+  display: flex;
+  align-items: flex-start;
+  text-align: left;
+  padding: 0 1rem;
+}
+
+.welcome-feature-icon {
+  flex-shrink: 0;
+}
+
+.welcome-feature-text {
+  margin-left: 0.75rem;
+}
+
+.welcome-feature-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1F2937; /* text-gray-900 */
+}
+
+.welcome-feature-description {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6B7280; /* text-gray-500 */
+}
+
+.checkmark-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--primary); /* Use primary (Qindred green) */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.setup-button-wrapper {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+/* Setup Logo Styles */
+.setup-logo-container {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.setup-logo-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.setup-logo-text {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-left: 0.1rem;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+  padding-top: 0.2rem;
+}
+
+/* Progress Bar and Steps */
+.setup-progress-bar {
+  width: 100%;
+  background-color: #E5E7EB; /* gray-200 */
+  height: 0.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.setup-progress-indicator {
+  height: 100%;
+  background-color: var(--primary);
+  transition: width 500ms;
+}
+
+.setup-step-indicator {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 2px;
+  font-weight: 500;
+}
+
+.setup-step-indicator-active {
+  border-color: var(--primary);
+  background-color: rgb(224, 242, 236); /* Light version of qindred-green */
+  color: var(--primary);
+}
+
+.setup-step-indicator-inactive {
+  border-color: #D1D5DB; /* gray-300 */
+  background-color: white;
+  color: #6B7280; /* gray-500 */
+}

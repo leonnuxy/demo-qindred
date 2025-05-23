@@ -1,0 +1,217 @@
+/* resources/css/pages/profile-settings.css */
+
+/*
+  Styles for the Profile Settings page.
+  This page will inherit its base light/dark mode variables from app.css.
+  We will override specific variables like --primary for this page if needed.
+*/
+
+/* Define Qindred Green Palette for this page's primary actions & accents */
+.profile-settings-page { /* Apply these overrides when this class is present */
+    --qindred-green-400: oklch(79.2% 0.209 151.711);
+    --qindred-green-500: oklch(72.3% 0.219 149.579);
+    --qindred-green-600: oklch(62.7% 0.194 149.214);
+    --qindred-green-700: oklch(52.7% 0.154 150.069);
+    --qindred-green-800: oklch(44.8% 0.119 151.328);
+    --qindred-green-900: oklch(39.3% 0.095 152.535);
+
+    /* Override standard theme variables with the Qindred Green Palette for this page */
+    /* These will be used by components like Buttons, Rings, etc. within this page */
+    --primary: var(--qindred-green-600);
+    --primary-foreground: oklch(1 0 0); /* White text for green buttons */
+    --ring: var(--qindred-green-500);    /* Green focus ring */
+    
+    /* Optional: Override accent if you want a green accent for this page */
+    /* --accent: var(--qindred-green-400); */
+    /* --accent-foreground: var(--qindred-green-900); */
+
+    /* Ensure page background and text use the global theme variables */
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+
+/* Page Container */
+.profile-settings-page {
+  max-width: 48rem; /* max-w-3xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2rem;    /* py-8 */
+  padding-bottom: 2rem; /* py-8 */
+  padding-left: 1rem;   /* px-4 */
+  padding-right: 1rem;  /* px-4 */
+}
+@media (min-width: 640px) { /* sm: */
+  .profile-settings-page {
+    padding-top: 2.5rem;    /* sm:py-10 */
+    padding-bottom: 2.5rem; /* sm:py-10 */
+    padding-left: 1.5rem;   /* sm:px-6 */
+    padding-right: 1.5rem;  /* sm:px-6 */
+  }
+}
+@media (min-width: 1024px) { /* lg: */
+  .profile-settings-page {
+    padding-left: 2rem;   /* lg:px-8 */
+    padding-right: 2rem;  /* lg:px-8 */
+    border-radius: var(--radius-lg);
+  }
+}
+.profile-settings-page > * + * { /* space-y-8 for direct children */
+  margin-top: 2rem;
+}
+
+.profile-settings-header {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+  font-weight: 700; /* font-bold */
+  color: var(--foreground); /* Inherits from .profile-settings-page or global :root */
+  margin-bottom: 1.5rem; 
+}
+
+/* Flash Messages & Error Blocks */
+.profile-flash-message,
+.profile-error-block {
+  margin-bottom: 1.5rem; 
+  padding: 1rem;
+  border-radius: var(--radius-md); /* Uses global --radius-md */
+  box-shadow: var(--shadow-sm); /* Assuming --shadow-sm is defined globally or in app.css */
+  border-width: 1px;
+}
+.profile-flash-message.success {
+  background-color: var(--qindred-green-400); /* Use a light Qindred green */
+  border-color: var(--qindred-green-500);  
+  color: var(--qindred-green-900); /* Dark green text for contrast */
+  opacity: 0.95; /* Slightly softer look */
+}
+.profile-flash-message.error,
+.profile-error-block {
+  background-color: oklch(from var(--destructive) l 0.95 c h); /* Light red */
+  border-color: oklch(from var(--destructive) l 0.8 c h);  
+  color: oklch(from var(--destructive) l 0.4 c h); /* Darker red text */      
+}
+.profile-error-block p { font-weight: 500; }
+.profile-error-block ul { list-style-type: disc; padding-left: 1.25rem; margin-top: 0.25rem; }
+
+/* Card Styling */
+.settings-card {
+  background-color: var(--card); /* Uses global --card */
+  border: 1px solid var(--border); 
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.settings-card-header {
+  padding: 1.5rem; 
+  border-bottom: 1px solid var(--border);
+}
+.settings-card-title {
+  font-size: 1.25rem; 
+  font-weight: 600; 
+  color: var(--card-foreground); 
+}
+.settings-card-description {
+  font-size: 0.875rem; 
+  color: var(--muted-foreground); 
+  margin-top: 0.25rem; 
+}
+.settings-card-content { padding: 1.5rem; }
+.settings-card-content form > * + * { margin-top: 1.5rem; }
+
+.settings-card-footer {
+  padding: 1rem 1.5rem; 
+  display: flex;
+  justify-content: flex-end;
+  background-color: var(--muted); 
+  border-top: 1px solid var(--border);
+}
+.settings-card-footer > * + * { margin-left: 0.75rem; }
+
+/* Profile Edit Section Specifics */
+.profile-avatar-section {
+  display: flex; flex-direction: column; align-items: center;
+  margin-bottom: 1.5rem; gap: 1.5rem;
+}
+@media (min-width: 640px) { .profile-avatar-section { flex-direction: row; } }
+
+.profile-avatar-image-wrapper {
+  height: 6rem; width: 6rem; border-radius: 9999px;
+  background-color: var(--muted); 
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; flex-shrink: 0;
+  border: 2px solid var(--border); 
+}
+@media (min-width: 640px) { .profile-avatar-image-wrapper { height: 7rem; width: 7rem; } }
+.profile-avatar-image { height: 100%; width: 100%; object-fit: cover; }
+.profile-avatar-initials {
+  font-size: 1.875rem; font-weight: 500;
+  color: var(--muted-foreground); 
+}
+@media (min-width: 640px) { .profile-avatar-initials { font-size: 2.25rem; } }
+
+.profile-avatar-text-content { text-align: center; }
+@media (min-width: 640px) { .profile-avatar-text-content { text-align: left; } }
+
+.profile-avatar-name { font-size: 1.25rem; font-weight: 600; color: var(--foreground); }
+.profile-avatar-description { font-size: 0.875rem; color: var(--muted-foreground); margin-bottom: 0.5rem; }
+.profile-avatar-note { font-size: 0.75rem; color: var(--muted-foreground); }
+
+/* Form Grid */
+.profile-form-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem 1rem; }
+@media (min-width: 768px) { .profile-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.profile-form-grid .md-col-span-2 { grid-column: span 2 / span 2; }
+@media (max-width: 767px) { .profile-form-grid .md-col-span-2 { grid-column: span 1 / span 1; } }
+
+/* Individual Form Group */
+.form-group > label + * { margin-top: 0.25rem; }
+.form-group > input + p,
+.form-group > select + p, /* Assuming Select is wrapped or its error is a p */
+.form-group > textarea + p { margin-top: 0.25rem; }
+
+.form-label {
+  display: block; font-size: 0.875rem; line-height: 1.25rem;
+  font-weight: 500; color: var(--foreground); 
+}
+
+.form-input, .form-textarea, .form-select-trigger {
+  display: block; width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input); 
+  background-color: var(--background); 
+  padding: 0.625rem 0.75rem; 
+  font-size: 0.875rem; line-height: 1.25rem;
+  color: var(--foreground); 
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.form-input::placeholder, .form-textarea::placeholder {
+    color: var(--muted-foreground); 
+    opacity: 0.7;
+}
+.form-input:focus, .form-textarea:focus, .form-select-trigger[data-state=open] {
+  border-color: var(--ring); /* Will use the Qindred green ring for this page */
+  outline: 2px solid transparent; outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); 
+}
+.form-input[disabled] {
+  cursor: not-allowed;
+  background-color: var(--muted); 
+  opacity: 0.7;
+  color: var(--muted-foreground);
+}
+.form-textarea { min-height: calc(4 * 1.5rem); }
+
+.form-error-message { font-size: 0.875rem; color: var(--destructive); }
+.form-note { font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.25rem; }
+.form-note .link { text-decoration: underline; margin-left: 0.25rem; color: var(--primary); /* Will be green */ }
+.form-note .link:hover { color: var(--qindred-green-700); /* Darker green on hover */ }
+
+/* Password Section Specifics */
+.password-form > * + * { margin-top: 1.5rem; }
+.password-status-message {
+  font-size: 0.875rem;
+  color: var(--qindred-green-700); /* Use a defined Qindred green for success */
+  margin-top: 0.5rem;
+}
+
+/* Button component styling will come from its own definition in ui/button.jsx,
+   which should use var(--primary), var(--secondary) etc.
+   Those variables will be overridden by the .profile-settings-page scope.
+*/
