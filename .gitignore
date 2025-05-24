@@ -94,3 +94,10 @@ build/
 composer.phar
 composer.lock
 package-lock.json
+# Nginx temporary files and logs
+logs/
+tmp/
+*.log
+
+# Nginx configuration backups
+*.conf.bak

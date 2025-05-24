@@ -53,11 +53,11 @@ export default function Index({ familyTrees }) {
 
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree relative">
         {/* Add blur overlay */}
-        <div className="absolute inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/30 z-50 flex items-center justify-center">
+        {/* <div className="absolute inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/30 z-50 flex items-center justify-center">
           <div className="text-4xl font-bold text-qindred-green-900 dark:text-qindred-green-500">
             Coming Soon
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-qindred-green-900 dark:text-qindred-green-500">My Family Trees</h1>

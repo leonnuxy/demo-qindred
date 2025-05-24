@@ -5,6 +5,23 @@ import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'node:path';
 
 export default defineConfig({
+    server: {
+        port: 5173,
+        host: true,
+        https: true,
+        cors: true,
+        strictPort: true,
+        hmr: {
+            host: process.env.VITE_DEV_SERVER_HOST,
+            protocol: 'wss',
+            clientPort: 443
+        },
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+            'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
+        }
+    },
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.jsx'],
