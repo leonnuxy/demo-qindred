@@ -47,7 +47,7 @@ export function SendInvitationForm({ familyTrees = [], relationshipTypes = [] })
     e.preventDefault();
     
     sendInvite(
-      route('invitations.send', { familyTree: selectedTree }),
+      route('invitations.send', { family_tree: selectedTree }),
       {
         preserveScroll: true,
         onSuccess: () => reset('email', 'relationship_type'),

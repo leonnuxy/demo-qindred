@@ -13,7 +13,7 @@ class InvitationController extends Controller
     public function __construct(protected InvitationService $invitations) {}
 
     /**
-     * POST  /api/family-trees/{familyTree}/invite
+     * POST  /api/family-trees/{family_tree}/invite
      */
     public function send(Request $request, int $familyTreeId)
     {

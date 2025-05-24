@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/select';
 
 export default function Edit({ familyTree }) {
-  const { errors, flash } = usePage().props;
+  const { errors, flash = {} } = usePage().props;
   const { toast } = useToast();
   
   const { data, setData, patch, processing } = useForm({

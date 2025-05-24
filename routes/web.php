@@ -29,11 +29,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Family tree routes
     Route::resource('family-trees', FamilyTreeController::class);
-    Route::post('family-trees/{familyTree}/logs', [FamilyTreeLogController::class,'store'])->name('family-trees.logs.store');
+    Route::post('family-trees/{family_tree}/logs', [FamilyTreeLogController::class,'store'])->name('family-trees.logs.store');
     
     // Invitation routes
     Route::get('/invitations', [InvitationController::class, 'index'])->name('invitations.index');
-    Route::post('/invitations/{familyTree}/send', [InvitationController::class, 'send'])->name('invitations.send');
+    Route::post('/invitations/{family_tree}/send', [InvitationController::class, 'send'])->name('invitations.send');
     Route::post('/invitations/{invitation}/accept', [InvitationController::class, 'accept'])->name('invitations.accept');
     Route::post('/invitations/{invitation}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
     Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->name('invitations.resend');

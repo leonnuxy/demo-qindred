@@ -12,7 +12,8 @@ class UpdateFamilyTreeRequest extends FormRequest
     public function authorize(): bool
     {
         // Check if the user is authorized to update the family tree
-        return $this->user()->id === $this->route('familyTree')->creator_id;
+        // return $this->user()->id === $this->route('familyTree')->creator_id;
+        return $this->user()->id === $this->route('family_tree')->creator_id;
     }
 
     /**

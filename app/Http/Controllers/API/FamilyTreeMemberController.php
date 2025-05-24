@@ -58,6 +58,14 @@ class FamilyTreeMemberController extends Controller
         }
 
         try {
+            // Check if we have an authenticated user for direct member addition
+            if ($data['addMode'] === 'direct' && !auth()->check()) {
+                \Log::warning('Attempted to add direct member without authentication', [
+                    'tree_id' => $familyTreeId
+                ]);
+                // Continue anyway - our updated service will handle this case
+            }
+            
             if ($data['addMode'] === 'direct') {
                 $member = $this->trees->addDirectMember((string)$familyTreeId, $data);
             } else {
@@ -71,8 +79,13 @@ class FamilyTreeMemberController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
+            // Return a more user-friendly error message
             return response()->json(
-                ['error' => 'Failed to add member: ' . $e->getMessage()], 
+                [
+                    'error' => 'Failed to add family member', 
+                    'message' => 'There was a problem adding the family member.',
+                    'details' => app()->environment('local') ? $e->getMessage() : null
+                ], 
                 500
             );
         }

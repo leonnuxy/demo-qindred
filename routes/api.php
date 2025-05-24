@@ -14,17 +14,17 @@ Route::get('/health', HealthController::class);
 // Option 2: Route::middleware('auth:web')->group(function () {
 Route::group([], function () {
     // Family-tree members
-    // Route::get   ('family-trees/{familyTree}/members',       [FamilyTreeMemberController::class, 'index']);
-    // Route::post  ('family-trees/{familyTree}/members',       [FamilyTreeMemberController::class, 'store']);
-    // Route::put   ('family-trees/{familyTree}/members/{member}', [FamilyTreeMemberController::class, 'update']);
-    // Route::delete('family-trees/{familyTree}/members/{member}', [FamilyTreeMemberController::class, 'destroy']);
+    // Route::get   ('family-trees/{family_tree}/members',       [FamilyTreeMemberController::class, 'index']);
+    // Route::post  ('family-trees/{family_tree}/members',       [FamilyTreeMemberController::class, 'store']);
+    // Route::put   ('family-trees/{family_tree}/members/{member}', [FamilyTreeMemberController::class, 'update']);
+    // Route::delete('family-trees/{family_tree}/members/{member}', [FamilyTreeMemberController::class, 'destroy']);
     // Route::get   ('relationship-types', [FamilyTreeMemberController::class, 'relationshipTypes']);
     Route::apiResource('family-trees.members', FamilyTreeMemberController::class)
         ->parameters(['family-trees' => 'family_tree', 'members'=>'member']);
     Route::get('relationship-types', [FamilyTreeMemberController::class,'relationshipTypes']);
 
     // Invitations
-    Route::post('family-trees/{familyTree}/invite', [APIInvitationController::class, 'send']);
+    Route::post('family-trees/{family_tree}/invite', [APIInvitationController::class, 'send']);
     Route::post('invitations/{invitation}/accept', [APIInvitationController::class, 'accept']);
     Route::post('invitations/{invitation}/decline',[APIInvitationController::class, 'decline']);
 });

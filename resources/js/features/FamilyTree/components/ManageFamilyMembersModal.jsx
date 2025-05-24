@@ -341,7 +341,7 @@ export default function ManageFamilyMembersModal({
               {familyMembers.length === 0 ? (
                 <div className="text-center py-10 bg-slate-50/50 dark:bg-slate-800/30 rounded-lg">
                   <p className="text-gray-500 dark:text-gray-400">No family members found in this tree.</p>
-                  <Button onClick={() => setActiveTab("add")} className="mt-4 bg-qindred-green-600 hover:bg-qindred-green-700 text-white">
+                  <Button onClick={() => setActiveTab("add")} className="mt-4 bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white">
                     Add First Member
                   </Button>
                 </div>
@@ -381,13 +381,13 @@ export default function ManageFamilyMembersModal({
                     type="button" 
                     variant={newMember.addMode === 'direct' ? 'default' : 'outline'} 
                     onClick={() => handleSelectChange('addMode', 'direct', setNewMember)}
-                    className={`flex-1 ${newMember.addMode === 'direct' ? 'bg-qindred-green-600 hover:bg-qindred-green-700 text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
+                    className={`flex-1 ${newMember.addMode === 'direct' ? 'bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
                   > Add Directly </Button>
                   <Button 
                     type="button" 
                     variant={newMember.addMode === 'invite' ? 'default' : 'outline'} 
                     onClick={() => handleSelectChange('addMode', 'invite', setNewMember)}
-                    className={`flex-1 ${newMember.addMode === 'invite' ? 'bg-qindred-green-600 hover:bg-qindred-green-700 text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
+                    className={`flex-1 ${newMember.addMode === 'invite' ? 'bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
                   > Invite by Email </Button>
                 </div>
                 {renderMemberFormFields(newMember, setNewMember, "new-")}
@@ -404,7 +404,7 @@ export default function ManageFamilyMembersModal({
                     type="button" 
                     onClick={handleAddNewMember} 
                     disabled={isLoading}
-                    className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white"
+                    className="bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white"
                   >
                     {isLoading ? (newMember.addMode === 'invite' ? "Sending..." : "Adding...") : (newMember.addMode === 'invite' ? "Send Invite" : "Add Member")}
                   </Button>
@@ -432,7 +432,7 @@ export default function ManageFamilyMembersModal({
                       type="button" 
                       onClick={handleSaveEdit} 
                       disabled={isLoading}
-                      className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white"
+                      className="bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white"
                     >
                       {isLoading ? "Saving..." : "Save Changes"}
                     </Button>

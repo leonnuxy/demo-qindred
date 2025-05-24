@@ -13,6 +13,33 @@ export function useFamilyTree(initialTreeData, currentUserId) {
   const [error, setError] = useState(null);
   const [zoom, setZoom] = useState(1);
   
+  /**
+   * Helper function to mark the current user in the tree data
+   */
+  const markCurrentUser = useCallback((data, userId) => {
+    if (!data || !userId) return data;
+    
+    // Create a deep copy to avoid mutating props
+    const copyData = JSON.parse(JSON.stringify(data));
+    
+    // Recursive function to find and mark the current user
+    function traverse(node) {
+      if (!node) return;
+      
+      // Mark this node if it matches the current user ID
+      if (node.userId === userId) {
+        node.currentUser = true;
+      }
+      
+      // Continue traversing children
+      if (node.children && node.children.length) {
+        node.children.forEach(child => traverse(child));
+      }
+    }
+    
+    traverse(copyData);
+    return copyData;
+  }, []);
   // Process tree data when it changes
   useEffect(() => {
     setIsLoading(true);
@@ -42,33 +69,7 @@ export function useFamilyTree(initialTreeData, currentUserId) {
     }
   }, [initialTreeData, currentUserId, markCurrentUser]);
   
-  /**
-   * Helper function to mark the current user in the tree data
-   */
-  const markCurrentUser = useCallback((data, userId) => {
-    if (!data || !userId) return data;
-    
-    // Create a deep copy to avoid mutating props
-    const copyData = JSON.parse(JSON.stringify(data));
-    
-    // Recursive function to find and mark the current user
-    function traverse(node) {
-      if (!node) return;
-      
-      // Mark this node if it matches the current user ID
-      if (node.userId === userId) {
-        node.currentUser = true;
-      }
-      
-      // Continue traversing children
-      if (node.children && node.children.length) {
-        node.children.forEach(child => traverse(child));
-      }
-    }
-    
-    traverse(copyData);
-    return copyData;
-  }, []);
+  
   
   // Zoom control functions
   const handleZoomIn = useCallback(() => {

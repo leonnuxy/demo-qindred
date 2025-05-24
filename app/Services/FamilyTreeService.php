@@ -375,8 +375,23 @@ class FamilyTreeService
 
     protected function logActivity(string $treeId, string $msg): void
     {
-        FamilyTree::find($treeId)
-            ->logs()
-            ->create(['user_id'=>Auth::id(),'action'=>$msg]);
+        // Get authenticated user ID or use the tree's creator ID as fallback
+        $userId = Auth::id();
+        
+        // If no authenticated user, find the tree creator
+        if (!$userId) {
+            $tree = FamilyTree::find($treeId);
+            $userId = $tree->creator_id ?? null;
+            \Log::info("No authenticated user for activity log, using fallback user", ['tree_id' => $treeId, 'fallback_user_id' => $userId]);
+        }
+        
+        // Only proceed if we have a user ID
+        if ($userId) {
+            FamilyTree::find($treeId)
+                ->logs()
+                ->create(['user_id' => $userId, 'action' => $msg]);
+        } else {
+            \Log::warning("Failed to create activity log - no user ID available", ['tree_id' => $treeId, 'action' => $msg]);
+        }
     }
 }

@@ -12,7 +12,7 @@ class APIInviteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $tree = FamilyTree::findOrFail($this->route('familyTree'));
+        $tree = FamilyTree::findOrFail($this->route('family_tree'));
         return $this->user()->id === $tree->creator_id;
     }
 
