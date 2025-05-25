@@ -12,68 +12,68 @@ return new class extends Migration
     public function up(): void
     {
         // Create genders table
-    if (!Schema::hasTable('genders')) {
-        Schema::create('genders', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name');
-            $table->timestamps();
-        });
-    }
-        
+        if (!Schema::hasTable('genders')) {
+            Schema::create('genders', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('name');
+                $table->timestamps();
+            });
+        }
+
         // Create users table with all combined fields
-    if (!Schema::hasTable('users')) {
-        Schema::create('users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->uuid('gender_id')->nullable();
-            $table->foreign('gender_id')->references('id')->on('genders')->onDelete('set null');
-            $table->date('date_of_birth')->nullable();
-            $table->date('date_of_death')->nullable();
-            $table->string('role')->default('user');
-            $table->string('status')->default('active');
-            
-            // Added from other migrations
-            $table->string('bio')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('country')->nullable();
-            $table->string('profile_photo')->nullable();
-            $table->string('avatar_path')->nullable();
-            $table->enum('profile_visibility', ['public', 'friends', 'private'])->default('public');
-            $table->boolean('is_profile_placeholder')->default(false);
-            $table->boolean('is_profile_completed')->default(false);
-            
-            $table->rememberToken();
-            $table->timestamps();
-        });
-    }
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('first_name');
+                $table->string('last_name');
+                $table->string('email')->unique();
+                $table->timestamp('email_verified_at')->nullable();
+                $table->string('password');
+                $table->uuid('gender_id')->nullable();
+                $table->foreign('gender_id')->references('id')->on('genders')->onDelete('set null');
+                $table->date('date_of_birth')->nullable();
+                $table->date('date_of_death')->nullable();
+                $table->string('role')->default('user');
+                $table->string('status')->default('active');
+
+                // Added from other migrations
+                $table->string('bio')->nullable();
+                $table->string('phone')->nullable();
+                $table->string('city')->nullable();
+                $table->string('state')->nullable();
+                $table->string('country')->nullable();
+                $table->string('profile_photo')->nullable();
+                $table->string('avatar_path')->nullable();
+                $table->enum('profile_visibility', ['public', 'friends', 'private'])->default('public');
+                $table->boolean('is_profile_placeholder')->default(false);
+                $table->boolean('is_profile_completed')->default(false);
+
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
 
 
 
         // Create password_reset_tokens table
-    if (!Schema::hasTable('password_reset_tokens')) {
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-    }
+        if (!Schema::hasTable('password_reset_tokens')) {
+            Schema::create('password_reset_tokens', function (Blueprint $table) {
+                $table->string('email')->primary();
+                $table->string('token');
+                $table->timestamp('created_at')->nullable();
+            });
+        }
 
         // Create sessions table
         if (!Schema::hasTable('sessions')) {
             Schema::create('sessions', function (Blueprint $table) {
                 $table->string('id')->primary();
-                $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
+                $table->foreignUuid('user_id')->nullable()->index();
+                $table->string('ip_address', 45)->nullable();
+                $table->text('user_agent')->nullable();
+                $table->longText('payload');
+                $table->integer('last_activity')->index();
+            });
         }
 
         // Create family_trees table
@@ -87,7 +87,7 @@ return new class extends Migration
                 $table->timestamps();
                 $table->foreign('creator_id')->references('id')->on('users')->onDelete('cascade');
             });
-    }
+        }
 
         // Create family_members table
         if (!Schema::hasTable('family_members')) {
@@ -98,10 +98,10 @@ return new class extends Migration
                 $table->string('role')->default('member'); // member, admin, viewer
                 $table->timestamps();
                 $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unique(['family_tree_id', 'user_id']);
-        });
-    }
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->unique(['family_tree_id', 'user_id']);
+            });
+        }
 
         // Create invitations table
         if (!Schema::hasTable('invitations')) {
@@ -113,10 +113,10 @@ return new class extends Migration
                 $table->string('status')->default('pending'); // pending, accepted, declined
                 $table->string('token')->unique();
                 $table->string('relationship_type')->nullable();
-            $table->timestamps();
-            $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
-        });
+                $table->timestamps();
+                $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
+                $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
+            });
         }
 
         // Create user_relationships table
@@ -129,11 +129,11 @@ return new class extends Migration
                 $table->uuid('family_tree_id')->nullable();
                 $table->timestamps();
                 $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('related_user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
-            $table->unique(['user_id', 'related_user_id', 'relationship_type', 'family_tree_id'], 'unique_relationship');
-        });
-    }
+                $table->foreign('related_user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
+                $table->unique(['user_id', 'related_user_id', 'relationship_type', 'family_tree_id'], 'unique_relationship');
+            });
+        }
 
         // Create families table
         if (!Schema::hasTable('families')) {
@@ -187,20 +187,20 @@ return new class extends Migration
                 $table->timestamps();
             });
         }
-        
+
 
         // Create family_tree_logs table
         if (!Schema::hasTable('family_tree_logs')) {
-        Schema::create('family_tree_logs', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('family_tree_id');
-            $table->uuid('user_id');
-            $table->text('action');
-            $table->json('details')->nullable();
-            $table->timestamps();
-            $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
+            Schema::create('family_tree_logs', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->uuid('family_tree_id');
+                $table->uuid('user_id');
+                $table->text('action');
+                $table->json('details')->nullable();
+                $table->timestamps();
+                $table->foreign('family_tree_id')->references('id')->on('family_trees')->onDelete('cascade');
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            });
         }
 
         // Create cache table
