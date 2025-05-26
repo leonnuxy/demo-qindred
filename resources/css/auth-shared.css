@@ -17,15 +17,47 @@
 /* Layout Structure */
 .auth-split-layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
+  background-color: #fff;
 }
 
 .auth-split-layout__panel {
-  flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  position: relative;
+  padding: 2.5rem;
+}
+
+.auth-split-layout__panel--image {
+  flex: 1;
+  background-color: #f9fafb;
+}
+
+.auth-split-layout__panel--form {
+  flex: 1;
+  background-color: white;
+}
+
+@media (max-width: 768px) {
+  .auth-split-layout {
+    flex-direction: column;
+  }
+
+  .auth-split-layout__panel {
+    padding: 1.5rem;
+  }
+
+  .auth-split-layout__panel--image {
+    display: none;
+  }
+
+  .auth-split-layout__panel--form {
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding-top: 2rem;
+  }
 }
 
 /* Image panel (left) → white */
@@ -101,12 +133,10 @@
 
 /* Shared Auth Form Styling */
 .auth-form-card {
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
   width: 100%;
-  max-width: 30rem;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .auth-form {
@@ -117,19 +147,45 @@
 
 .auth-form-header {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .auth-title {
   font-size: 1.5rem;
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: #111827;
   margin-bottom: 0.5rem;
 }
 
 .auth-subtitle {
-  font-size: 1rem;
-  color: #555;
+  font-size: 0.925rem;
+  color: #6b7280;
+}
+
+@media (max-width: 640px) {
+  .auth-form-card {
+    padding: 1.5rem 1rem;
+    margin: 0;
+  }
+
+  .auth-form input,
+  .auth-form button {
+    font-size: 16px; /* Prevent iOS zoom on focus */
+    height: 44px; /* Larger touch targets */
+  }
+
+  .auth-btn {
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+  }
+
+  .auth-google-btn {
+    margin-top: 1rem;
+  }
+
+  .divider {
+    margin: 1.25rem 0;
+  }
 }
 
 /* Form Elements */
@@ -361,4 +417,34 @@
 .qindred-logo-icon {
   height: 2.25rem;
   width: auto;
+}
+
+/* ————————————————————————————————
+   4. Form Inputs & Labels
+   ———————————————————————————————— */
+.auth-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.auth-form .input-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+@media (max-width: 640px) {
+  .auth-form .form-group {
+    margin-bottom: 0.875rem;
+  }
+
+  .auth-form .input-label {
+    font-size: 0.813rem;
+  }
+
+  .auth-form .input-error {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
 }

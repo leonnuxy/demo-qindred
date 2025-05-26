@@ -9,7 +9,25 @@ export async function getFamilyMembers(treeId) {
   try {
     console.log(`Fetching family members for tree ${treeId}`);
     const response = await axios.get(`/api/family-trees/${treeId}/members`);
-    return response.data;
+    
+    // Debug the response
+    console.log('Raw API response:', response.data);
+    
+    // Ensure we're properly extracting data from the response
+    const members = response.data.data || response.data || [];
+    
+    // Process members to ensure consistent format
+    return members.map(member => ({
+      ...member,
+      // If firstName/lastName are not available, try to parse from name
+      firstName: member.firstName || (member.user?.name ? member.user.name.split(' ')[0] : ''),
+      lastName: member.lastName || (member.user?.name ? member.user.name.split(' ').slice(1).join(' ') : ''),
+      // Ensure relationshipToUser property exists and is not empty
+      relationshipToUser: member.relationshipToUser || member.role || 'other',
+      // Ensure consistent date formats
+      dateOfBirth: member.dateOfBirth ? new Date(member.dateOfBirth).toISOString().split('T')[0] : null,
+      dateOfDeath: member.dateOfDeath ? new Date(member.dateOfDeath).toISOString().split('T')[0] : null,
+    }));
   } catch (error) {
     console.error('Error fetching family members:', error);
     // Log detailed error information for debugging
@@ -88,9 +106,23 @@ export async function deleteFamilyMember(treeId, memberId) {
 export async function getRelationshipTypes() {
   try {
     const response = await axios.get('/api/relationship-types');
-    return response.data;
+    
+    // Format the relationship types for UI
+    return (response.data || []).map(type => ({
+      value: type.value || type.id,
+      label: type.label || type.name,
+      reciprocal: type.reciprocal || null
+    }));
   } catch (error) {
     console.error('Error fetching relationship types:', error);
-    throw error;
+    
+    // Return basic relationship types as fallback
+    return [
+      { value: 'parent', label: 'Parent' },
+      { value: 'child', label: 'Child' },
+      { value: 'spouse', label: 'Spouse' },
+      { value: 'sibling', label: 'Sibling' },
+      { value: 'other', label: 'Other' },
+    ];
   }
 }

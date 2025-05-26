@@ -1,0 +1,183 @@
+/* Welcome Step Styles */
+
+.welcome-container {
+  max-width: 100%;
+  padding: 1rem 0;
+}
+
+@media (min-width: 768px) {
+  .welcome-container {
+    padding: 2rem 0;
+  }
+}
+
+.welcome-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.welcome-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.welcome-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #F9FAFB;
+  border-radius: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.welcome-feature:hover {
+  transform: translateY(-2px);
+}
+
+.welcome-feature-icon {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--primary);
+}
+
+.welcome-feature-content {
+  flex: 1;
+}
+
+.welcome-feature-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 0.25rem;
+}
+
+.welcome-feature-description {
+  font-size: 0.875rem;
+  color: #6B7280;
+  line-height: 1.5;
+}
+
+/* Get Started Button */
+.welcome-button {
+  width: 100%;
+  max-width: 300px;
+  margin: 2rem auto 0;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  background-color: var(--primary);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  display: block;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .welcome-button {
+    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Verification Step Styles */
+
+.verification-container {
+  max-width: 100%;
+  padding: 1rem;
+  background-color: #F9FAFB;
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .verification-container {
+    padding: 1.5rem;
+  }
+}
+
+.verification-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.verification-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.verification-heading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 1rem;
+}
+
+.verification-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .verification-grid {
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.verification-label {
+  font-weight: 500;
+  color: #6B7280;
+}
+
+.verification-value {
+  color: #1F2937;
+}
+
+/* Member Lists */
+.verification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.verification-list li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #E5E7EB;
+  font-size: 0.875rem;
+}
+
+.verification-list li:last-child {
+  border-bottom: none;
+}
+
+/* Complete Button */
+.complete-button {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .complete-button {
+    width: auto;
+    margin-top: 2rem;
+  }
+}
+
+/* Processing State */
+.processing {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

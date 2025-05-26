@@ -84,12 +84,9 @@ export default function SetupPage() {
         
         console.log('Submitting form data:', sanitizedFormData);
         
-        post(route('setup.complete'), {
-            data: sanitizedFormData,
-            // Don't preserve state or scroll position for a clean redirect
+        post(route('setup.complete'), sanitizedFormData, {
             preserveState: false,
             preserveScroll: false,
-            // Use replace: true to avoid browser history accumulation
             replace: true,
             onSuccess: () => {
                 // Force a hard redirect to the dashboard to ensure proper page load
@@ -100,9 +97,9 @@ export default function SetupPage() {
                 toast({
                     title: 'Error',
                     description: 'There was an error completing your setup. Please try again.',
-                    variant: 'destructive',
+                    variant: 'destructive'
                 });
-            },
+            }
         });
     };
 

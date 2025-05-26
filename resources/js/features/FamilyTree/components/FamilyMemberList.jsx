@@ -27,8 +27,12 @@ export default function FamilyMemberList({ membersList = [] }) {
                   alt={member.name || 'Member'}
                   className="w-full h-full object-cover"
                   onError={(e) => { 
-                    e.target.onerror = null; 
-                    e.target.src = ''; // Clear the src to show the fallback UI
+                    e.target.onerror = null;
+                    // Use default avatar if loading fails
+                    e.target.parentElement.innerHTML = (member.name || member.firstName || 'M').charAt(0).toUpperCase();
+                    e.target.parentElement.style.display = 'flex';
+                    e.target.parentElement.style.alignItems = 'center';
+                    e.target.parentElement.style.justifyContent = 'center';
                     e.target.parentElement.innerHTML = (member.name || 'M').charAt(0).toUpperCase();
                   }}
                 />

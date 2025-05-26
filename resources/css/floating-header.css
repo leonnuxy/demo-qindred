@@ -2,7 +2,8 @@
 .floating-header {
   position: fixed;
   top: 0;
-  left: var(--sidebar-width);
+  /* left: var(--sidebar-width); */
+  left: calc(var(--sidebar-width) + var(--sidebar-width-icon));
   right: 0;
   height: 4rem;
   display: flex;
@@ -13,15 +14,16 @@
   transition:
     left 0.2s ease-in-out,
     transform 0.3s ease-in-out;
-
+  z-index: 40;
 }
 
 /* Collapsed vs expanded sidebar */
 .floating-header.sidebar-collapsed {
-  left: calc(var(--sidebar-width-icon) + 20rem);
+  left: var(--sidebar-width);
 }
+
 .floating-header.sidebar-expanded {
-  left: calc(var(--sidebar-width) + 20rem);
+  left: calc(var(--sidebar-width) + var(--sidebar-width-icon));
 }
 
 /* Hide on scroll up */
@@ -31,14 +33,47 @@
 
 /* Darken / solidify on scroll past threshold */
 .floating-header.scrolled {
-   background: transparent;
-
+  background: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Responsive mobile fix */
-@media (max-width: 767px) {
-  .floating-header {
+/* Desktop and mobile header separation */
+.desktop-header {
+  display: none;
+}
+
+.mobile-header {
+  display: flex;
+}
+
+@media (min-width: 769px) {
+  .desktop-header {
+    display: flex;
+  }
+  
+  .mobile-header {
+    display: none;
+  }
+}
+
+/* Mobile header specific positioning */
+@media (max-width: 768px) {
+  .mobile-header {
     left: 0;
+    padding: 0 0.5rem;
+    z-index: 40;
+  }
+  .mobile-header.sidebar-collapsed,
+  .mobile-header.sidebar-expanded {
+    left: 0;
+  }
+
+  .floating-header.scrolled {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+    border-radius: 10%;
   }
 }
 
@@ -53,29 +88,51 @@
   padding: 0 1rem;
 }
 
-/* Search box */
-.search-wrapper {
+@media (max-width: 768px) {
+  .mobile-header .floating-header-content {
+    padding: 0 0.5rem;
+    justify-content: flex-end; /* Align actions to the right on mobile */
+  }
+}
+
+/* Search wrapper - desktop only */
+.desktop-search.search-wrapper {
   position: relative;
   flex: 1;
-  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
 }
-.search-icon {
-  position: absolute;
-  top: 0.625rem; /* 2.5 / 16 */
-  left: 0.625rem;
+
+/* Search box - desktop only */
+.desktop-search .search-input {
+  width: 100%;
+  max-width: 400px;
+  height: 2.25rem;
+  padding-left: 2.25rem;
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--input));
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  transition: all 0.2s ease-in-out;
+}
+
+.desktop-search .search-icon {
+  position: relative;
+  left: 1.75rem;
   height: 1rem;
   width: 1rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--qindred-green-700);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 2;
 }
-.search-input {
-  width: 100%;
-  height: 2.25rem; /* 9/4 rem */
-  padding-left: 2rem;
-  border-radius: 0.375rem;
-  transition: box-shadow 0.2s ease-in-out;
-}
-.search-input:focus {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+
+.desktop-search .search-input:focus {
+  box-shadow: 0 0 0 2px hsl(var(--qindred-green-500) / 0.2);
+  border-color: var(--qindred-green-500);
+  outline: none;
 }
 
 /* Action buttons */
@@ -85,10 +142,33 @@
   gap: 0.5rem;
 }
 
+@media (max-width: 768px) {
+  .mobile-header .actions {
+    gap: 0.5rem; /* Consistent spacing on mobile */
+    width: 100%; /* Take full width on mobile when search is hidden */
+    justify-content: flex-end; /* Align to the right */
+  }
+  .mobile-header .actions button {
+    height: 2.75rem; /* Larger touch targets */
+    width: 2.75rem;
+    padding: 0.5rem;
+  }
+  .desktop-search .search-input {
+    display: none; /* Hide search on mobile */
+  }
+  .desktop-search .search-icon {
+    display: none; /* Hide search icon on mobile */
+  }
+  .floating-header .search-wrapper {
+    display: none; /* Hide header search on mobile */
+  }
+}
+
 /* Notification badge */
 .notification-button {
   position: relative;
 }
+
 .notification-badge {
   position: absolute;
   top: -0.25rem;
@@ -106,12 +186,39 @@
   justify-content: center;
 }
 
-/* Dropdown content widths */
+/* Dropdown content widths and backgrounds */
 .notifications-content {
-  width: 20rem; /* = 80 */
+  width: 20rem;
+  background-color: hsl(var(--popover)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: var(--shadow-md) !important;
+  backdrop-filter: blur(8px) !important;
 }
+
+@media (max-width: 768px) {
+  .mobile-header .notifications-content {
+    width: calc(100vw - 2rem);
+    max-width: 20rem;
+    right: 0;
+    left: auto;
+  }
+}
+
 .profile-menu {
-  width: 14rem; /* = 56 */
+  width: 14rem;
+  background-color: hsl(var(--popover)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: var(--shadow-md) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-header .profile-menu {
+    width: calc(100vw - 2rem);
+    max-width: 14rem;
+    right: 0;
+    left: auto;
+  }
 }
 
 /* Avatar trigger */
@@ -119,4 +226,118 @@
   padding: 0.25rem;
   border-radius: 9999px;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .mobile-header .avatar-button {
+    padding: 0;
+  }
+  .mobile-header .avatar-button img {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* Override button styles for dropdown triggers */
+.notification-trigger {
+  position: relative !important;
+  background-color: hsl(var(--background) / 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid hsl(var(--border) / 0.4) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.notification-trigger:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.profile-trigger {
+  position: relative !important;
+  background-color: hsl(var(--background) / 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid hsl(var(--border) / 0.4) !important;
+  padding: 0.25rem !important;
+  border-radius: 9999px !important;
+  transition: all 0.2s ease-in-out !important;
+  overflow: hidden !important;
+}
+
+.profile-trigger:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-header .notification-trigger,
+  .mobile-header .profile-trigger {
+    height: 2.75rem !important;
+    width: 2.75rem !important;
+  }
+  
+  .mobile-header .profile-trigger {
+    padding: 0 !important;
+  }
+}
+
+/* Ensure dropdown menus are visible with proper backgrounds */
+[data-radix-popper-content-wrapper] [role="menu"] {
+  background-color: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Specific fixes for floating header dropdowns */
+.floating-header [data-radix-popper-content-wrapper] [role="menu"] {
+  background-color: hsl(var(--background) / 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid hsl(var(--border) / 0.8) !important;
+}
+
+/* Enhanced dropdown positioning and mobile fixes */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important;
+}
+
+/* Mobile dropdown positioning improvements */
+@media (max-width: 768px) {
+  .mobile-header [data-radix-popper-content-wrapper] {
+    position: fixed !important;
+  }
+  
+  .mobile-header [data-radix-popper-content-wrapper] [role="menu"] {
+    position: relative !important;
+    transform: none !important;
+    max-width: calc(100vw - 2rem) !important;
+    margin: 0.5rem !important;
+  }
+  
+  /* Ensure dropdowns don't overflow on mobile */
+  .mobile-header .notifications-content,
+  .mobile-header .profile-menu {
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+  }
+}
+
+/* Touch-friendly menu items on mobile */
+@media (max-width: 768px) {
+  .mobile-header [role="menu"] [role="menuitem"] {
+    min-height: 2.75rem !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important; /* Prevent iOS zoom */
+  }
+}
+
+/* Ensure proper button spacing and sizing consistency */
+@media (max-width: 768px) {
+  .mobile-header .actions button {
+    min-width: 2.75rem !important;
+    min-height: 2.75rem !important;
+    border-radius: 0.5rem !important;
+  }
 }

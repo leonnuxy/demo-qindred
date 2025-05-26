@@ -13,11 +13,18 @@
   background-color: var(--qindred-green-100);
   color: var(--qindred-green-800);
   font-weight: 500;
+  border-radius: 0.375rem;
+  box-shadow: var(--shadow-xs);
+  border: 1px solid hsl(var(--qindred-green-400) / 0.3);
 }
 
 .sidebar-menu-button:hover {
   background-color: var(--qindred-green-50);
   color: var(--qindred-green-700);
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-xs);
 }
 
 /* Custom spacing for sidebar items */
@@ -33,4 +40,410 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.5rem 0.75rem;
+}
+
+/* Mobile search in sidebar - enhanced styling */
+.sidebar-mobile-search {
+  position: relative;
+  margin: 0.5rem 0.5rem 0 0.5rem;
+  background-color: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border) / 0.4);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Only show on mobile screens */
+@media (min-width: 769px) {
+  .sidebar-mobile-search {
+    display: none !important;
+  }
+}
+
+.sidebar-mobile-search .search-icon {
+  position: absolute;
+  left: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 0.875rem;
+  width: 0.875rem;
+  color: var(--qindred-green-700);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.sidebar-mobile-search .search-input {
+  width: 100%;
+  height: 2rem;
+  padding-left: 2rem;
+  padding-right: 0.625rem;
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border) / 0.4);
+  background: transparent;
+  color: hsl(var(--foreground));
+  font-size: 0.8125rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-mobile-search .search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--qindred-green-500) / 0.2);
+}
+
+.sidebar-mobile-search .search-input::placeholder {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+}
+
+.sidebar-mobile-search:hover {
+  background-color: hsl(var(--accent) / 0.8);
+  border-color: hsl(var(--border) / 0.6);
+}
+
+.sidebar-mobile-search:focus-within {
+  background-color: hsl(var(--background));
+  border-color: var(--qindred-green-500);
+  box-shadow: 0 0 0 2px hsl(var(--qindred-green-500) / 0.2);
+}
+
+/* Touch optimization for mobile */
+@media (max-width: 768px) {
+  .sidebar-mobile-search .search-input {
+    height: 3rem; /* Larger touch target */
+    font-size: 1rem; /* Prevent zoom on iOS */
+  }
+  
+  .sidebar-mobile-search .search-icon {
+    height: 1.25rem;
+    width: 1.25rem;
+    left: 1rem;
+  }
+  
+  .sidebar-mobile-search .search-input {
+    padding-left: 3rem;
+  }
+}
+
+/* Enhanced sidebar menu for mobile */
+@media (max-width: 768px) {
+  .sidebar-menu-button {
+    height: 3rem; /* Larger touch targets */
+    padding: 0.75rem 1rem;
+  }
+  
+  .sidebar-menu-button svg {
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+}
+
+/* Sidebar header improvements */
+.sidebar-header {
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar-header {
+    padding: 1rem 0.75rem 0.75rem 0.75rem;
+  }
+}
+
+/* Logo improvements for mobile */
+@media (max-width: 768px) {
+  .sidebar-menu-button[data-size="lg"] {
+    height: 3.5rem;
+    padding: 0.75rem;
+  }
+}
+
+/* Sidebar dropdown menu styling (if any are added in the future) */
+.sidebar [data-radix-popper-content-wrapper] [role="menu"] {
+  background-color: hsl(var(--background) / 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid hsl(var(--border) / 0.8) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Enhanced sidebar styling */
+.sidebar {
+  background-color: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  border-right: 1px solid hsl(var(--border) / 0.4);
+}
+
+/* Sidebar group labels enhanced */
+.sidebar-section-header,
+[data-sidebar="group-label"] {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--qindred-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  background-color: hsl(var(--muted) / 0.5);
+  border-radius: 0.25rem;
+  margin: 0.25rem 0;
+}
+
+/* Sidebar group labels */
+[data-slot="sidebar-group-label"],
+[data-sidebar="group-label"] {
+  background-color: transparent !important;
+  color: hsl(var(--foreground) / 0.8) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-radius: 0.25rem !important;
+  margin: 0.25rem 0 !important;
+  padding: 0.5rem 0.5rem !important;
+  font-size: 0.8rem !important;
+  border-bottom: 1px solid hsl(var(--border) / 0.4) !important;
+}
+
+/* Enhanced mobile sidebar heading */
+@media (max-width: 768px) {
+  [data-slot="sidebar-group-label"],
+  [data-sidebar="group-label"] {
+    color: hsl(var(--foreground)) !important;
+    background-color: hsl(var(--background) / 0.8) !important;
+    backdrop-filter: blur(4px) !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.06em !important;
+  }
+}
+
+/* Logo button enhancement */
+.sidebar-menu-button[data-size="lg"] {
+  background-color: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid hsl(var(--border) / 0.4);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-menu-button[data-size="lg"]:hover {
+  background-color: hsl(var(--accent) / 0.8);
+  border-color: hsl(var(--border) / 0.6);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Sidebar CSS Variables Override for proper styling */
+[data-slot="sidebar"] {
+  background-color: hsl(var(--sidebar) / 0.95) !important;
+  color: hsl(var(--sidebar-foreground)) !important;
+  backdrop-filter: blur(12px) !important;
+  border-right: 1px solid hsl(var(--sidebar-border) / 0.8) !important;
+}
+
+/* Additional Shadcn/UI sidebar overrides */
+.bg-sidebar {
+  background-color: hsl(var(--sidebar) / 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.text-sidebar-foreground {
+  color: hsl(var(--sidebar-foreground)) !important;
+}
+
+.border-sidebar-border {
+  border-color: hsl(var(--sidebar-border) / 0.8) !important;
+}
+
+/* Specific sidebar container styling */
+[data-sidebar="sidebar"] {
+  background-color: #fdfdfd !important;
+  color: hsl(var(--sidebar-foreground)) !important;
+  backdrop-filter: blur(12px) !important;
+  border-right: 1px solid hsl(var(--sidebar-border) / 0.8) !important;
+}
+
+/* Enhanced mobile sidebar styling */
+@media (max-width: 768px) {
+  [data-sidebar="sidebar"],
+  [data-slot="sidebar"],
+  .bg-sidebar {
+    background-color: hsl(var(--sidebar) / 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* Enhanced padding for mobile sidebar content */
+  [data-sidebar="content"],
+  [data-slot="sidebar-content"] {
+    padding: 0.5rem 0.5rem !important;
+  }
+  
+  /* Better close button styling */
+  [data-sidebar="sidebar"] > button {
+    background-color: hsl(var(--background) / 0.8) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid hsl(var(--border) / 0.3) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 0.5rem !important;
+    opacity: 0.9 !important;
+    padding: 0.5rem !important;
+    margin: 0.5rem !important;
+  }
+  
+  [data-sidebar="sidebar"] > button svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+}
+
+/* Sidebar menu buttons styling */
+[data-slot="sidebar-menu-button"],
+.sidebar [data-slot="sidebar-menu-button"],
+[data-sidebar="menu-button"] {
+  background-color: transparent !important;
+  color: hsl(var(--sidebar-foreground)) !important;
+  border-radius: 0.375rem !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+[data-slot="sidebar-menu-button"]:hover,
+.sidebar [data-slot="sidebar-menu-button"]:hover,
+[data-sidebar="menu-button"]:hover {
+  background-color: hsl(var(--sidebar-accent) / 0.8) !important;
+  color: hsl(var(--sidebar-accent-foreground)) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+[data-slot="sidebar-menu-button"][data-active="true"],
+.sidebar [data-slot="sidebar-menu-button"][data-active="true"],
+[data-sidebar="menu-button"][data-active="true"] {
+  background-color: hsl(var(--qindred-green-100)) !important;
+  color: hsl(var(--qindred-green-800)) !important;
+  font-weight: 500 !important;
+  border: 1px solid hsl(var(--qindred-green-400) / 0.3) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+/* Final sidebar enhancements for active states and mobile touch */
+@media (max-width: 768px) {
+  /* Enhanced active state for sidebar menu buttons on mobile */
+  [data-sidebar="menu-button"][data-active="true"],
+  .sidebar [data-slot="sidebar-menu-button"][data-active="true"],
+  [data-active="true"].sidebar-menu-button {
+    background-color: hsl(var(--qindred-green-100)) !important;
+    color: var(--qindred-green-800) !important;
+    font-weight: 600 !important;
+    border: 1px solid hsl(var(--qindred-green-400) / 0.4) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
+  }
+  
+  /* Better spacing for mobile sidebar menu items */
+  [data-sidebar="menu-item"],
+  [data-slot="sidebar-menu-item"] {
+    margin-bottom: 0.35rem !important;
+    padding: 0 0.375rem !important;
+  }
+  
+  /* Enhanced touch targets for all sidebar clickable elements */
+  [data-sidebar="menu-button"],
+  [data-slot="sidebar-menu-button"],
+  .sidebar-menu-button {
+    min-height: 3.25rem !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important; /* Prevent iOS zoom */
+    touch-action: manipulation !important;
+    border-radius: 0.625rem !important;
+    line-height: 1.5 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  /* Better icon styling in sidebar menu buttons */
+  [data-sidebar="menu-button"] svg,
+  [data-slot="sidebar-menu-button"] svg,
+  .sidebar-menu-button svg {
+    width: 1.35rem !important;
+    height: 1.35rem !important;
+    margin-right: 0.75rem !important;
+  }
+
+  /* Improved hover effect for mobile touch */
+  [data-sidebar="menu-button"]:active,
+  [data-slot="sidebar-menu-button"]:active,
+  .sidebar-menu-button:active {
+    background-color: hsl(var(--accent) / 0.5) !important;
+    transform: translateY(0px) !important;
+    transition: all 0.1s ease-in-out !important;
+  }
+}
+
+/* Ensure proper glassmorphism effect consistency */
+.sidebar-mobile-search:focus-within,
+.sidebar-mobile-search:hover {
+  background-color: hsl(var(--background) / 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Sidebar group labels */
+[data-slot="sidebar-group-label"] {
+  background-color: hsl(var(--muted) / 0.5) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-radius: 0.25rem !important;
+  margin: 0.25rem 0 !important;
+}
+
+/* Logo button enhanced styling */
+[data-slot="sidebar-menu-button"][data-size="lg"] {
+  background-color: hsl(var(--background) / 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid hsl(var(--border) / 0.4) !important;
+  border-radius: 0.5rem !important;
+  gap: 0px;
+}
+
+[data-slot="sidebar-menu-button"][data-size="lg"]:hover {
+  background-color: hsl(var(--accent) / 0.8) !important;
+  border-color: hsl(var(--border) / 0.6) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* Enhanced mobile search bar integration */
+@media (max-width: 768px) {
+  .sidebar-mobile-search {
+    background-color: hsl(var(--background) / 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid hsl(var(--border) / 0.3) !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-radius: 0.75rem !important;
+    margin: 1rem 0.75rem 0.5rem 0.75rem !important;
+  }
+  
+  .sidebar-mobile-search .search-icon {
+    color: hsl(var(--foreground) / 0.7) !important;
+  }
+  
+  .sidebar-mobile-search .search-input {
+    font-size: 0.95rem !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  .sidebar-mobile-search .search-input::placeholder {
+    color: hsl(var(--foreground) / 0.5) !important;
+  }
+  
+  .sidebar-mobile-search:focus-within {
+    background-color: hsl(var(--background) / 0.95) !important;
+    border-color: var(--qindred-green-700) !important;
+    box-shadow: 0 0 0 1px hsl(var(--qindred-green-400) / 0.3) !important;
+  }
+  
+  .sidebar-mobile-search:focus-within .search-icon {
+    color: var(--qindred-green-700) !important;
+  }
 }

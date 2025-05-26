@@ -2,25 +2,19 @@ import AppLogoIcon from './app-logo-icon';
 import { useSidebar } from '@/components/ui/sidebar';
 
 export default function AppLogo() {
-    const { state } = useSidebar();
-    const isCollapsed = state === "collapsed";
+    const { state, isMobile } = useSidebar();
+    const isCollapsed = state === "collapsed" && !isMobile;
     
     return (<>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-md transition-all duration-200">
+            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-12 items-center justify-center rounded-md transition-all duration-200 hover:bg-sidebar-accent/80">
                 <AppLogoIcon 
                   variant="sidebar" 
-                  className="size-5 fill-current text-white dark:text-black"
+                  className="size-8 fill-current text-white dark:text-black"
                 />
             </div>
-            <div className={`ml-1 grid flex-1 text-left text-sm transition-all duration-200 ${isCollapsed ? 'opacity-0 w-0 ml-0' : 'opacity-100 ml-2'}`}>
+            <div className={`transition-all duration-200 ${isCollapsed ? 'w-0 opacity-0' : 'opacity-100'}`}>
                 <span
-                    className="mb-0.5 truncate leading-none font-semibold"
-                    style={{
-                        fontSize: '1.35rem',
-                        letterSpacing: '0.03em',
-                        color: '#2d3748',
-                        textShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                    }}
+                    className="font-bold text-foreground dark:text-white text-[1.5rem] leading-none tracking-wide"
                 >
                     Qindred
                 </span>

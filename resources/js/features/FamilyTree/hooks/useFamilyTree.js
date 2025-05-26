@@ -22,36 +22,62 @@ export function useFamilyTree(initialTreeData, currentUserId) {
     // Create a deep copy to avoid mutating props
     const copyData = JSON.parse(JSON.stringify(data));
     
-    // Recursive function to find and mark the current user
-    function traverse(node) {
-      if (!node) return;
+    // Normalize fields to ensure all nodes have required properties
+    function normalizeNode(node) {
+      if (!node) return null;
+      
+      // Extract data from backend format
+      const nameParts = node.name ? node.name.split(' ') : ['?', ''];
+      
+      // Ensure all nodes have these fields with default values
+      node.firstName = node.firstName || nameParts[0] || '?';
+      node.lastName = node.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
+      node.dateOfBirth = node.dateOfBirth || (node.attributes?.birth_date || '');
+      node.dateOfDeath = node.dateOfDeath || (node.attributes?.death_date || '');
+      node.gender = node.gender || (node.attributes?.gender || 'other');
+      node.relationshipToUser = node.relationshipToUser || (node.attributes?.relationship_to_user || '');
       
       // Mark this node if it matches the current user ID
-      if (node.userId === userId) {
-        node.currentUser = true;
+      if (node.id === userId) {
+        node.isCurrentUser = true;
+        console.log('Found current user:', node);
+      }
+      
+      // Recurse through partners if present
+      if (node.partners && Array.isArray(node.partners)) {
+        node.partners = node.partners
+          .filter(Boolean)
+          .map(partner => normalizeNode(partner));
       }
       
       // Continue traversing children
-      if (node.children && node.children.length) {
-        node.children.forEach(child => traverse(child));
+      if (node.children && Array.isArray(node.children)) {
+        node.children = node.children
+          .filter(Boolean)
+          .map(child => normalizeNode(child));
       }
+      
+      return node;
     }
     
-    traverse(copyData);
-    return copyData;
+    return normalizeNode(copyData);
   }, []);
   // Process tree data when it changes
   useEffect(() => {
     setIsLoading(true);
     
     try {
+      console.log('Processing initial tree data:', initialTreeData);
+      
       if (!initialTreeData) {
+        console.warn('No tree data provided');
         setError('No tree data provided');
-        setTreeData(null);
+        setTreeData({ firstName: '?', lastName: '', children: [] });
         return;
       }
       
       if (initialTreeData.error) {
+        console.error('Error in tree data:', initialTreeData.error);
         setError(initialTreeData.error);
         setTreeData(initialTreeData);
         return;
@@ -59,11 +85,20 @@ export function useFamilyTree(initialTreeData, currentUserId) {
       
       // Process the tree data to mark the current user if found
       const processedData = markCurrentUser(initialTreeData, currentUserId);
+      console.log('Processed tree data:', processedData);
       setTreeData(processedData);
       setError(null);
     } catch (err) {
       console.error('Error processing tree data:', err);
       setError(err.message || 'Failed to process tree data');
+      
+      // Provide a fallback empty tree structure if there's an error
+      setTreeData({ 
+        firstName: '?', 
+        lastName: 'Error', 
+        children: [],
+        error: err.message 
+      });
     } finally {
       setIsLoading(false);
     }

@@ -1,0 +1,184 @@
+{
+  "familyTree": {
+    "id": "0196fbaa-0d41-7076-b405-5d40618cbffd",
+    "name": "Smith Family Tree",
+    "description": "Our family history dating back two generations",
+    "created_at": "May 20, 2025",
+    "user_role_in_tree": "Member",
+    "is_creator": true,
+    "privacy": "private"
+  },
+  
+  "hierarchicalTreeData": {
+    "id": "father-id",
+    "firstName": "John",
+    "lastName": "Smith",
+    "gender": "male",
+    "isCurrentUser": false,
+    "relationshipToUser": "father",
+    "partners": [
+      {
+        "id": "mother-id",
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "gender": "female",
+        "isCurrentUser": false,
+        "relationshipToUser": "mother",
+        "children": [
+          {
+            "id": "current-user-id",
+            "firstName": "Alex",
+            "lastName": "Smith",
+            "gender": "male",
+            "isCurrentUser": true,
+            "relationshipToUser": "self",
+            "partners": [
+              {
+                "id": "spouse-id",
+                "firstName": "Emily",
+                "lastName": "Smith",
+                "gender": "female",
+                "isCurrentUser": false,
+                "relationshipToUser": "spouse",
+                "children": [
+                  {
+                    "id": "child-1-id",
+                    "firstName": "Emma",
+                    "lastName": "Smith",
+                    "gender": "female",
+                    "isCurrentUser": false,
+                    "relationshipToUser": "child",
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "children": []
+          },
+          {
+            "id": "sister-id",
+            "firstName": "Sarah",
+            "lastName": "Smith",
+            "gender": "female",
+            "isCurrentUser": false,
+            "relationshipToUser": "sibling",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  
+  "membersList": [
+    {
+      "id": "father-id",
+      "firstName": "John",
+      "lastName": "Smith",
+      "dateOfBirth": "1960-05-15",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "father",
+      "email": "john.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/john-smith.jpg"
+    },
+    {
+      "id": "mother-id",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "dateOfBirth": "1962-08-22",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "mother",
+      "email": "jane.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/jane-smith.jpg"
+    },
+    {
+      "id": "current-user-id",
+      "firstName": "Alex",
+      "lastName": "Smith",
+      "dateOfBirth": "1990-03-10",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "self",
+      "email": "alex.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/alex-smith.jpg"
+    },
+    {
+      "id": "spouse-id",
+      "firstName": "Emily",
+      "lastName": "Smith",
+      "dateOfBirth": "1991-07-18",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "spouse",
+      "email": "emily.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/emily-smith.jpg"
+    },
+    {
+      "id": "child-1-id",
+      "firstName": "Emma",
+      "lastName": "Smith",
+      "dateOfBirth": "2020-12-25",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "child",
+      "profilePhoto": "/storage/profile-photos/emma-smith.jpg"
+    },
+    {
+      "id": "sister-id",
+      "firstName": "Sarah",
+      "lastName": "Smith",
+      "dateOfBirth": "1992-11-28",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "sibling",
+      "email": "sarah.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/sarah-smith.jpg"
+    }
+  ],
+  
+  "familyTreeLogs": [
+    {
+      "id": "log-1",
+      "content": "Created our family tree with basic information",
+      "author": {
+        "id": "current-user-id",
+        "name": "Alex Smith",
+        "avatar": "/storage/profile-photos/alex-smith.jpg"
+      },
+      "timestamp": "May 20, 2025 14:30",
+      "created_at": "2025-05-20T14:30:00.000Z",
+      "likes": 2
+    },
+    {
+      "id": "log-2",
+      "content": "Added Emma to our family tree! 👶",
+      "author": {
+        "id": "current-user-id",
+        "name": "Alex Smith",
+        "avatar": "/storage/profile-photos/alex-smith.jpg"
+      },
+      "timestamp": "May 21, 2025 10:15",
+      "created_at": "2025-05-21T10:15:00.000Z",
+      "likes": 5
+    },
+    {
+      "id": "log-3",
+      "content": "Updated all profile photos",
+      "author": {
+        "id": "sister-id",
+        "name": "Sarah Smith",
+        "avatar": "/storage/profile-photos/sarah-smith.jpg"
+      },
+      "timestamp": "May 22, 2025 16:45",
+      "created_at": "2025-05-22T16:45:00.000Z",
+      "likes": 3
+    }
+  ]
+}

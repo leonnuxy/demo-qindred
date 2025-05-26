@@ -2,20 +2,23 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarGroup,
-  SidebarGroupLabel,
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarGroup,
+    SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Users, UserRound, Mail, Settings, LayoutPanelTop } from 'lucide-react';
 import { Network } from 'lucide-react';
 import AppLogo from './app-logo';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import '@css/sidebar.css';
 
 // Helper function to create route URL safely
 const route = (name, params = {}) => {
@@ -27,7 +30,7 @@ const route = (name, params = {}) => {
         'forest': '/forest',
         'invitations.index': '/invitations',
     };
-    
+
     return routes[name] || '/';
 };
 
@@ -93,7 +96,7 @@ const footerNavItems = [
 export function AppSidebar() {
     const page = usePage();
     const { component } = page;
-    
+
     // Add an active class to the correct navigation item
     const isActive = (navComponent) => {
         if (component === navComponent) return true;
@@ -113,12 +116,22 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
+
+                {/* Mobile Search */}
+                <div className="sidebar-mobile-search md:hidden">
+                    <Search className="search-icon" />
+                    <Input
+                        type="search"
+                        placeholder="Search family trees, members..."
+                        className="search-input"
+                    />
+                </div>
             </SidebarHeader>
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
-                
-                {/* For mobile view only */}
+
+                {/* 
                 <div className="md:hidden mt-4">
                     <SidebarGroup className="px-2 py-0">
                         <SidebarGroupLabel>Quick Access</SidebarGroupLabel>
@@ -136,6 +149,7 @@ export function AppSidebar() {
                         </SidebarMenu>
                     </SidebarGroup>
                 </div>
+                */}
             </SidebarContent>
 
             <SidebarFooter>

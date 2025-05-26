@@ -63,8 +63,7 @@ export default function Index({ familyTrees }) {
           <h1 className="text-3xl font-bold text-qindred-green-900 dark:text-qindred-green-500">My Family Trees</h1>
           <Link href={route('family-trees.create')}>
             <Button
-              // Consider using a Tailwind class for the background color
-              className="flex items-center gap-1 text-white bg-[#31a63d] hover:bg-[#2a8f35]" // Example hover, adjust as needed
+              className="flex items-center gap-1 text-white bg-qindred-green-600 hover:bg-qindred-green-700"
             >
               <Plus size={20} /> New Family Tree
             </Button>
@@ -73,13 +72,13 @@ export default function Index({ familyTrees }) {
 
         {/* inline flash block */}
         {flash.success && (
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
-            <p className="text-green-700">{flash.success}</p>
+          <div role="alert" className="bg-qindred-green-100 dark:bg-qindred-green-800 border-l-4 border-qindred-green-500 dark:border-qindred-green-600 p-4 mb-6">
+            <p className="text-qindred-green-700 dark:text-qindred-green-100">{flash.success}</p>
           </div>
         )}
         {flash.error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-            <p className="text-red-700">{flash.error}</p>
+          <div role="alert" className="bg-red-100 dark:bg-red-800 border-l-4 border-red-500 dark:border-red-600 p-4 mb-6">
+            <p className="text-red-700 dark:text-red-100">{flash.error}</p>
           </div>
         )}
 

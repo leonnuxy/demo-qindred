@@ -95,7 +95,8 @@ export function AppHeader({ breadcrumbs = [] }) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer">
+                            {/* Search button - hidden on mobile since search is in sidebar */}
+                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer hidden md:flex">
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100"/>
                             </Button>
                             <div className="hidden lg:flex">

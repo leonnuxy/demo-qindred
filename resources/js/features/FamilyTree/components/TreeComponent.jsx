@@ -1,153 +1,274 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 
-/**
- * Family Tree Visualization Component
- * 
- * @param {Object} props
- * @param {Object} props.initialData - Hierarchical data for the tree
- * @param {Function} props.onNodeClick - Optional callback when a node is clicked
- */
-export default function TreeComponent({ initialData, onNodeClick }) {
+const NODE_WIDTH = 120;
+const NODE_HEIGHT = 130;
+const SPOUSE_GAP = 40;
+const GENERATION_GAP = 150;
+
+const TreeComponent = ({ initialData, onNodeClick }) => {
   const svgRef = useRef();
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-  
-  // Set up the tree visualization
+  const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
+
+  const processNode = (node, depth = 0) => {
+    if (!node) return null;
+    
+    console.log('Processing node:', node);
+    
+    // Map the backend data format to the format needed for the tree
+    // Extract data from name and attributes fields if firstName/lastName aren't available
+    const processedNode = {
+      ...node,
+      // Extract first name and last name from the name field if available
+      firstName: node.firstName || (node.name ? node.name.split(' ')[0] : '?'),
+      lastName: node.lastName || (node.name && node.name.split(' ').length > 1 
+        ? node.name.split(' ').slice(1).join(' ') 
+        : ''),
+      // Extract dates from attributes if available
+      dateOfBirth: node.dateOfBirth || (node.attributes?.birth_date || ''),
+      dateOfDeath: node.dateOfDeath || (node.attributes?.death_date || ''),
+      // Use default values for other fields if not available
+      gender: node.gender || (node.attributes?.gender || 'other'),
+      relationshipToUser: node.relationshipToUser || (node.attributes?.relationship_to_user || ''),
+      depth,
+      // Process children and partners if available
+      children: [
+        ...(node.partners?.flatMap(partner => partner ? [
+          { 
+            ...(partner || {}), 
+            firstName: partner.firstName || (partner.name ? partner.name.split(' ')[0] : '?'), 
+            lastName: partner.lastName || (partner.name && partner.name.split(' ').length > 1 
+              ? partner.name.split(' ').slice(1).join(' ') 
+              : ''), 
+            dateOfBirth: partner.dateOfBirth || (partner.attributes?.birth_date || ''),
+            dateOfDeath: partner.dateOfDeath || (partner.attributes?.death_date || ''),
+            gender: partner.gender || (partner.attributes?.gender || 'other'),
+            relationshipToUser: partner.relationshipToUser || (partner.attributes?.relationship_to_user || ''),
+            isPartner: true 
+          },
+          ...(partner.children?.map(child => processNode(child, depth + 1)).filter(Boolean) || [])
+        ] : []) || []),
+        ...(node.children?.map(child => processNode(child, depth + 1)).filter(Boolean) || [])
+      ]
+    };
+
+    console.log('Processed node:', processedNode);
+    return processedNode;
+  };
+
   useEffect(() => {
-    if (!initialData || !svgRef.current) return;
+    if (!initialData) return;
     
-    // Clear previous rendering
-    d3.select(svgRef.current).selectAll("*").remove();
-    
+    console.log('Initial tree data:', JSON.stringify(initialData, null, 2));
+    console.log('Rendering tree with data:', initialData);
+
     const svg = d3.select(svgRef.current);
-    const width = dimensions.width;
-    const height = dimensions.height;
-    
-    // Create a tree layout
-    const treeLayout = d3.tree()
-      .size([width - 100, height - 100]);
-    
-    // Convert the initialData to a d3 hierarchy
-    const root = d3.hierarchy(initialData);
-    
-    // Assign the x and y positions to each node
-    treeLayout(root);
-    
-    // Create a container for the tree with a smoother translation
+    svg.selectAll('*').remove();
+
+    // Create a group for the entire tree that will be centered
     const g = svg.append("g")
-      .attr("transform", `translate(50, 50)`)
-      .attr("class", "tree-container");
+      .attr("transform", `translate(${dimensions.width / 2}, 70)`);
+
+    const root = d3.hierarchy(processNode(initialData));
+    const treeLayout = d3.tree().nodeSize([NODE_WIDTH, GENERATION_GAP]);
     
-    // Create links between nodes with enhanced styling
-    g.selectAll(".link")
+    treeLayout(root);
+
+    // Adjust coordinates for vertical layout
+    root.descendants().forEach(d => {
+      d.y = d.depth * (NODE_HEIGHT + GENERATION_GAP);
+      d.x = d.x * (NODE_WIDTH + SPOUSE_GAP);
+    });
+
+    // Draw links
+    g.selectAll('.link')
       .data(root.links())
-      .enter()
-      .append("path")
-      .attr("class", "link")
-      .attr("d", d3.linkHorizontal()
-        .x(d => d.y)  // Swap x and y for a horizontal tree
-        .y(d => d.x))
-      .attr("fill", "none")
-      .attr("stroke", "var(--qindred-green-500)")
-      .attr("stroke-width", 1.5)
-      .attr("opacity", 0.8)
-      .attr("stroke-linecap", "round")
-      .attr("stroke-linejoin", "round");
-    
-    // Create node groups with interactive features
-    const node = g.selectAll(".node")
+      .enter().append('path')
+      .attr('class', 'link')
+      .attr('d', d3.linkVertical()
+        .x(d => d.x)
+        .y(d => d.y))
+      .attr('fill', 'none')
+      .attr('stroke', '#94a3b8')
+      .attr('stroke-width', 2);
+
+    // Draw spouse connections
+    root.descendants().forEach(node => {
+      if (node.data.partners?.length) {
+        node.data.partners.forEach(partner => {
+          g.append('path')
+            .attr('class', 'spouse-link')
+            .attr('d', `M${node.x},${node.y + NODE_HEIGHT} L${node.x},${node.y + NODE_HEIGHT + 25} L${partner.x},${partner.y + NODE_HEIGHT + 25} L${partner.x},${partner.y + NODE_HEIGHT}`)
+            .attr('stroke', '#94a3b8')
+            .attr('stroke-width', 2)
+            .attr('fill', 'none');
+        });
+      }
+    });
+
+    // Draw nodes
+    const nodes = g.selectAll('.node')
       .data(root.descendants())
-      .enter()
-      .append("g")
-      .attr("class", d => `node ${d.children ? "node--internal" : "node--leaf"}`)
-      .attr("transform", d => `translate(${d.y}, ${d.x})`)
-      .attr("cursor", "pointer")
-      .on("click", (event, d) => {
-        if (onNodeClick) {
-          onNodeClick(d.data);
-        }
-      })
-      .on("mouseover", function() {
-        // Highlight node on hover
-        d3.select(this).select("circle")
-          .attr("stroke-width", d => d.data.currentUser ? 3.5 : 2)
-          .attr("filter", "drop-shadow(0 2px 3px rgba(0,0,0,0.2))");
-      })
-      .on("mouseout", function() {
-        // Reset styling on mouseout
-        d3.select(this).select("circle")
-          .attr("stroke-width", d => d.data.currentUser ? 3 : 1)
-          .attr("filter", "none");
-      });
-    
-    // Add circles for the nodes with enhanced styling
-    node.append("circle")
-      .attr("r", 10)
-      .attr("fill", d => d.data.deceased ? "#f3f4f6" : 
-        d.data.gender === "male" ? "var(--qindred-green-400)" : 
-        d.data.gender === "female" ? "var(--qindred-green-500)" : "var(--qindred-green-100)")
-      .attr("stroke", d => d.data.currentUser ? "var(--qindred-green-900)" : "var(--qindred-green-700)")
-      .attr("stroke-width", d => d.data.currentUser ? 3 : 1)
-      .attr("transition", "all 0.2s ease-in-out");
-    
-    // Add name labels to nodes with improved styling
-    node.append("text")
-      .attr("dy", 3)
-      .attr("x", d => d.children ? -15 : 15)
-      .style("text-anchor", d => d.children ? "end" : "start")
-      .text(d => `${d.data.firstName || ''} ${d.data.lastName || ''}`)
-      .attr("font-size", "12px")
-      .attr("font-weight", d => d.data.currentUser ? "bold" : "normal")
-      .attr("fill", d => d.data.currentUser ? "var(--qindred-green-900)" : "var(--qindred-green-800)")
-      .attr("filter", d => d.data.currentUser ? "drop-shadow(0 1px 1px rgba(0,0,0,0.1))" : "none");
-    
-    // Add date labels to nodes with subtle styling
-    node.append("text")
-      .attr("dy", 18)
-      .attr("x", d => d.children ? -15 : 15)
-      .style("text-anchor", d => d.children ? "end" : "start")
-      .text(d => {
-        const birth = d.data.dateOfBirth ? new Date(d.data.dateOfBirth).getFullYear() : null;
-        const death = d.data.dateOfDeath ? new Date(d.data.dateOfDeath).getFullYear() : null;
+      .enter().append('foreignObject')
+      .attr('class', d => `node ${d.data.isPartner ? 'partner' : ''}`)
+      .attr('x', d => d.x - NODE_WIDTH/2)
+      .attr('y', d => d.y)
+      .attr('width', NODE_WIDTH)
+      .attr('height', NODE_HEIGHT)
+      .on('mouseover', (event, d) => {
+        // Extract name from either firstName/lastName or from name property
+        const firstName = d.data.firstName || (d.data.name ? d.data.name.split(' ')[0] : '?');
+        const lastName = d.data.lastName || (d.data.name && d.data.name.split(' ').length > 1 
+          ? d.data.name.split(' ').slice(1).join(' ') 
+          : '');
         
-        if (birth && death) return `${birth} - ${death}`;
-        if (birth) return `b. ${birth}`;
-        return '';
+        // Extract dates from direct fields or attributes
+        const birthDate = d.data.dateOfBirth || (d.data.attributes && d.data.attributes.birth_date) || 'Unknown';
+        const deathDate = d.data.dateOfDeath || (d.data.attributes && d.data.attributes.death_date) || 'Present';
+        
+        setTooltip({
+          visible: true,
+          content: `${firstName || '?'} ${lastName || ''}\n${birthDate} - ${deathDate}`,
+          x: event.pageX,
+          y: event.pageY
+        });
       })
-      .attr("font-size", "10px")
-      .attr("fill", "var(--qindred-green-600)")
-      .attr("opacity", 0.8);
-    
+      .on('mouseout', () => setTooltip({ visible: false }))
+      .on('click', (event, d) => onNodeClick?.(d.data));
+
+    nodes.html(d => {
+      // Format dates properly
+      let birthYear = '';
+      let deathYear = '';
+      let dateDisplay = '';
+      
+      // Use either direct field or from attributes
+      const birthDate = d.data.dateOfBirth || (d.data.attributes && d.data.attributes.birth_date);
+      const deathDate = d.data.dateOfDeath || (d.data.attributes && d.data.attributes.death_date);
+      
+      if (birthDate) {
+        try {
+          birthYear = birthDate.split('-')[0] || '';
+        } catch (e) {
+          birthYear = '';
+        }
+      }
+      
+      if (deathDate) {
+        try {
+          deathYear = deathDate.split('-')[0] || '';
+        } catch (e) {
+          deathYear = '';
+        }
+      }
+      
+      if (birthYear && deathYear) {
+        dateDisplay = `${birthYear} - ${deathYear}`;
+      } else if (birthYear) {
+        dateDisplay = `${birthYear} -`;
+      } else if (deathYear) {
+        dateDisplay = `? - ${deathYear}`;
+      }
+
+      // Extract name from either direct fields or from name field
+      const firstName = d.data.firstName || (d.data.name ? d.data.name.split(' ')[0] : '?');
+      const lastName = d.data.lastName || (d.data.name && d.data.name.split(' ').length > 1 
+        ? d.data.name.split(' ').slice(1).join(' ') 
+        : '');
+        
+      // Generate initials for avatar placeholder
+      const firstInitial = firstName ? firstName[0].toUpperCase() : '?';
+      const lastInitial = lastName ? lastName[0].toUpperCase() : '';
+      
+      // Determine gender class - check both direct field and attributes
+      const gender = d.data.gender || (d.data.attributes && d.data.attributes.gender) || 'other';
+      const isCurrentUser = d.data.isCurrentUser || d.data.id === d.data.userId;
+      
+      // Get relationship info
+      const relationship = d.data.relationshipToUser || 
+        (d.data.attributes && d.data.attributes.relationship_to_user) || '';
+      
+      console.log('Rendering node:', {
+        name: d.data.name,
+        firstName,
+        lastName,
+        birthDate,
+        deathDate,
+        gender,
+        isCurrentUser
+      });
+      
+      return `
+        <div class="flex flex-col items-center p-2 h-full w-full bg-white rounded-lg border-2 ${
+          isCurrentUser ? 'border-2 border-purple-500 ' : 
+          gender === 'male' ? 'border-blue-200 ' : 'border-pink-200 '
+        }shadow-md hover:shadow-lg transition-all cursor-pointer">
+          <div class="w-16 h-16 rounded-full my-2 ${
+            gender === 'male' ? 'bg-blue-100 ' : 'bg-pink-100 '
+          }flex items-center justify-center overflow-hidden">
+            ${
+              d.data.profilePhoto 
+                ? `<img src="${d.data.profilePhoto}" alt="${firstName || '?'}" class="w-full h-full object-cover" />`
+                : `<span class="text-xl font-medium">${firstInitial}${lastInitial}</span>`
+            }
+          </div>
+          <div class="text-center mt-1">
+            <div class="font-medium text-sm">${firstName || '?'} ${lastName || ''}</div>
+            <div class="text-xs text-gray-600">
+              ${dateDisplay}
+            </div>
+            ${
+              relationship && !d.data.isPartner 
+                ? `<div class="text-xs text-gray-500 mt-1">${relationship}</div>`
+                : ''
+            }
+          </div>
+        </div>
+      `;
+    });
+
   }, [initialData, dimensions, onNodeClick]);
-  
-  // Handle window resize
+
   useEffect(() => {
     const handleResize = () => {
       const container = svgRef.current?.parentElement;
       if (container) {
         setDimensions({
           width: container.clientWidth,
-          height: Math.max(500, container.clientHeight),
+          height: container.clientHeight
         });
       }
     };
-    
+
     handleResize();
     window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
-    <div className="w-full h-full min-h-[400px] overflow-auto bg-qindred-green-50/30 dark:bg-qindred-green-900/5 rounded-lg p-4">
-      <svg 
-        ref={svgRef} 
-        width={dimensions.width} 
-        height={dimensions.height} 
-        className="family-tree-svg"
-      />
+    <div className="relative w-full h-full flex items-center justify-center">
+      <svg ref={svgRef} width={dimensions.width} height={dimensions.height}>
+        {tooltip.visible && (
+          <foreignObject x={tooltip.x + 10} y={tooltip.y + 10} width="150" height="150">
+            <div className="p-2 bg-white rounded shadow-lg border border-gray-200 text-sm">
+              {tooltip.content}
+            </div>
+          </foreignObject>
+        )}
+      </svg>
+
+      <style>{`
+        .spouse-link {
+          stroke-dasharray: 4;
+          stroke-width: 2px;
+        }
+        .partner .node-content {
+          background-color: #f8fafc;
+        }
+      `}</style>
     </div>
   );
-}
+};
+
+export default TreeComponent;

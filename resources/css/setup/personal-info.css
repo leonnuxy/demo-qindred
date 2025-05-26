@@ -1,0 +1,133 @@
+/* Personal Info Step Styles */
+
+.personal-info-container {
+  max-width: 100%;
+}
+
+.info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Form Sections */
+.info-section {
+  margin-bottom: 1.5rem;
+}
+
+.info-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 1rem;
+}
+
+/* Field Groups */
+.field-group {
+  margin-bottom: 1.25rem;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .field-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Form Fields */
+.info-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.375rem;
+}
+
+.info-input, 
+.info-select {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #D1D5DB;
+  font-size: 0.875rem;
+  background-color: white;
+}
+
+@media (max-width: 640px) {
+  .info-input,
+  .info-select {
+    font-size: 16px;
+    padding: 0.625rem 0.75rem;
+  }
+}
+
+/* Date Inputs */
+.date-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Select Dropdowns */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.75rem;
+  height: 0.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Text Areas */
+.info-textarea {
+  width: 100%;
+  min-height: 5rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #D1D5DB;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+@media (max-width: 640px) {
+  .info-textarea {
+    font-size: 16px;
+    padding: 0.625rem 0.75rem;
+  }
+}
+
+/* Optional Fields */
+.optional-label {
+  color: #6B7280;
+  font-size: 0.75rem;
+  margin-left: 0.25rem;
+}
+
+/* Error States */
+.field-error {
+  color: #DC2626;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.error-input {
+  border-color: #DC2626;
+}
+
+.error-input:focus {
+  border-color: #DC2626;
+  box-shadow: 0 0 0 1px #DC2626;
+}

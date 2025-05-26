@@ -1,201 +1,137 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Input } from '@/components/ui/input';
-import { Button, buttonVariants } from '@/components/ui/button'; 
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { MembersList } from './ManageFamilyMembersModal/components/MembersList';
+import { MemberForm } from './ManageFamilyMembersModal/components/MemberForm';
+import { DeleteMemberDialog } from './ManageFamilyMembersModal/components/DeleteMemberDialog';
+import { useFamilyMembers } from './ManageFamilyMembersModal/hooks/useFamilyMembers';
+import { useMemberForm } from './ManageFamilyMembersModal/hooks/useMemberForm';
 
-const initialNewMemberState = {
-  firstName: '',
-  lastName: '',
-  dateOfBirth: '',
-  dateOfDeath: '',
-  isDeceased: false,
-  gender: '',
-  relationshipToUser: '',
-  email: '',
-  addMode: 'direct'
-};
+// Constants have been moved to utils/constants.js
 
 export default function ManageFamilyMembersModal({ 
   isOpen, 
   onClose,
-  familyMembers = [],
-  relationshipTypes,
+  familyMembers: initialFamilyMembers = [],
+  familyTreeId,
+  relationshipTypes = [],
   onAddMember,
   onUpdateMember,
   onDeleteMember
 }) {
-  const [activeTab, setActiveTab] = useState("existing");
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [memberToDelete, setMemberToDelete] = useState(null);
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const [editingMember, setEditingMember] = useState(null);
-  const [newMember, setNewMember] = useState(initialNewMemberState);
+  const {
+    familyMembers,
+    isLoading,
+    searchTerm,
+    setSearchTerm,
+    relationshipFilter,
+    setRelationshipFilter,
+    filteredMembers,
+    handleMemberDeletion,
+    loadFamilyMembers,
+    handleMemberAddition,
+    handleMemberUpdate
+  } = useFamilyMembers({
+    initialFamilyMembers,
+    familyTreeId,
+    onAddMember,
+    onUpdateMember,
+    onDeleteMember
+  });
 
+  const {
+    activeTab,
+    setActiveTab,
+    editingMember,
+    setEditingMember,
+    newMember,
+    setNewMember,
+    memberToDelete,
+    setMemberToDelete,
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+    handleInputChange,
+    handleSelectChange,
+    startEditMember,
+    cancelEdit,
+    resetForm
+  } = useMemberForm();
+
+  // Effects for modal state management
   useEffect(() => {
-    if (!isOpen) {
-      setActiveTab("existing");
-      setEditingMember(null);
-      setNewMember(initialNewMemberState);
+    if (isOpen && familyTreeId) {
+      loadFamilyMembers();
+      resetForm();
+    } else if (!isOpen) {
+      resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, familyTreeId]);
 
-  const handleInputChange = (e, setterFunction) => {
-    const { name, value, type, checked } = e.target;
-    setterFunction(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
+  // Default relationship types based on the backend enum
+const DEFAULT_RELATIONSHIP_TYPES = [
+  { value: 'father', label: 'Father' },
+  { value: 'mother', label: 'Mother' },
+  { value: 'parent', label: 'Parent' },
+  { value: 'spouse', label: 'Spouse' },
+  { value: 'child', label: 'Child' },
+  { value: 'sibling', label: 'Sibling' },
+  { value: 'grandparent', label: 'Grandparent' },
+  { value: 'grandchild', label: 'Grandchild' },
+  { value: 'aunt_uncle', label: 'Aunt/Uncle' },
+  { value: 'niece_nephew', label: 'Niece/Nephew' },
+  { value: 'cousin', label: 'Cousin' },
+  { value: 'in_law', label: 'In-Law' },
+  { value: 'step_parent', label: 'Step Parent' },
+  { value: 'step_child', label: 'Step Child' },
+  { value: 'step_sibling', label: 'Step Sibling' },
+  { value: 'foster_parent', label: 'Foster Parent' },
+  { value: 'foster_child', label: 'Foster Child' },
+  { value: 'adoptive_parent', label: 'Adoptive Parent' },
+  { value: 'adoptive_child', label: 'Adoptive Child' },
+  { value: 'other', label: 'Other' }
+];
+
+const availableRelationshipTypes = useMemo(() => {
+  // If no relationship types are provided, use the defaults
+  if (!Array.isArray(relationshipTypes) || relationshipTypes.length === 0) {
+    return DEFAULT_RELATIONSHIP_TYPES;
+  }
   
-  const handleSelectChange = (name, value, setterFunction) => {
-    setterFunction(prev => ({ 
-      ...prev, 
-      [name]: value 
-    }));
-  };
+  // Filter out any invalid values and ensure proper structure
+  const validTypes = relationshipTypes.filter(rt => 
+    rt && 
+    typeof rt === 'object' && 
+    rt.value && 
+    typeof rt.value === 'string' && 
+    rt.value.trim() !== '' &&
+    rt.label && 
+    typeof rt.label === 'string'
+  );
 
-  const startEditMember = (member) => {
-    const formatDate = (dateStr) => {
-        if (!dateStr) return '';
-        try { return new Date(dateStr).toISOString().split('T')[0]; } 
-        catch (e) { return ''; }
-    };
-    setEditingMember({
-      ...member,
-      firstName: member.firstName || '',
-      lastName: member.lastName || '',
-      dateOfBirth: formatDate(member.dateOfBirth),
-      isDeceased: Boolean(member.dateOfDeath || member.isDeceased),
-      dateOfDeath: formatDate(member.dateOfDeath),
-      gender: member.gender || '',
-      relationshipToUser: member.relationshipToUser || '',
-      email: member.email || '',
-      addMode: 'direct', // When editing, it's always direct details, not invite mode
+  return validTypes.length > 0 ? validTypes : DEFAULT_RELATIONSHIP_TYPES;
+}, [relationshipTypes]);
+
+  // Default relationship types if none are available
+  const defaultRelationshipTypes = [
+    { value: 'child', label: 'Child' },
+    { value: 'parent', label: 'Parent' },
+    { value: 'spouse', label: 'Spouse' },
+    { value: 'sibling', label: 'Sibling' }
+  ];
+
+  const relationshipTypesToShow = availableRelationshipTypes.length > 0 
+    ? availableRelationshipTypes 
+    : defaultRelationshipTypes;
+
+  // This is a duplicate and can be removed since we already have filteredMembers working
+  // Keep this commented out for reference
+  /* const filteredFamilyMembers = useMemo(() => {
+    return familyMembers.filter(member => {
+      const matchesSearchTerm = member.firstName.toLowerCase().includes(searchTerm.toLowerCase()) || member.lastName.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRelationshipFilter = relationshipFilter ? member.relationshipToUser === relationshipFilter : true;
+      return matchesSearchTerm && matchesRelationshipFilter;
     });
-    setActiveTab("edit");
-  };
-
-  const cancelEdit = () => {
-    setEditingMember(null);
-    setActiveTab("existing");
-  };
-  
-  const handleSaveEdit = async () => {
-    if (!editingMember) return;
-    if (!editingMember.firstName || !editingMember.lastName || !editingMember.relationshipToUser) {
-        toast({ title: "Validation Error", description: "First name, last name, and relationship are required.", variant: "destructive" });
-        return;
-    }
-    try {
-      setIsLoading(true);
-      await onUpdateMember(editingMember);
-      toast({ 
-        title: "Success", 
-        description: `Successfully updated ${editingMember.firstName} ${editingMember.lastName}.` 
-      });
-      setEditingMember(null);
-      setActiveTab("existing");
-    } catch (error) {
-      console.error("Update member error:", error);
-      toast({ 
-        title: "Error", 
-        description: "Failed to update member. Please try again.", 
-        variant: "destructive" 
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const startDeleteMember = (member) => {
-    setMemberToDelete(member);
-    setDeleteDialogOpen(true);
-  };
-
-  const confirmDeleteMember = async () => {
-    if (!memberToDelete) return;
-    try {
-      setIsLoading(true);
-      await onDeleteMember(memberToDelete.id);
-      toast({ 
-        title: "Success", 
-        description: `Successfully removed ${memberToDelete.firstName} ${memberToDelete.lastName}.` 
-      });
-      setDeleteDialogOpen(false);
-      setMemberToDelete(null);
-      setActiveTab("existing");
-    } catch (error) {
-      console.error("Delete member error:", error);
-      toast({ 
-        title: "Error", 
-        description: "Failed to delete member. Please try again.", 
-        variant: "destructive" 
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAddNewMember = async () => {
-    if (newMember.addMode === 'direct') {
-      if (!newMember.firstName || !newMember.lastName || !newMember.relationshipToUser) {
-        toast({ title: "Validation Error", description: "First name, last name, and relationship are required for direct add.", variant: "destructive" });
-        return;
-      }
-    } else { 
-      if (!newMember.email || !newMember.relationshipToUser) {
-        toast({ title: "Validation Error", description: "Email and relationship are required for invite.", variant: "destructive" });
-        return;
-      }
-    }
-    
-    try {
-      setIsLoading(true);
-      await onAddMember(newMember);
-      toast({ 
-        title: "Success", 
-        description: newMember.addMode === 'invite' 
-          ? `Invitation sent to ${newMember.email}.` 
-          : `Successfully added ${newMember.firstName} ${newMember.lastName}.` 
-      });
-      setNewMember(initialNewMemberState);
-      setActiveTab("existing");
-    } catch (error) {
-      console.error("Add member error:", error);
-      toast({ 
-        title: "Error", 
-        description: "Failed to add member. Please try again.", 
-        variant: "destructive" 
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const availableRelationshipTypes = Array.isArray(relationshipTypes) && relationshipTypes.length > 0 
-    ? relationshipTypes 
-    : [ 
-        { value: 'father', label: 'Father' }, { value: 'mother', label: 'Mother' },
-        { value: 'spouse', label: 'Spouse' }, { value: 'child', label: 'Child' },
-        { value: 'sibling', label: 'Sibling' }, { value: 'other', label: 'Other' },
-      ];
+  }, [familyMembers, searchTerm, relationshipFilter]); */
 
   const renderMemberFormFields = (memberData, setMemberDataFunction, formPrefix = "") => (
     <>
@@ -267,10 +203,13 @@ export default function ManageFamilyMembersModal({
           <div>
             <Label htmlFor={`${formPrefix}gender`} className="form-label">Gender</Label>
             <Select 
-              name="gender" value={memberData.gender} 
+              name="gender" 
+              value={memberData.gender || ''} 
               onValueChange={(value) => handleSelectChange('gender', value, setMemberDataFunction)}
             >
-              <SelectTrigger className="mt-1 w-full"><SelectValue placeholder="Select gender" /></SelectTrigger>
+              <SelectTrigger className="mt-1 w-full">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="male">Male</SelectItem>
                 <SelectItem value="female">Female</SelectItem>
@@ -292,18 +231,61 @@ export default function ManageFamilyMembersModal({
           )}
         </>
       )}
-      <div>
-        <Label htmlFor={`${formPrefix}relationshipToUser`} className="form-label">
-          Their Relationship to You * <span className="text-xs text-gray-500 ml-1">(e.g., if adding your child, select "Child")</span>
-        </Label>
+      {/* Relationship to user section */}
+      <div className="mb-5">
+        <Label htmlFor={`${formPrefix}relationshipToUser`} className="block mb-2">Relationship to you <span className="text-red-500">*</span></Label>
         <Select 
-          name="relationshipToUser" value={memberData.relationshipToUser} 
+          name="relationshipToUser" 
+          value={memberData.relationshipToUser || ''} 
           onValueChange={(value) => handleSelectChange('relationshipToUser', value, setMemberDataFunction)}
+          required
         >
-          <SelectTrigger className="mt-1 w-full"><SelectValue placeholder="Select relationship" /></SelectTrigger>
+          <SelectTrigger id={`${formPrefix}relationshipToUser`} className="w-full">
+            <SelectValue placeholder="Select relationship" />
+          </SelectTrigger>
           <SelectContent>
-            {availableRelationshipTypes.map(type => (
-              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+            {/* Group relationship types by category */}
+            {Object.entries(relationshipCategories).map(([category, types]) => {
+              // Get relationship types for this category
+              const categoryTypes = availableRelationshipTypes.filter(rt => types.includes(rt.value));
+              
+              // Only render the group if it has items
+              return categoryTypes.length > 0 ? (
+                <SelectGroup key={category}>
+                  <SelectLabel className="text-sm font-semibold">
+                    {category}
+                  </SelectLabel>
+                  {categoryTypes.map(rt => (
+                    <SelectItem key={rt.value} value={rt.value}>
+                      {rt.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ) : null;
+            })}
+          </SelectContent>
+        </Select>
+        {!memberData.relationshipToUser && (
+          <p className="text-xs text-qindred-green-600 dark:text-qindred-green-400 mt-1">
+            This information helps build your family tree connections.
+          </p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor={`${formPrefix}relationshipType`} className="form-label">Relationship Type</Label>
+        <Select 
+          name="relationshipType" 
+          value={memberData.relationshipType || ''} 
+          onValueChange={(value) => handleSelectChange('relationshipType', value, setMemberDataFunction)}
+        >
+          <SelectTrigger className="mt-1 w-full">
+            <SelectValue placeholder="Select relationship type" />
+          </SelectTrigger>
+          <SelectContent>
+            {relationshipTypesToShow.map((type) => (
+              <SelectItem key={type.value} value={type.value}>
+                {type.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -314,152 +296,93 @@ export default function ManageFamilyMembersModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        {/* Increased max-width for more space */}
         <DialogContent className="max-w-4xl w-[90vw] md:w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onInteractOutside={(e) => e.preventDefault()}>
-          <DialogTitle className="text-2xl font-semibold text-qindred-green-900 dark:text-qindred-green-400">Manage Family Members</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold text-qindred-green-900 dark:text-qindred-green-400">
+            Manage Family Members
+          </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground mb-6">
             View, edit, or add members to your family tree.
           </DialogDescription>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className={`grid w-full mb-6 ${editingMember ? 'grid-cols-3' : 'grid-cols-2'} gap-1`}>
-              <TabsTrigger value="existing" className="data-[state=active]:bg-qindred-green-50 data-[state=active]:text-qindred-green-900 dark:data-[state=active]:bg-qindred-green-900/30 dark:data-[state=active]:text-qindred-green-400">
-                Existing Members
-              </TabsTrigger>
-              <TabsTrigger value="add" className="data-[state=active]:bg-qindred-green-50 data-[state=active]:text-qindred-green-900 dark:data-[state=active]:bg-qindred-green-900/30 dark:data-[state=active]:text-qindred-green-400">
-                Add New Member
-              </TabsTrigger>
-              {/* Conditional rendering for Edit tab trigger */}
+              <TabsTrigger value="existing">Existing Members</TabsTrigger>
+              <TabsTrigger value="add">Add New Member</TabsTrigger>
               {editingMember && (
-                <TabsTrigger value="edit" className="data-[state=active]:bg-qindred-green-50 data-[state=active]:text-qindred-green-900 dark:data-[state=active]:bg-qindred-green-900/30 dark:data-[state=active]:text-qindred-green-400">
-                  Edit: {editingMember.firstName}
-                </TabsTrigger>
+                <TabsTrigger value="edit">Edit: {editingMember.firstName}</TabsTrigger>
               )}
             </TabsList>
             
-            <TabsContent value="existing" className="mt-0 outline-none ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-              {familyMembers.length === 0 ? (
-                <div className="text-center py-10 bg-slate-50/50 dark:bg-slate-800/30 rounded-lg">
-                  <p className="text-gray-500 dark:text-gray-400">No family members found in this tree.</p>
-                  <Button onClick={() => setActiveTab("add")} className="mt-4 bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white">
-                    Add First Member
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3 max-h-[calc(70vh-200px)] overflow-y-auto pr-2">
-                  {familyMembers.map(member => (
-                    <div key={member.id} className="border border-qindred-green-200 dark:border-qindred-green-800/30 rounded-lg p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-md hover:border-qindred-green-400 dark:hover:border-qindred-green-600/50 transition-all">
-                      <div className="flex-grow">
-                        <h3 className="font-semibold text-lg text-qindred-green-900 dark:text-qindred-green-400">{member.firstName} {member.lastName}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Relationship to you: {availableRelationshipTypes.find(rt => rt.value === member.relationshipToUser)?.label || member.relationshipToUser || 'N/A'}
-                        </p>
-                        {member.dateOfBirth && (
-                          <p className="text-xs text-gray-500 dark:text-gray-500">
-                            Born: {new Date(member.dateOfBirth).toLocaleDateString()}
-                            {member.dateOfDeath && ` • Died: ${new Date(member.dateOfDeath).toLocaleDateString()}`}
-                            {member.isDeceased && !member.dateOfDeath && " (Deceased)"}
-                          </p>
-                        )}
-                         {member.email && <p className="text-xs text-gray-500 dark:text-gray-500">Email: {member.email}</p>}
-                      </div>
-                      <div className="flex space-x-2 flex-shrink-0 self-start sm:self-center mt-2 sm:mt-0">
-                        <Button variant="outline" size="sm" onClick={() => startEditMember(member)} 
-                                className="border-qindred-green-500 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 text-qindred-green-700 dark:text-qindred-green-500">Edit</Button>
-                        <Button variant="destructive" size="sm" onClick={() => startDeleteMember(member)}>Delete</Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+            <TabsContent value="existing">
+              <MembersList
+                members={filteredMembers}
+                onEdit={startEditMember}
+                onDelete={setMemberToDelete}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                relationshipFilter={relationshipFilter}
+                onRelationshipFilterChange={setRelationshipFilter}
+                relationshipTypes={relationshipTypes}
+                isLoading={isLoading}
+              />
             </TabsContent>
             
-            <TabsContent value="add" className="mt-0 outline-none ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-              <div className="space-y-6">
-                <div className="flex space-x-2 mb-6">
-                  <Button 
-                    type="button" 
-                    variant={newMember.addMode === 'direct' ? 'default' : 'outline'} 
-                    onClick={() => handleSelectChange('addMode', 'direct', setNewMember)}
-                    className={`flex-1 ${newMember.addMode === 'direct' ? 'bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
-                  > Add Directly </Button>
-                  <Button 
-                    type="button" 
-                    variant={newMember.addMode === 'invite' ? 'default' : 'outline'} 
-                    onClick={() => handleSelectChange('addMode', 'invite', setNewMember)}
-                    className={`flex-1 ${newMember.addMode === 'invite' ? 'bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white' : 'border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500'}`}
-                  > Invite by Email </Button>
-                </div>
-                {renderMemberFormFields(newMember, setNewMember, "new-")}
-                <div className="flex justify-end pt-6 space-x-3">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => { setNewMember(initialNewMemberState); setActiveTab("existing"); }}
-                    className="border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30"
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="button" 
-                    onClick={handleAddNewMember} 
-                    disabled={isLoading}
-                    className="bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white"
-                  >
-                    {isLoading ? (newMember.addMode === 'invite' ? "Sending..." : "Adding...") : (newMember.addMode === 'invite' ? "Send Invite" : "Add Member")}
-                  </Button>
-                </div>
-              </div>
+            <TabsContent value="add">
+              <MemberForm
+                member={newMember}
+                onInputChange={(e) => handleInputChange(e, setNewMember)}
+                onSelectChange={(name, value) => handleSelectChange(name, value, setNewMember)}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  await handleMemberAddition(newMember);
+                  setActiveTab("existing");
+                }}
+                onCancel={() => {
+                  setNewMember(initialMemberState);
+                  setActiveTab("existing");
+                }}
+                isLoading={isLoading}
+                mode="add"
+                relationshipTypes={relationshipTypes}
+              />
             </TabsContent>
             
             {editingMember && (
-              <TabsContent value="edit" className="mt-0 outline-none ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                <div className="space-y-6">
-                  <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">
-                    Editing: {editingMember.firstName} {editingMember.lastName}
-                  </h4>
-                  {renderMemberFormFields(editingMember, setEditingMember, "edit-")}
-                  <div className="flex justify-end pt-6 space-x-3">
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={cancelEdit}
-                      className="border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30"
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      type="button" 
-                      onClick={handleSaveEdit} 
-                      disabled={isLoading}
-                      className="bg-[oklch(62.7%_0.194_149.214)] hover:bg-[oklch(57%_0.19_149)] text-white"
-                    >
-                      {isLoading ? "Saving..." : "Save Changes"}
-                    </Button>
-                  </div>
-                </div>
+              <TabsContent value="edit">
+                <MemberForm
+                  member={editingMember}
+                  onInputChange={(e) => handleInputChange(e, setEditingMember)}
+                  onSelectChange={(name, value) => handleSelectChange(name, value, setEditingMember)}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    await handleMemberUpdate(editingMember);
+                    setActiveTab("existing");
+                  }}
+                  onCancel={() => {
+                    setEditingMember(null);
+                    setActiveTab("existing");
+                  }}
+                  isLoading={isLoading}
+                  mode="edit"
+                  relationshipTypes={relationshipTypes}
+                />
               </TabsContent>
             )}
           </Tabs>
         </DialogContent>
       </Dialog>
       
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent onInteractOutside={(e) => e.preventDefault()}>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {memberToDelete && `This will permanently delete ${memberToDelete.firstName} ${memberToDelete.lastName} from your family tree. This action cannot be undone.`}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setMemberToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteMember} disabled={isLoading} className={buttonVariants({ variant: "destructive" })}>
-              {isLoading ? "Deleting..." : "Yes, Delete Member"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteMemberDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={async () => {
+          await handleMemberDeletion(memberToDelete.id);
+          setDeleteDialogOpen(false);
+          setMemberToDelete(null);
+        }}
+        memberName={memberToDelete ? `${memberToDelete.firstName} ${memberToDelete.lastName}` : ''}
+        processing={isLoading}
+      />
     </>
   );
 }

@@ -1,56 +1,59 @@
 /* — Simplified Footer Styles — */
 .site-footer {
-  border-top: 1px solid #e5e7eb;
-  padding: 1rem 1rem; /* Further reduced vertical padding */
-}
-
-.simple-footer {
-  padding-bottom: 5px; /* Remove padding for simple footer */
-  border-top: none;
-  width: 50%;
+  border-top: 1px solid var(--qindred-green-100, #e5e7eb);
+  padding: 1rem;
+  background-color: hsl(var(--background));
 }
 
 .footer-wrapper {
   max-width: 80rem;
   margin-left: auto;
   margin-right: auto;
-  /* Removed padding, handled by site-footer */
 }
 
-/* Remove grid layout for content */
+/* Footer content structure */
 .footer-content {
-  /* display: grid; */ /* No longer needed */
-  /* grid-template-columns: 1fr; */
-  /* gap: 2rem; */
+  display: flex;
+  align-items: center;
 }
 
-/* Remove section styles */
-.footer-section {
-  /* margin-top: 1rem; */
-  /* margin-bottom: 1rem; */
+.footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 2rem;
 }
 
-.footer-heading {
-  /* display: none; /* Hide headings */
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .footer-links {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.25rem 0.75rem; /* Further reduced gap (vertical horizontal) */
-  margin-top: 0;
-  margin-bottom: 0.75rem; /* Reduced space before copyright */
+  gap: 0.5rem 1.5rem;
+  margin: 0;
 }
 
 .footer-link {
   font-size: 0.75rem; /* Even smaller font size (text-xs equivalent) */
-  color: #6b7280;
+  color: hsl(var(--muted-foreground));
   text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 0.5rem 0.75rem; /* Larger touch target */
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .footer-link:hover {
-  color: #111827;
-  text-decoration: underline; /* Add underline on hover */
+  color: var(--qindred-green-700);
+  text-decoration: none;
+  background-color: var(--qindred-green-50, hsl(var(--muted) / 0.3));
 }
 
 .footer-bottom {
@@ -62,14 +65,107 @@
 
 .copyright {
   font-size: 0.75rem; /* Even smaller font size (text-xs equivalent) */
-  color: #9ca3af;
+  color: hsl(var(--muted-foreground) / 0.8);
   margin: 0; /* Remove default paragraph margin */
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-/* Remove social links styles if not used */
+/* Social links styles */
 .social-links {
-  /* display: flex; */
-  /* gap: 1.5rem; */
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.social-link {
+  color: hsl(var(--muted-foreground));
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+}
+
+.social-link:hover {
+  color: var(--qindred-green-600);
+  transform: translateY(-1px);
+  background-color: var(--qindred-green-50, hsl(var(--muted) / 0.3));
+}
+
+/* New CSS classes for footer brand and made with text */
+.footer-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.made-with {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.75rem;
+  gap: 0.25rem;
+  color: hsl(var(--muted-foreground) / 0.7);
+  font-size: 0.7rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 0.75rem;
+  }
+
+  .footer-row {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .footer-left {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .footer-links {
+    order: 2;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .footer-links::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .footer-link {
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .copyright {
+    order: 3;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-align: center;
+  }
+
+  .social-links {
+    order: 1;
+  }
+
+  .social-link {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+  }
 }
 
 /* Remove media query overrides if simplified layout works */
@@ -79,3 +175,16 @@
 /* .simple-footer { ... } */
 /* .login-container, .signup-container { ... } */
 /* .login-content { ... } */
+
+/* Dark mode styling */
+.dark .site-footer {
+  border-top-color: var(--qindred-green-800, hsl(var(--border)));
+}
+
+.dark .footer-link:hover {
+  background-color: hsl(var(--accent) / 0.2);
+}
+
+.dark .social-link:hover {
+  background-color: hsl(var(--accent) / 0.2);
+}

@@ -1,0 +1,52 @@
+{
+  "familyTree": {
+    "id": "0196fbaa-0d41-7076-b405-5d40618cbffd",
+    "name": "Smith Family Tree",
+    "description": "Our immediate family tree",
+    "created_at": "May 20, 2025",
+    "user_role_in_tree": "Member",
+    "is_creator": true,
+    "privacy": "private"
+  },
+  
+  "hierarchicalTreeData": {
+    "id": "current-user-id",
+    "firstName": "Alex",
+    "lastName": "Smith",
+    "gender": "male",
+    "isCurrentUser": true,
+    "relationshipToUser": "self",
+    "partners": [],
+    "children": []
+  },
+  
+  "membersList": [
+    {
+      "id": "current-user-id",
+      "firstName": "Alex",
+      "lastName": "Smith",
+      "dateOfBirth": "1990-03-10",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "self",
+      "email": "alex.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/alex-smith.jpg"
+    }
+  ],
+  
+  "familyTreeLogs": [
+    {
+      "id": "log-1",
+      "content": "Created my family tree",
+      "author": {
+        "id": "current-user-id",
+        "name": "Alex Smith",
+        "avatar": "/storage/profile-photos/alex-smith.jpg"
+      },
+      "timestamp": "May 20, 2025 14:30",
+      "created_at": "2025-05-20T14:30:00.000Z",
+      "likes": 0
+    }
+  ]
+}

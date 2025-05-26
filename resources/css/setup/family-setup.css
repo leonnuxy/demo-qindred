@@ -1,0 +1,170 @@
+/* Family Setup Step Styles */
+
+.family-setup-container {
+  max-width: 100%;
+}
+
+.family-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.family-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Member Add Form */
+.member-add-form {
+  background-color: #F9FAFB;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .member-add-form {
+    padding: 1.5rem;
+  }
+}
+
+.member-add-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.member-add-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+/* Member Fields Grid */
+.member-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .member-fields-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Member List */
+.member-list {
+  margin-top: 1.5rem;
+  border-top: 1px solid #E5E7EB;
+}
+
+.member-list-empty {
+  padding: 1rem 0;
+  text-align: center;
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+.member-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+@media (max-width: 640px) {
+  .member-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.member-name {
+  font-weight: 500;
+  color: #1F2937;
+}
+
+.member-relationship {
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+.member-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Form Fields */
+.field-group {
+  margin-bottom: 1.25rem;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.375rem;
+}
+
+.field-input {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #D1D5DB;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .field-input {
+    font-size: 16px;
+    padding: 0.625rem 0.75rem;
+  }
+}
+
+.field-error {
+  color: #DC2626;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Add Member Button */
+.add-member-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem;
+  background-color: #F9FAFB;
+  border: 1px dashed #D1D5DB;
+  border-radius: 0.375rem;
+  color: #6B7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-member-button:hover {
+  background-color: #F3F4F6;
+  border-color: #9CA3AF;
+  color: #374151;
+}
+
+.add-member-icon {
+  margin-right: 0.5rem;
+  width: 1rem;
+  height: 1rem;
+}

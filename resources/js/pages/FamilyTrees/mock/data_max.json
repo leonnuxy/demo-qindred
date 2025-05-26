@@ -1,0 +1,399 @@
+{
+  "familyTree": {
+    "id": "0196fbaa-0d41-7076-b405-5d40618cbffd",
+    "name": "Smith Family Tree",
+    "description": "Our extensive family history dating back three generations",
+    "created_at": "May 20, 2025",
+    "user_role_in_tree": "Member",
+    "is_creator": true,
+    "privacy": "private"
+  },
+  
+  "hierarchicalTreeData": {
+    "id": "grandfather-id",
+    "firstName": "George",
+    "lastName": "Smith",
+    "gender": "male",
+    "isCurrentUser": false,
+    "relationshipToUser": "grandfather",
+    "partners": [
+      {
+        "id": "grandmother-id",
+        "firstName": "Margaret",
+        "lastName": "Smith",
+        "gender": "female",
+        "isCurrentUser": false,
+        "relationshipToUser": "grandmother",
+        "children": [
+          {
+            "id": "father-id",
+            "firstName": "John",
+            "lastName": "Smith",
+            "gender": "male",
+            "isCurrentUser": false,
+            "relationshipToUser": "father",
+            "partners": [
+              {
+                "id": "mother-id",
+                "firstName": "Jane",
+                "lastName": "Smith",
+                "gender": "female",
+                "isCurrentUser": false,
+                "relationshipToUser": "mother",
+                "children": [
+                  {
+                    "id": "current-user-id",
+                    "firstName": "Alex",
+                    "lastName": "Smith",
+                    "gender": "male",
+                    "isCurrentUser": true,
+                    "relationshipToUser": "self",
+                    "partners": [
+                      {
+                        "id": "spouse-id",
+                        "firstName": "Emily",
+                        "lastName": "Smith",
+                        "gender": "female",
+                        "isCurrentUser": false,
+                        "relationshipToUser": "spouse",
+                        "children": [
+                          {
+                            "id": "child-1-id",
+                            "firstName": "Emma",
+                            "lastName": "Smith",
+                            "gender": "female",
+                            "isCurrentUser": false,
+                            "relationshipToUser": "child",
+                            "children": []
+                          },
+                          {
+                            "id": "child-2-id",
+                            "firstName": "Liam",
+                            "lastName": "Smith",
+                            "gender": "male",
+                            "isCurrentUser": false,
+                            "relationshipToUser": "child",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "sister-id",
+                    "firstName": "Sarah",
+                    "lastName": "Smith",
+                    "gender": "female",
+                    "isCurrentUser": false,
+                    "relationshipToUser": "sibling",
+                    "partners": [
+                      {
+                        "id": "brother-in-law-id",
+                        "firstName": "David",
+                        "lastName": "Johnson",
+                        "gender": "male",
+                        "isCurrentUser": false,
+                        "relationshipToUser": "in_law",
+                        "children": [
+                          {
+                            "id": "niece-id",
+                            "firstName": "Sophie",
+                            "lastName": "Johnson",
+                            "gender": "female",
+                            "isCurrentUser": false,
+                            "relationshipToUser": "niece_nephew",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "brother-id",
+                    "firstName": "Michael",
+                    "lastName": "Smith",
+                    "gender": "male",
+                    "isCurrentUser": false,
+                    "relationshipToUser": "sibling",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "aunt-id",
+            "firstName": "Mary",
+            "lastName": "Jones",
+            "gender": "female",
+            "isCurrentUser": false,
+            "relationshipToUser": "aunt_uncle",
+            "partners": [
+              {
+                "id": "uncle-id",
+                "firstName": "Robert",
+                "lastName": "Jones",
+                "gender": "male",
+                "isCurrentUser": false,
+                "relationshipToUser": "aunt_uncle",
+                "children": [
+                  {
+                    "id": "cousin-1-id",
+                    "firstName": "Jennifer",
+                    "lastName": "Jones",
+                    "gender": "female",
+                    "isCurrentUser": false,
+                    "relationshipToUser": "cousin",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  
+  "membersList": [
+    {
+      "id": "grandfather-id",
+      "firstName": "George",
+      "lastName": "Smith",
+      "dateOfBirth": "1935-03-15",
+      "dateOfDeath": "2020-11-20",
+      "isDeceased": true,
+      "gender": "male",
+      "relationshipToUser": "grandfather",
+      "profilePhoto": "/storage/profile-photos/george-smith.jpg"
+    },
+    {
+      "id": "grandmother-id",
+      "firstName": "Margaret",
+      "lastName": "Smith",
+      "dateOfBirth": "1938-09-28",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "grandmother",
+      "email": "margaret.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/margaret-smith.jpg"
+    },
+    {
+      "id": "father-id",
+      "firstName": "John",
+      "lastName": "Smith",
+      "dateOfBirth": "1960-05-15",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "father",
+      "email": "john.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/john-smith.jpg"
+    },
+    {
+      "id": "mother-id",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "dateOfBirth": "1962-08-22",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "mother",
+      "email": "jane.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/jane-smith.jpg"
+    },
+    {
+      "id": "aunt-id",
+      "firstName": "Mary",
+      "lastName": "Jones",
+      "dateOfBirth": "1965-04-12",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "aunt_uncle",
+      "email": "mary.jones@example.com",
+      "profilePhoto": "/storage/profile-photos/mary-jones.jpg"
+    },
+    {
+      "id": "uncle-id",
+      "firstName": "Robert",
+      "lastName": "Jones",
+      "dateOfBirth": "1963-12-05",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "aunt_uncle",
+      "email": "robert.jones@example.com",
+      "profilePhoto": "/storage/profile-photos/robert-jones.jpg"
+    },
+    {
+      "id": "current-user-id",
+      "firstName": "Alex",
+      "lastName": "Smith",
+      "dateOfBirth": "1990-03-10",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "self",
+      "email": "alex.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/alex-smith.jpg"
+    },
+    {
+      "id": "spouse-id",
+      "firstName": "Emily",
+      "lastName": "Smith",
+      "dateOfBirth": "1991-07-18",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "spouse",
+      "email": "emily.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/emily-smith.jpg"
+    },
+    {
+      "id": "sister-id",
+      "firstName": "Sarah",
+      "lastName": "Smith",
+      "dateOfBirth": "1992-11-28",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "sibling",
+      "email": "sarah.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/sarah-smith.jpg"
+    },
+    {
+      "id": "brother-id",
+      "firstName": "Michael",
+      "lastName": "Smith",
+      "dateOfBirth": "1994-07-03",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "sibling",
+      "email": "michael.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/michael-smith.jpg"
+    },
+    {
+      "id": "brother-in-law-id",
+      "firstName": "David",
+      "lastName": "Johnson",
+      "dateOfBirth": "1991-09-15",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "in_law",
+      "email": "david.johnson@example.com",
+      "profilePhoto": "/storage/profile-photos/david-johnson.jpg"
+    },
+    {
+      "id": "child-1-id",
+      "firstName": "Emma",
+      "lastName": "Smith",
+      "dateOfBirth": "2020-12-25",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "child",
+      "profilePhoto": "/storage/profile-photos/emma-smith.jpg"
+    },
+    {
+      "id": "child-2-id",
+      "firstName": "Liam",
+      "lastName": "Smith",
+      "dateOfBirth": "2023-06-15",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "child",
+      "profilePhoto": "/storage/profile-photos/liam-smith.jpg"
+    },
+    {
+      "id": "niece-id",
+      "firstName": "Sophie",
+      "lastName": "Johnson",
+      "dateOfBirth": "2021-03-30",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "niece_nephew",
+      "profilePhoto": "/storage/profile-photos/sophie-johnson.jpg"
+    },
+    {
+      "id": "cousin-1-id",
+      "firstName": "Jennifer",
+      "lastName": "Jones",
+      "dateOfBirth": "1988-02-14",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "cousin",
+      "email": "jennifer.jones@example.com",
+      "profilePhoto": "/storage/profile-photos/jennifer-jones.jpg"
+    }
+  ],
+  
+  "familyTreeLogs": [
+    {
+      "id": "log-1",
+      "content": "Created our extended family tree",
+      "author": {
+        "id": "current-user-id",
+        "name": "Alex Smith",
+        "avatar": "/storage/profile-photos/alex-smith.jpg"
+      },
+      "timestamp": "May 20, 2025 14:30",
+      "created_at": "2025-05-20T14:30:00.000Z",
+      "likes": 5
+    },
+    {
+      "id": "log-2",
+      "content": "Added information about Grandpa George. Rest in peace. ❤️",
+      "author": {
+        "id": "father-id",
+        "name": "John Smith",
+        "avatar": "/storage/profile-photos/john-smith.jpg"
+      },
+      "timestamp": "May 21, 2025 10:15",
+      "created_at": "2025-05-21T10:15:00.000Z",
+      "likes": 8
+    },
+    {
+      "id": "log-3",
+      "content": "Welcome to the family, baby Liam! 👶",
+      "author": {
+        "id": "mother-id",
+        "name": "Jane Smith",
+        "avatar": "/storage/profile-photos/jane-smith.jpg"
+      },
+      "timestamp": "May 22, 2025 16:45",
+      "created_at": "2025-05-22T16:45:00.000Z",
+      "likes": 12
+    },
+    {
+      "id": "log-4",
+      "content": "Updated all family photos and added missing birth dates",
+      "author": {
+        "id": "current-user-id",
+        "name": "Alex Smith",
+        "avatar": "/storage/profile-photos/alex-smith.jpg"
+      },
+      "timestamp": "May 23, 2025 09:20",
+      "created_at": "2025-05-23T09:20:00.000Z",
+      "likes": 4
+    },
+    {
+      "id": "log-5",
+      "content": "Planning a big family reunion next month! Save the date: June 15th",
+      "author": {
+        "id": "aunt-id",
+        "name": "Mary Jones",
+        "avatar": "/storage/profile-photos/mary-jones.jpg"
+      },
+      "timestamp": "May 24, 2025 11:30",
+      "created_at": "2025-05-24T11:30:00.000Z",
+      "likes": 15
+    }
+  ]
+}

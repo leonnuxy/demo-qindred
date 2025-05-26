@@ -13,7 +13,12 @@ export default defineConfig({
             manifest: true,
             buildDirectory: 'build'
         }),
-        react(),
+        react({
+            // Prevent double registration of custom elements during HMR
+            fastRefresh: true,
+            exclude: ['**/node_modules/**'],
+            include: ['**/*.jsx', '**/*.tsx'],
+        }),
         tailwindcss(),
     ],
     esbuild: {

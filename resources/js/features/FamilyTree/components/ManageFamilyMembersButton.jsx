@@ -2,13 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { UserPlus } from 'lucide-react';
 import ManageFamilyMembersModal from './ManageFamilyMembersModal';
-import { 
-  getFamilyMembers, 
-  addFamilyMember, 
-  updateFamilyMember, 
-  deleteFamilyMember, 
-  getRelationshipTypes 
-} from '../services/familyMemberService';
+import FamilyMembersStats from './FamilyMembersStats';
 import { useToast } from "@/components/ui/use-toast";
 
 export default function ManageFamilyMembersButton({ 
@@ -16,7 +10,8 @@ export default function ManageFamilyMembersButton({
   onMembersUpdated,
   buttonClassName,
   buttonVariant = "default", 
-  buttonSize = "default" 
+  buttonSize = "default",
+  showStats = true
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [familyMembers, setFamilyMembers] = useState([]);
@@ -26,13 +21,17 @@ export default function ManageFamilyMembersButton({
   
   const fetchMembers = async () => {
     if (!familyTreeId) return;
-    
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      
-      // Make API calls separately to isolate failures
+      // load the service module on-demand
+      const svc = await import(
+        /* webpackChunkName: "family-member-service" */
+        '../services/familyMemberService'
+      );
+
+      // getFamilyMembers
       try {
-        const membersData = await getFamilyMembers(familyTreeId);
+        const membersData = await svc.getFamilyMembers(familyTreeId);
         setFamilyMembers(membersData || []);
       } catch (memberError) {
         console.error("Failed to fetch family members:", memberError);
@@ -43,13 +42,19 @@ export default function ManageFamilyMembersButton({
         });
         setFamilyMembers([]);
       }
-      
+
+      // getRelationshipTypes
       try {
-        const relationshipTypesData = await getRelationshipTypes();
-        setRelationshipTypes(relationshipTypesData || []);
-      } catch (relationshipError) {
-        console.error("Failed to fetch relationship types:", relationshipError);
-        // Use fallback relationship types if API fails
+        const types = await svc.getRelationshipTypes();
+        const valid = (types || []).filter(rt =>
+          rt && typeof rt.value === 'string' && rt.value !== ""
+        );
+        if (valid.length !== (types || []).length) {
+          console.warn("Filtered out invalid relationship types.");
+        }
+        setRelationshipTypes(valid);
+      } catch {
+        // fallback
         setRelationshipTypes([
           { value: 'father', label: 'Father' },
           { value: 'mother', label: 'Mother' },
@@ -59,89 +64,72 @@ export default function ManageFamilyMembersButton({
           { value: 'other', label: 'Other' }
         ]);
       }
-    } catch (error) {
-      console.error("fetchMembers caught:", error);
     } finally {
       setIsLoading(false);
     }
   };
   
-  // Load data when the modal opens
   useEffect(() => {
-    if (isModalOpen) {
-      fetchMembers();
-    }
+    if (isModalOpen) fetchMembers();
   }, [isModalOpen, familyTreeId]);
   
   const handleAddMember = async (memberData) => {
-    try {
-      const newMember = await addFamilyMember(familyTreeId, memberData);
-      setFamilyMembers(prev => [...prev, newMember]);
-      
-      // Notify parent component about the update
-      if (onMembersUpdated) {
-        onMembersUpdated();
-      }
-      
-      return newMember;
-    } catch (error) {
-      throw error;
-    }
+    const svc = await import(
+      /* webpackChunkName: "family-member-service" */
+      '../services/familyMemberService'
+    );
+    const newMember = await svc.addFamilyMember(familyTreeId, memberData);
+    setFamilyMembers(prev => [...prev, newMember]);
+    onMembersUpdated?.();
+    return newMember;
   };
   
   const handleUpdateMember = async (memberData) => {
-    try {
-      console.log('Updating member:', memberData);
-      const updatedMember = await updateFamilyMember(familyTreeId, memberData.id, memberData);
-      
-      setFamilyMembers(prev => 
-        prev.map(member => member.id === updatedMember.id ? updatedMember : member)
-      );
-      
-      // Notify parent component about the update
-      if (onMembersUpdated) {
-        onMembersUpdated();
-      }
-      
-      return updatedMember;
-    } catch (error) {
-      throw error;
-    }
+    const svc = await import(
+      /* webpackChunkName: "family-member-service" */
+      '../services/familyMemberService'
+    );
+    const updated = await svc.updateFamilyMember(familyTreeId, memberData.id, memberData);
+    setFamilyMembers(prev =>
+      prev.map(m => m.id === updated.id ? updated : m)
+    );
+    onMembersUpdated?.();
+    return updated;
   };
   
   const handleDeleteMember = async (memberId) => {
-    try {
-      await deleteFamilyMember(familyTreeId, memberId);
-      
-      setFamilyMembers(prev => 
-        prev.filter(member => member.id !== memberId)
-      );
-      
-      // Notify parent component about the update
-      if (onMembersUpdated) {
-        onMembersUpdated();
-      }
-    } catch (error) {
-      throw error;
-    }
+    const svc = await import(
+      /* webpackChunkName: "family-member-service" */
+      '../services/familyMemberService'
+    );
+    await svc.deleteFamilyMember(familyTreeId, memberId);
+    setFamilyMembers(prev => prev.filter(m => m.id !== memberId));
+    onMembersUpdated?.();
   };
 
   return (
     <>
+      {showStats && familyMembers.length > 0 && !isLoading && (
+        <FamilyMembersStats familyMembers={familyMembers} />
+      )}
+      
       <Button
         onClick={() => setIsModalOpen(true)}
+        className={`${buttonClassName || ''} ${
+          buttonClassName?.includes('bg-') ? '' : 'bg-[#31a63d] hover:bg-[#288c32]'
+        }`}
         variant={buttonVariant}
         size={buttonSize}
-        className={`flex items-center ${buttonClassName || ''}`}
       >
-        <UserPlus className="mr-2 h-4 w-4" />
+        <UserPlus className="h-4 w-4 mr-2" />
         Manage Family Members
       </Button>
-      
+
       <ManageFamilyMembersModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         familyMembers={familyMembers}
+        familyTreeId={familyTreeId}
         relationshipTypes={relationshipTypes}
         onAddMember={handleAddMember}
         onUpdateMember={handleUpdateMember}

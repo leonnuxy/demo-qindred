@@ -126,7 +126,7 @@
   @apply overflow-auto border dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-900/50;
   height: 50vh;
   min-height: 400px;
-  transform-origin: top left;
+  transform-origin: center;
   transition: transform 0.2s ease-out;
 }
 

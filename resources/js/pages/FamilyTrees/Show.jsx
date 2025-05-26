@@ -6,18 +6,70 @@ import { useFamilyTree } from '@/features/FamilyTree/hooks/useFamilyTree';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ManageFamilyMembersButton from '@/features/FamilyTree/components/ManageFamilyMembersButton';
-import '@css/pages/invitations.css'; // Import the shared CSS
+import '@css/pages/invitations.css';
 import FamilyMemberList from '@/features/FamilyTree/components/FamilyMemberList';
 
+// Import mock data
+import dataBasic from './mock/data_basic.json';
+import dataMid from './mock/data_mid.json';
+import dataMax from './mock/data_max.json';
+
 export default function Show({
-  familyTree,
-  hierarchicalTreeData,
-  membersList,
-  familyTreeLogs
+  familyTree: initialFamilyTree,
+  hierarchicalTreeData: initialHierarchicalTreeData,
+  membersList: initialMembersList,
+  familyTreeLogs: initialFamilyTreeLogs
 }) {
   const { auth, flash, errors: pageErrors } = usePage().props;
   const currentUser = auth.user;
+  
+  // State for mock data selection
+  const [mockDataType, setMockDataType] = useState('real');
+  const [familyTree, setFamilyTree] = useState(initialFamilyTree);
+  const [hierarchicalTreeData, setHierarchicalTreeData] = useState(initialHierarchicalTreeData);
+  const [membersList, setMembersList] = useState(initialMembersList);
+  const [familyTreeLogs, setFamilyTreeLogs] = useState(initialFamilyTreeLogs);
+
+  // Handle mock data changes
+  const handleMockDataChange = (value) => {
+    let selectedData;
+    switch (value) {
+      case 'basic':
+        selectedData = dataBasic;
+        break;
+      case 'mid':
+        selectedData = dataMid;
+        break;
+      case 'max':
+        selectedData = dataMax;
+        break;
+      default:
+        selectedData = {
+          familyTree: initialFamilyTree,
+          hierarchicalTreeData: initialHierarchicalTreeData,
+          membersList: initialMembersList,
+          familyTreeLogs: initialFamilyTreeLogs
+        };
+    }
+
+    setMockDataType(value);
+    setFamilyTree(selectedData.familyTree);
+    setHierarchicalTreeData(selectedData.hierarchicalTreeData);
+    setMembersList(selectedData.membersList);
+    setFamilyTreeLogs(selectedData.familyTreeLogs);
+  };
+
+  // Add debug logging to see the raw tree data from the backend
+  console.log('Raw hierarchicalTreeData:', hierarchicalTreeData);
+  console.log('Current user ID:', currentUser?.id);
+  console.log('Members list:', membersList);
+  
+  // Check if there is a direct match to ensure the current user is identified in the tree
+  if (hierarchicalTreeData && currentUser?.id && hierarchicalTreeData.id === currentUser.id) {
+    console.log("Current user is the root node of the tree");
+  }
 
   const {
     treeData: displayTreeData,
@@ -116,6 +168,24 @@ export default function Show({
 
           {/* Basic Info Section */}
           <section className="mb-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-qindred-green-100 dark:border-qindred-green-800/30">
+            {/* Mock Data Selector - Development Only */}
+            <div className="mb-4 w-full md:w-64">
+              <Label htmlFor="mock-data-select" className="block text-sm font-medium mb-2">
+                Select Data Source (Dev Only)
+              </Label>
+              <Select value={mockDataType} onValueChange={handleMockDataChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose data source" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="real">Real Data</SelectItem>
+                  <SelectItem value="basic">Basic Family (Self)</SelectItem>
+                  <SelectItem value="mid">Extended Family</SelectItem>
+                  <SelectItem value="max">Large Family Tree</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="invitations-page-header mb-4">
               <h1 className="invitations-page-title text-3xl font-bold text-qindred-green-900 dark:text-qindred-green-500">
                 {familyTree?.name || 'Family Tree Details'}
@@ -183,8 +253,8 @@ export default function Show({
                   Error loading tree: {typeof treeError === 'object' ? JSON.stringify(treeError) : treeError}
                 </div>
               ) : displayTreeData && !displayTreeData.error ? (
-                <div className="h-full" style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
-                  <TreeComponent initialData={displayTreeData} />
+                <div className="h-full flex items-center justify-center" style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}>
+                  <TreeComponent initialData={displayTreeData} onNodeClick={(node) => console.log('Node clicked:', node)} />
                 </div>
               ) : displayTreeData?.error && (
                 <p role="alert" className="p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
