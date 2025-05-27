@@ -1,0 +1,50 @@
+/* Custom styles for Radix UI Checkbox component */
+
+/* Reset any conflicting styles that might be inherited */
+[data-slot="checkbox"] {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Checked state styling */
+[data-slot="checkbox"][data-state="checked"] {
+  background-color: var(--qindred-green-600);
+  border-color: var(--qindred-green-600);
+}
+
+/* Hover state */
+[data-slot="checkbox"]:hover {
+  background-color: rgba(var(--qindred-green-600-rgb, 98, 199, 75), 0.05);
+}
+
+/* Focus state */
+[data-slot="checkbox"]:focus-visible {
+  border-color: var(--qindred-green-500);
+  box-shadow: 0 0 0 2px rgba(var(--qindred-green-500-rgb, 98, 199, 75), 0.35);
+}
+
+/* Error state */
+[data-slot="checkbox"].error {
+  border-color: #ef4444;
+}
+
+/* Checkbox indicator */
+[data-slot="checkbox-indicator"] {
+  color: white;
+}
+
+/* Disabled state */
+[data-slot="checkbox"][data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import '@css/auth/auth-shared.css';
 import '@css/auth/register.css';
+import '@css/components/checkbox.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 
