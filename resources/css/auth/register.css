@@ -213,11 +213,11 @@
 .login-prompt {
   text-align: center;
   margin-top: 1.5rem;
-  padding: 1rem;
+  padding: 0.5rem;
   background-color: #f9fafb;
   border-radius: 0.5rem;
   border: 1px solid #e5e7eb;
-  font-size: 0.925rem;
+  font-size: 0.9rem;
   color: #374151;
 }
 
