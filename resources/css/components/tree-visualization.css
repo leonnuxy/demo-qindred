@@ -1,0 +1,87 @@
+/* Tree Visualization Component Styles */
+.tree-viz {
+  position: relative;
+}
+
+.tree-viz__container {
+  position: relative;
+  height: 500px;
+  overflow: auto;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  transform: scale(var(--zoom-level, 1));
+  transform-origin: center;
+  transition: transform 0.2s ease-out;
+}
+
+.tree-viz__controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.tree-viz__buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tree-viz__zoom-text {
+  display: inline-block;
+  font-size: 0.875rem;
+  width: 4rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+}
+
+/* Mobile responsiveness */
+@media (min-width: 640px) {
+  .tree-viz__controls {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .tree-viz__buttons {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .tree-viz__container {
+    height: 400px;
+  }
+
+  .tree-viz__controls {
+    gap: 0.5rem;
+  }
+
+  .tree-viz__buttons {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Loading and Error States */
+.tree-viz__loading,
+.tree-viz__error {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.tree-viz__loading-text {
+  color: hsl(var(--muted-foreground));
+}
+
+.tree-viz__error-message {
+  padding: 1rem;
+  background-color: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--destructive));
+  border-radius: var(--radius-lg);
+}

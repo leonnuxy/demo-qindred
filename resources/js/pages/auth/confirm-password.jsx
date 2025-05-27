@@ -7,8 +7,8 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import '@css/auth-shared.css';
-import '@css/confirm-password.css';
+import '@css/auth/auth-shared.css';
+import '@css/auth/confirm-password.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 export default function ConfirmPassword() {

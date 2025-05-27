@@ -6,8 +6,8 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import '@css/auth-shared.css';
-import '@css/reset-password.css';
+import '@css/auth/auth-shared.css';
+import '@css/auth/reset-password.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 export default function ResetPassword({ token, email }) {

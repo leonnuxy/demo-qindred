@@ -1,0 +1,57 @@
+/* App Logo Icon Component Styles */
+
+.app-logo-icon {
+  display: block;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+/* Variant-specific sizing */
+.app-logo-icon--auth {
+  width: 20%;
+  height: auto;
+  max-width: 120px;
+  min-width: 80px;
+}
+
+.app-logo-icon--sidebar {
+  width: 100%;
+  height: auto;
+  max-width: 40px;
+}
+
+.app-logo-icon--header {
+  width: 32px;
+  height: 32px;
+}
+
+/* Hover effects */
+.app-logo-icon:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-logo-icon--auth {
+    width: 15%;
+    max-width: 100px;
+    min-width: 60px;
+  }
+  
+  .app-logo-icon--sidebar {
+    max-width: 32px;
+  }
+  
+  .app-logo-icon--header {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-logo-icon--auth {
+    width: 10%;
+    max-width: 60px;
+    min-width: 30px;
+  }
+}

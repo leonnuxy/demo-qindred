@@ -5,8 +5,8 @@ import { LoaderCircle, Sun, Moon } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
-import '@css/auth-shared.css';
-import '@css/verify-email.css'; // Add a specific CSS file for verify-email
+import '@css/auth/auth-shared.css';
+import '@css/auth/verify-email.css'; // Add a specific CSS file for verify-email
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 

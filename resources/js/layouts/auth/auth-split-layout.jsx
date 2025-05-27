@@ -1,22 +1,9 @@
 import React from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Link } from '@inertiajs/react';
-import '@css/auth-shared.css';
+import '@css/auth/auth-shared.css';
 
 export default function AuthSplitLayout({ children, logo, image, taglineText, logoText = 'Qindred' }) {
-  const headingStyle = {
-    fontSize: '2rem',
-    fontWeight: 'bold',
-    marginBottom: '1rem'
-  };
-
-  const taglineStyle = {
-    fontWeight: '300',
-    fontSize: '1.0rem',
-    lineHeight: '1.6',
-    color: '#555'
-  };
-
   return (
     <div className="auth-split-layout">
       {/* Image Panel */}
@@ -26,8 +13,8 @@ export default function AuthSplitLayout({ children, logo, image, taglineText, lo
           <span className="qindred-logo-text">{logoText}</span>
         </Link>
         {image && <img src={image} alt="" className="auth-image" />}
-        <h1 className="auth-heading" style={headingStyle}>Build & Explore Your Family Tree</h1>
-        <h2 className="auth-tagline-title" style={taglineStyle}>Easily add family members, link relatives, and explore your lineage in a beautifully designed family tree.</h2>
+        <h1 className="auth-heading">Build & Explore Your Family Tree</h1>
+        <h2 className="auth-tagline-title">Easily add family members, link relatives, and explore your lineage in a beautifully designed family tree.</h2>
         <p className="auth-tagline-text">{taglineText}</p>
       </div>
 

@@ -1,0 +1,305 @@
+/* login.css - Login page specific styles */
+
+/* Remember me checkbox row */
+.remember-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  background-color: rgba(98, 199, 75, 0.03);
+  transition: background-color 0.2s ease;
+}
+
+.remember-row:hover {
+  background-color: rgba(98, 199, 75, 0.06);
+}
+
+.remember-row label {
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Form group header with forgot password */
+.form-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.375rem;
+}
+
+/* Forgot password link */
+.forgot-link {
+  font-size: 0.875rem;
+  color: var(--qindred-green-600);
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.25rem 0;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+  color: var(--qindred-green-700);
+  transform: translateY(-1px);
+}
+
+/* Login button specific styling */
+.login-btn {
+  margin-top: 1.75rem;
+  background: linear-gradient(135deg, var(--qindred-green-600), var(--qindred-green-700));
+  box-shadow: 0 4px 12px rgba(98, 199, 75, 0.3);
+  transition: all 0.2s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--qindred-green-700), var(--qindred-green-800));
+  box-shadow: 0 6px 20px rgba(98, 199, 75, 0.4);
+  transform: translateY(-2px);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(98, 199, 75, 0.3);
+}
+
+/* Enhanced Google button for login */
+.auth-google-btn {
+  margin-top: 1rem;
+  border: 2px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.auth-google-btn:hover {
+  background-color: #f9fafb;
+  border-color: var(--qindred-green-300);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced form animations for login */
+.auth-form-card {
+  animation: slideInFromLeft 0.6s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Enhanced focus states for login form */
+.auth-form input:focus {
+  border-color: var(--qindred-green-500);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(98, 199, 75, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Login prompt styling */
+.login-prompt {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.925rem;
+  color: #374151;
+}
+
+.login-prompt a {
+  color: var(--qindred-green-600);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.login-prompt a:hover {
+  color: var(--qindred-green-700);
+  text-decoration: underline;
+}
+
+/* Status message (success, info) */
+.login-status {
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background-color: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: rgb(16, 185, 129);
+  animation: fadeInDown 0.4s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Login error message */
+.login-error {
+  color: #ef4444;
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Divider enhancement for login */
+.divider {
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  border-bottom-color: #e5e7eb;
+}
+
+.divider span {
+  background-color: white;
+  color: #6b7280;
+  font-weight: 500;
+  padding: 0 1rem;
+}
+
+/* Enhanced checkbox styling */
+.remember-row input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--qindred-green-600);
+  cursor: pointer;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .form-group-header {
+    flex-direction: row;
+    margin-bottom: 0.5rem;
+  }
+
+  .forgot-link {
+    font-size: 0.813rem;
+    padding: 0.375rem 0.25rem;
+  }
+
+  .remember-row {
+    margin: 0.875rem 0;
+    padding: 0.75rem;
+  }
+
+  .remember-row label {
+    font-size: 0.813rem;
+  }
+
+  .login-btn {
+    margin-top: 1.5rem;
+  }
+
+  .login-prompt {
+    margin-top: 1.75rem;
+    font-size: 0.875rem;
+    padding: 0.875rem;
+  }
+
+  .login-status,
+  .login-error {
+    padding: 0.75rem;
+    font-size: 0.813rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .divider {
+    margin: 1.25rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .remember-row {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+  }
+
+  .form-group-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .forgot-link {
+    align-self: flex-end;
+    font-size: 0.75rem;
+  }
+}
+
+/* Loading state enhancements */
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(98, 199, 75, 0.2);
+}
+
+.login-btn .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Input field enhancements */
+.auth-form input {
+  transition: all 0.2s ease;
+  border: 2px solid #e5e7eb;
+}
+
+.auth-form input:hover {
+  border-color: #d1d5db;
+}
+
+.auth-form input:focus {
+  border-color: var(--qindred-green-500);
+  box-shadow: 0 0 0 3px rgba(98, 199, 75, 0.1);
+}
+
+/* Error state for inputs */
+.auth-form input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.auth-form input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}

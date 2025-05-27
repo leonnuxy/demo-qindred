@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import '@css/auth-shared.css';
-import '@css/register.css';
+import '@css/auth/auth-shared.css';
+import '@css/auth/register.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 

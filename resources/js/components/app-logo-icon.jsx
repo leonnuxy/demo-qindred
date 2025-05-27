@@ -1,3 +1,5 @@
+import '@css/components/app-logo-icon.css';
+
 export default function AppLogoIcon({ variant = 'auth', className, ...props }) {
     /**
      * Supports multiple variants:

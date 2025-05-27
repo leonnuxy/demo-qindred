@@ -1,6 +1,6 @@
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Link } from '@inertiajs/react';
-import '@css/auth-shared.css';
+import '@css/auth/auth-shared.css';
 export default function AuthSimpleLayout({ children, title, description, logoText = 'Qindred' }) {
     return (<div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
             <div className="w-full max-w-sm">
