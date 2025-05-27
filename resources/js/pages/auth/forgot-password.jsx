@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// src/components/Auth/ForgotPassword.jsx
+
+import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Sun, Moon } from 'lucide-react';
+import { LoaderCircle, Mail, ArrowLeft } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -11,24 +13,8 @@ import '@css/auth/auth-shared.css';
 import '@css/auth/forgot-password.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
+
 export default function ForgotPassword({ status }) {
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem('theme') === 'dark'
-    );
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
-    const toggleTheme = () => setDarkMode(prev => !prev);
-
     const { data, setData, post, processing, errors } = useForm({
         email: '',
     });
@@ -39,21 +25,22 @@ export default function ForgotPassword({ status }) {
     };
 
     const formCard = (
-        <div className="auth-form-card forgot-password-card">
-            <div className="theme-toggle">
-                <button onClick={toggleTheme} aria-label="Toggle theme">
-                    {darkMode ? <Sun /> : <Moon />}
-                </button>
+        <div className="auth-form-card">
+            <div className="auth-form-header">
+                <h2 className="auth-title">Reset Your Password</h2>
+                <p className="auth-subtitle">
+                    <Mail className="auth-mobile-tree-icon" />
+                    Enter your email and we'll send you a reset link
+                </p>
             </div>
-            
-            <div className="auth-form-header forgot-password-header">
-                <h2 className="auth-title">Forgot Password</h2>
-                <p className="auth-subtitle">Enter your email to receive a password reset link</p>
-            </div>
-            
-            {status && <div className="forgot-password-status">{status}</div>}
-            
-            <form className="auth-form forgot-password-form" onSubmit={submit}>
+
+            {status && (
+                <div className="verification-sent-message">
+                    <strong>✓</strong> {status}
+                </div>
+            )}
+
+            <form className="auth-form" onSubmit={submit}>
                 <div className="form-group">
                     <Label htmlFor="email" className="input-label">Email address</Label>
                     <Input
@@ -62,31 +49,39 @@ export default function ForgotPassword({ status }) {
                         required
                         autoFocus
                         autoComplete="email"
-                        placeholder="email@example.com"
+                        placeholder="you@example.com"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={e => setData('email', e.target.value)}
+                        className={errors.email ? 'error' : ''}
                     />
                     <InputError message={errors.email} />
                 </div>
-                
-                <Button type="submit" className="auth-btn forgot-password-btn" disabled={processing}>
+
+                <Button type="submit" className="auth-btn" disabled={processing}>
                     {processing && <LoaderCircle className="spinner" />}
-                    Send Password Reset Link
+                    {processing ? 'Sending reset link...' : (
+                        <>
+                            <Mail size={16} />
+                            Send Password Reset
+                        </>
+                    )}
                 </Button>
             </form>
-            
-            <TextLink href={route('login')} className="back-to-login">
-                Back to Login
-            </TextLink>
+
+            <div className="login-prompt">
+                <ArrowLeft className="auth-mobile-tree-icon" />
+                Remember your password? <TextLink href={route('login')}>Sign in instead</TextLink>
+            </div>
         </div>
     );
 
     return (
         <>
-            <Head title="Forgot Password - Qindred" />
+            <Head title="Reset Password • Qindred" />
             <AuthSplitLayout
                 logo={logo}
                 image={tree}
+                taglineText="Need help accessing your family tree? We're here to help you get back to preserving your family memories."
             >
                 {formCard}
             </AuthSplitLayout>

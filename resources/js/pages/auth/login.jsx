@@ -1,9 +1,9 @@
 // src/components/Auth/Login.jsx
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { FcGoogle } from 'react-icons/fc';
-import { LoaderCircle, Sun, Moon } from 'lucide-react';
+import { LoaderCircle, TreePine } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -17,23 +17,6 @@ import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 
 export default function Login({ status, canResetPassword }) {
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem('theme') === 'dark'
-    );
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
-    const toggleTheme = () => setDarkMode(prev => !prev);
-
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -47,18 +30,20 @@ export default function Login({ status, canResetPassword }) {
 
     const formCard = (
         <div className="auth-form-card">
-            <div className="theme-toggle">
-                <button onClick={toggleTheme} aria-label="Toggle theme">
-                    {darkMode ? <Sun /> : <Moon />}
-                </button>
-            </div>
-            
             <div className="auth-form-header">
-                <h2 className="auth-title">Sign In to Qindred</h2>
-                <p className="auth-subtitle">Access your account</p>
+                <h2 className="auth-title">Welcome Back</h2>
+                <p className="auth-subtitle">
+                    <TreePine className="auth-mobile-tree-icon" />
+                    Sign in to your account
+                </p>
             </div>
             
-            {status && <div className="login-status">{status}</div>}
+            {status && (
+                <div className="login-status">
+                    <strong>✓</strong> {status}
+                </div>
+            )}
+
             <form className="auth-form" onSubmit={submit}>
                 <div className="form-group">
                     <Label htmlFor="email" className="input-label">Email address</Label>
@@ -71,9 +56,11 @@ export default function Login({ status, canResetPassword }) {
                         placeholder="you@example.com"
                         value={data.email}
                         onChange={e => setData('email', e.target.value)}
+                        className={errors.email ? 'error' : ''}
                     />
                     <InputError message={errors.email} />
                 </div>
+
                 <div className="form-group">
                     <div className="form-group-header">
                         <Label htmlFor="password" className="input-label">Password</Label>
@@ -91,9 +78,11 @@ export default function Login({ status, canResetPassword }) {
                         placeholder="••••••••"
                         value={data.password}
                         onChange={e => setData('password', e.target.value)}
+                        className={errors.password ? 'error' : ''}
                     />
                     <InputError message={errors.password} />
                 </div>
+
                 <div className="remember-row">
                     <Checkbox
                         id="remember"
@@ -101,12 +90,18 @@ export default function Login({ status, canResetPassword }) {
                         checked={data.remember}
                         onCheckedChange={checked => setData('remember', checked)}
                     />
-                    <Label htmlFor="remember">Remember me</Label>
+                    <Label htmlFor="remember">Keep me signed in</Label>
                 </div>
+
                 <Button type="submit" className="auth-btn login-btn" disabled={processing}>
                     {processing && <LoaderCircle className="spinner" />}
-                    Log in
+                    {processing ? 'Signing in...' : 'Sign In'}
                 </Button>
+
+                <div className="divider">
+                    <span>or continue with</span>
+                </div>
+
                 <Button
                     type="button"
                     variant="outline"
@@ -117,18 +112,20 @@ export default function Login({ status, canResetPassword }) {
                     Continue with Google
                 </Button>
             </form>
+
             <div className="login-prompt">
-                Don't have an account? <TextLink href={route('register')}>Sign Up</TextLink>
+                New to Qindred? <TextLink href={route('register')}>Create your family tree</TextLink>
             </div>
         </div>
     );
 
     return (
         <>
-            <Head title="Log in to Qindred" />
+            <Head title="Sign In • Qindred Family Tree" />
             <AuthSplitLayout
                 logo={logo}
                 image={tree}
+                taglineText="Join thousands of families preserving their legacy and connecting with loved ones."
             >
                 {formCard}
             </AuthSplitLayout>

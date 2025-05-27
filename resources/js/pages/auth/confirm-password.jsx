@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// src/components/Auth/ConfirmPassword.jsx
+
+import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Sun, Moon } from 'lucide-react';
+import { LoaderCircle, Shield, ArrowLeft } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -11,24 +13,8 @@ import '@css/auth/auth-shared.css';
 import '@css/auth/confirm-password.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
+
 export default function ConfirmPassword() {
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem('theme') === 'dark'
-    );
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
-    const toggleTheme = () => setDarkMode(prev => !prev);
-
     const { data, setData, post, processing, errors, reset } = useForm({
         password: '',
     });
@@ -41,57 +27,69 @@ export default function ConfirmPassword() {
     };
 
     const formCard = (
-        <div className="auth-form-card confirm-password-card">
-            <div className="theme-toggle">
-                <button onClick={toggleTheme} aria-label="Toggle theme">
-                    {darkMode ? <Sun /> : <Moon />}
-                </button>
-            </div>
-            
-            <div className="auth-form-header confirm-password-header">
-                <h2 className="auth-title">Confirm Password</h2>
-                <p className="auth-subtitle confirm-password-info">
-                    This is a secure area of the application. Please confirm your password before continuing.
+        <div className="auth-form-card">
+            <div className="auth-form-header">
+                <h2 className="auth-title">Confirm Your Password</h2>
+                <p className="auth-subtitle">
+                    <Shield className="auth-mobile-tree-icon" />
+                    Please confirm your password to continue
                 </p>
             </div>
-            
-            <form className="auth-form confirm-password-form" onSubmit={submit}>
+
+            <div className="confirm-password-notice">
+                <Shield size={20} />
+                <div>
+                    <p>
+                        <strong>Security Check Required</strong>
+                    </p>
+                    <p>
+                        This is a secure area of your family tree. Please confirm your password to continue protecting your family's information.
+                    </p>
+                </div>
+            </div>
+
+            <form className="auth-form" onSubmit={submit}>
                 <div className="form-group">
-                    <Label htmlFor="password" className="input-label">Password</Label>
+                    <Label htmlFor="password" className="input-label">Current Password</Label>
                     <Input
                         id="password"
                         type="password"
-                        name="password"
-                        placeholder="Password"
-                        autoComplete="current-password"
-                        value={data.password}
+                        required
                         autoFocus
-                        onChange={(e) => setData('password', e.target.value)}
+                        autoComplete="current-password"
+                        placeholder="Enter your password"
+                        value={data.password}
+                        onChange={e => setData('password', e.target.value)}
+                        className={errors.password ? 'error' : ''}
                     />
                     <InputError message={errors.password} />
                 </div>
-                
-                <Button type="submit" className="auth-btn confirm-password-btn" disabled={processing}>
+
+                <Button type="submit" className="auth-btn" disabled={processing}>
                     {processing && <LoaderCircle className="spinner" />}
-                    Confirm Password
+                    {processing ? 'Confirming...' : (
+                        <>
+                            <Shield size={16} />
+                            Confirm Password
+                        </>
+                    )}
                 </Button>
-                
-                <TextLink 
-                    href={route('dashboard')} 
-                    className="cancel-link"
-                >
-                    Cancel
-                </TextLink>
             </form>
+
+            <div className="login-prompt">
+                <ArrowLeft className="auth-mobile-tree-icon" />
+                <TextLink href={route('dashboard')}>Return to Family Tree</TextLink>
+            </div>
         </div>
     );
 
     return (
         <>
-            <Head title="Confirm Password - Qindred" />
+            <Head title="Confirm Password • Qindred" />
             <AuthSplitLayout
                 logo={logo}
                 image={tree}
+                taglineText="Your family's privacy and security are our top priority. Thank you for helping us keep your information safe."
             >
                 {formCard}
             </AuthSplitLayout>

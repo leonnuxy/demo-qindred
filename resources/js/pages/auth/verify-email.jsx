@@ -1,33 +1,16 @@
-// Components
-import React, { useState, useEffect } from 'react';
-import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Sun, Moon } from 'lucide-react';
+// src/components/Auth/VerifyEmail.jsx
+
+import React from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { LoaderCircle, Mail, CheckCircle, RefreshCw } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import '@css/auth/auth-shared.css';
-import '@css/auth/verify-email.css'; // Add a specific CSS file for verify-email
+import '@css/auth/verify-email.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 
 export default function VerifyEmail({ status }) {
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem('theme') === 'dark'
-    );
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
-    const toggleTheme = () => setDarkMode(prev => !prev);
-
     const { post, processing } = useForm({});
 
     const submit = (e) => {
@@ -36,55 +19,86 @@ export default function VerifyEmail({ status }) {
     };
 
     const formCard = (
-        <div className="auth-form-card verify-email-card">
-            <div className="theme-toggle">
-                <button onClick={toggleTheme} aria-label="Toggle theme">
-                    {darkMode ? <Sun /> : <Moon />}
-                </button>
-            </div>
-            
-            <div className="auth-form-header verify-email-header">
+        <div className="auth-form-card">
+            <div className="auth-form-header">
                 <h2 className="auth-title">Verify Your Email</h2>
-                <p className="auth-subtitle">Please verify your email address by clicking on the link we just emailed to you.</p>
+                <p className="auth-subtitle">
+                    <Mail className="auth-mobile-tree-icon" />
+                    Check your inbox to activate your family tree account
+                </p>
             </div>
-            
+
             {status === 'verification-link-sent' && (
                 <div className="verification-sent-message">
-                    A new verification link has been sent to the email address you provided during registration.
+                    <CheckCircle size={16} />
+                    <strong>Verification link sent!</strong> Check your email inbox and click the link to verify your account.
                 </div>
             )}
-            
-            <form className="auth-form verify-email-form" onSubmit={submit}>
-                <Button 
-                    type="submit" 
-                    className="auth-btn verify-email-btn" 
-                    disabled={processing}
-                >
-                    {processing && <LoaderCircle className="spinner" />}
-                    Resend Verification Email
-                </Button>
-                
-                <div className="verify-email-divider">
-                    <span>or</span>
+
+            <div className="verification-content">
+                <div className="verification-steps">
+                    <h3>What's next?</h3>
+                    <ol>
+                        <li>
+                            <Mail size={14} />
+                            Check your email inbox (and spam folder)
+                        </li>
+                        <li>
+                            <CheckCircle size={14} />
+                            Click the verification link in the email
+                        </li>
+                        <li>
+                            <span className="tree-emoji">🌳</span>
+                            Start building your family tree!
+                        </li>
+                    </ol>
                 </div>
-                
-                <TextLink 
-                    href={route('logout')} 
-                    method="post" 
+
+                <form onSubmit={submit}>
+                    <Button type="submit" className="auth-btn" disabled={processing}>
+                        {processing && <LoaderCircle className="spinner" />}
+                        {processing ? 'Sending...' : (
+                            <>
+                                <RefreshCw size={16} />
+                                Resend Verification Email
+                            </>
+                        )}
+                    </Button>
+                </form>
+
+                <div className="verification-help">
+                    <p>
+                        <strong>Didn't receive the email?</strong>
+                    </p>
+                    <ul>
+                        <li>Check your spam or junk mail folder</li>
+                        <li>Make sure you entered the correct email address</li>
+                        <li>Wait a few minutes and try resending</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div className="login-prompt">
+                Need to use a different email?{' '}
+                <Link
+                    href={route('logout')}
+                    method="post"
+                    as="button"
                     className="logout-link"
                 >
-                    Log Out
-                </TextLink>
-            </form>
+                    Sign out and try again
+                </Link>
+            </div>
         </div>
     );
 
     return (
         <>
-            <Head title="Verify Email - Qindred" />
+            <Head title="Verify Email • Qindred" />
             <AuthSplitLayout
                 logo={logo}
                 image={tree}
+                taglineText="You're almost ready to start your family tree journey! Just one quick verification step remains."
             >
                 {formCard}
             </AuthSplitLayout>

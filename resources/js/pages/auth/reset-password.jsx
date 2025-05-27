@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle, Sun, Moon } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -11,23 +11,6 @@ import '@css/auth/reset-password.css';
 import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 export default function ResetPassword({ token, email }) {
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem('theme') === 'dark'
-    );
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
-    const toggleTheme = () => setDarkMode(prev => !prev);
-
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -44,11 +27,6 @@ export default function ResetPassword({ token, email }) {
 
     const formCard = (
         <div className="auth-form-card reset-password-card">
-            <div className="theme-toggle">
-                <button onClick={toggleTheme} aria-label="Toggle theme">
-                    {darkMode ? <Sun /> : <Moon />}
-                </button>
-            </div>
             
             <div className="auth-form-header reset-password-header">
                 <h2 className="auth-title">Reset Password</h2>

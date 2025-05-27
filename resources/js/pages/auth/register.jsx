@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+// src/components/Auth/Register.jsx
+
+import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { FcGoogle } from 'react-icons/fc';
-import { LoaderCircle, Sun, Moon } from 'lucide-react';
+import { LoaderCircle, Users, TreePine, Heart } from 'lucide-react';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
@@ -15,31 +17,44 @@ import logo from '@assets/logo.png';
 import tree from '@assets/tree.png';
 
 export default function Register() {
-    const [darkMode, setDarkMode] = useState(
-        () => localStorage.getItem('theme') === 'dark'
-    );
-
-    useEffect(() => {
-        const root = document.documentElement;
-        if (darkMode) {
-            root.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            root.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [darkMode]);
-
-    const toggleTheme = () => setDarkMode(prev => !prev);
-
     const { data, setData, post, processing, errors, reset } = useForm({
         first_name: '',
         last_name: '',
         email: '',
         password: '',
         password_confirmation: '',
-        terms: false
+        terms: false,
     });
+
+    const [passwordStrength, setPasswordStrength] = useState(0);
+    const [passwordCriteria, setPasswordCriteria] = useState({
+        length: false,
+        uppercase: false,
+        lowercase: false,
+        number: false,
+        special: false,
+    });
+
+    const checkPasswordStrength = (password) => {
+        const criteria = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /\d/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        };
+        
+        setPasswordCriteria(criteria);
+        
+        const strength = Object.values(criteria).filter(Boolean).length;
+        setPasswordStrength(strength);
+    };
+
+    const handlePasswordChange = (e) => {
+        const password = e.target.value;
+        setData('password', password);
+        checkPasswordStrength(password);
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -48,63 +63,82 @@ export default function Register() {
         });
     };
 
+    const getStrengthLabel = () => {
+        switch (passwordStrength) {
+            case 0:
+            case 1:
+                return 'Very Weak';
+            case 2:
+                return 'Weak';
+            case 3:
+                return 'Good';
+            case 4:
+            case 5:
+                return 'Strong';
+            default:
+                return '';
+        }
+    };
+
     const formCard = (
         <div className="auth-form-card">
-            <div className="theme-toggle">
-                <button onClick={toggleTheme} aria-label="Toggle theme">
-                    {darkMode ? <Sun /> : <Moon />}
-                </button>
-            </div>
-            
             <div className="auth-form-header">
-                <h2 className="auth-title">Sign Up for Qindred</h2>
-                <p className="auth-subtitle">Create your account and start connecting.</p>
+                <h2 className="auth-title">Start Your Family Tree</h2>
+                <p className="auth-subtitle">
+                    <Users className="auth-mobile-tree-icon" />
+                    Create your account and begin connecting generations
+                </p>
             </div>
-            
+
             <form className="auth-form" onSubmit={submit}>
-                <div className="form-row register-name-row">
+                <div className="register-name-row">
                     <div className="form-group">
-                        <Label htmlFor="first_name" className="input-label">First Name</Label>
+                        <Label htmlFor="first_name" className="input-label">First name</Label>
                         <Input
                             id="first_name"
                             type="text"
                             required
                             autoFocus
-                            placeholder="First Name"
+                            autoComplete="given-name"
+                            placeholder="John"
                             value={data.first_name}
-                            onChange={(e) => setData('first_name', e.target.value)}
+                            onChange={e => setData('first_name', e.target.value)}
+                            className={errors.first_name ? 'error' : ''}
                         />
                         <InputError message={errors.first_name} />
                     </div>
-                    
+
                     <div className="form-group">
-                        <Label htmlFor="last_name" className="input-label">Last Name</Label>
+                        <Label htmlFor="last_name" className="input-label">Last name</Label>
                         <Input
                             id="last_name"
                             type="text"
                             required
-                            placeholder="Last Name"
+                            autoComplete="family-name"
+                            placeholder="Doe"
                             value={data.last_name}
-                            onChange={(e) => setData('last_name', e.target.value)}
+                            onChange={e => setData('last_name', e.target.value)}
+                            className={errors.last_name ? 'error' : ''}
                         />
                         <InputError message={errors.last_name} />
                     </div>
                 </div>
-                
+
                 <div className="form-group">
-                    <Label htmlFor="email" className="input-label">Email</Label>
+                    <Label htmlFor="email" className="input-label">Email address</Label>
                     <Input
                         id="email"
                         type="email"
                         required
                         autoComplete="email"
-                        placeholder="Email Address"
+                        placeholder="you@example.com"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={e => setData('email', e.target.value)}
+                        className={errors.email ? 'error' : ''}
                     />
                     <InputError message={errors.email} />
                 </div>
-                
+
                 <div className="form-group">
                     <Label htmlFor="password" className="input-label">Password</Label>
                     <Input
@@ -112,84 +146,95 @@ export default function Register() {
                         type="password"
                         required
                         autoComplete="new-password"
-                        placeholder="Password"
+                        placeholder="Create a strong password"
                         value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
+                        onChange={handlePasswordChange}
+                        className={errors.password ? 'error' : ''}
                     />
                     <InputError message={errors.password} />
                     
+                    {data.password && (
+                        <>
+                            <div className="password-strength">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div
+                                        key={i}
+                                        className={`strength-bar ${i <= passwordStrength ? 'active' : ''}`}
+                                    />
+                                ))}
+                            </div>
+                            <div className="password-strength-label">
+                                <span className={passwordStrength > 0 ? 'active' : ''}>
+                                    Password strength: {getStrengthLabel()}
+                                </span>
+                            </div>
+                            <ul className="password-criteria">
+                                <li className={passwordCriteria.length ? 'met' : ''}>
+                                    At least 8 characters
+                                </li>
+                                <li className={passwordCriteria.uppercase ? 'met' : ''}>
+                                    One uppercase letter
+                                </li>
+                                <li className={passwordCriteria.lowercase ? 'met' : ''}>
+                                    One lowercase letter
+                                </li>
+                                <li className={passwordCriteria.number ? 'met' : ''}>
+                                    One number
+                                </li>
+                                <li className={passwordCriteria.special ? 'met' : ''}>
+                                    One special character
+                                </li>
+                            </ul>
+                        </>
+                    )}
                 </div>
-                
+
                 <div className="form-group">
-                    <Label htmlFor="password_confirmation" className="input-label">Confirm Password</Label>
+                    <Label htmlFor="password_confirmation" className="input-label">Confirm password</Label>
                     <Input
                         id="password_confirmation"
                         type="password"
                         required
                         autoComplete="new-password"
-                        placeholder="Confirm Password"
+                        placeholder="Confirm your password"
                         value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
+                        onChange={e => setData('password_confirmation', e.target.value)}
+                        className={errors.password_confirmation ? 'error' : ''}
                     />
                     <InputError message={errors.password_confirmation} />
-
-                    {/* Password Strength Bar */}
-                    <div className="password-strength">
-                        <div className={`strength-bar ${data.password.length > 0 ? 'active' : ''}`}></div>
-                        <div className={`strength-bar ${data.password.length >= 6 ? 'active' : ''}`}></div>
-                        <div className={`strength-bar ${data.password.length >= 8 ? 'active' : ''}`}></div>
-                        <div className={`strength-bar ${data.password.length >= 10 ? 'active' : ''}`}></div>
-                        
-                        <div className="password-strength-label">
-                            <span className={data.password.length === 0 ? '' : 'active'}>
-                                {data.password.length === 0 ? 'Password strength' : 
-                                data.password.length < 6 ? 'Very weak' :
-                                data.password.length < 8 ? 'Weak' :
-                                data.password.length < 10 ? 'Good' : 'Strong'}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    {/* Password Criteria List */}
-                    {data.password.length > 0 && (
-                        <ul className="password-criteria">
-                            <li className={data.password.length >= 8 ? 'met' : ''}>
-                                At least 8 characters
-                            </li>
-                            <li className={/[A-Z]/.test(data.password) ? 'met' : ''}>
-                                At least one uppercase letter
-                            </li>
-                            <li className={/[a-z]/.test(data.password) ? 'met' : ''}>
-                                At least one lowercase letter
-                            </li>
-                            <li className={/[0-9]/.test(data.password) ? 'met' : ''}>
-                                At least one number
-                            </li>
-                        </ul>
-                    )}
                 </div>
-                
-                <div className="terms-checkbox register-terms">
+
+                <div className="register-terms">
                     <Checkbox
                         id="terms"
+                        required
                         checked={data.terms}
-                        onCheckedChange={(checked) => setData('terms', checked)}
+                        onCheckedChange={checked => setData('terms', checked)}
+                        className={errors.terms ? 'error' : ''}
                     />
                     <Label htmlFor="terms" className="terms-label">
-                        I understand and agree to the <TextLink href="/terms">terms of service</TextLink>
+                        I agree to the{' '}
+                        <TextLink href="#" target="_blank">Terms of Service</TextLink>
+                        {' '}and{' '}
+                        <TextLink href="#" target="_blank">Privacy Policy</TextLink>.
                     </Label>
                     <InputError message={errors.terms} />
                 </div>
-                
-                <Button type="submit" className="auth-btn" disabled={processing}>
+
+                <Button type="submit" className="auth-btn register-btn" disabled={processing || !data.terms}>
                     {processing && <LoaderCircle className="spinner" />}
-                    Create Account
+                    {processing ? 'Creating your account...' : (
+                        <>
+                            <TreePine size={16} />
+                            Create My Family Tree
+                        </>
+                    )}
                 </Button>
-                
+
                 <div className="divider">
-                    <span>or</span>
+                    <span>or continue with</span>
                 </div>
-                
+
                 <Button
                     type="button"
                     variant="outline"
@@ -200,19 +245,21 @@ export default function Register() {
                     Continue with Google
                 </Button>
             </form>
-            
+
             <div className="login-prompt">
-                Already have an account? <TextLink href={route('login')}>Log In</TextLink>
+                <Heart className="auth-mobile-tree-icon" />
+                Already have an account? <TextLink href={route('login')}>Sign in here</TextLink>
             </div>
         </div>
     );
 
     return (
         <>
-            <Head title="Create an account - Qindred" />
+            <Head title="Create Your Family Tree • Qindred" />
             <AuthSplitLayout
                 logo={logo}
                 image={tree}
+                taglineText="Start building your family legacy today. Connect with relatives, preserve memories, and discover your roots."
             >
                 {formCard}
             </AuthSplitLayout>
