@@ -24,7 +24,7 @@
 
 /* Hover state */
 [data-slot="checkbox"]:hover {
-  background-color: rgba(var(--qindred-green-600-rgb, 98, 199, 75), 0.05);
+  background-color: var(--qindred-green-600);
 }
 
 /* Focus state */

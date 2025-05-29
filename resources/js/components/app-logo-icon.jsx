@@ -20,7 +20,7 @@ export default function AppLogoIcon({ variant = 'auth', className, ...props }) {
             src="/assets/logo.png" 
             alt="Qindred Logo"
             className={`app-logo-icon ${variantClass} ${className || ''}`}
-            style={props.style || {}}
+            style={{ ...props.style, backgroundColor: 'transparent' }}
         />
     );
 }

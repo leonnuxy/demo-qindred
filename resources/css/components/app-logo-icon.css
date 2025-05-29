@@ -6,6 +6,7 @@
   transition: all 0.3s ease;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  background-color: transparent; /* Ensure transparent background */
 }
 
 /* Variant-specific sizing */
@@ -13,7 +14,7 @@
   width: 20%;
   height: auto;
   max-width: 120px;
-  min-width: 80px;
+  min-width: 60px;
 }
 
 .app-logo-icon--sidebar {
@@ -33,7 +34,7 @@
   width: 48px;
   height: 48px;
   border-radius: 8px;
-  background-color: inherit;
+  background-color: transparent; /* Override to ensure transparency */
   object-fit: contain;
 }
 

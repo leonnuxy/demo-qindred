@@ -34,7 +34,6 @@
 .welcome-nav__logo {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s ease;
@@ -121,9 +120,8 @@
 }
 
 .welcome-hero__logo-icon {
-  width: 6rem;
-  height: 6rem;
-  margin-bottom: 1rem;
+  width: 8rem;
+  height: 8rem;
   justify-self: center;
 }
 

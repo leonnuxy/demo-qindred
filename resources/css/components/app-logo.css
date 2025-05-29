@@ -6,7 +6,7 @@
   gap: 0.75rem;
   width: 100%;
   min-width: 0;
-  background-color: var(--sidebar-primary) !important;
+  background-color: transparent !important; /* Changed to transparent to blend with page */
 }
 
 .app-logo__icon-container {
@@ -15,20 +15,20 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.5rem;
-  background-color: var(--sidebar-primary);
+  background-color: transparent; /* Changed to transparent */
   color: var(--sidebar-primary-foreground);
   transition: all 0.3s ease-in-out;
 }
 
 .app-logo__icon-container:hover {
-  background-color: color-mix(in oklch, var(--sidebar-accent), transparent 20%);
+  background-color: transparent; /* Ensure it stays transparent on hover */
   transform: scale(1.05);
 }
 
 .app-logo__icon-container--collapsed {
   width: 3.5rem;
   height: 2rem;
-  background-color: var(--sidebar-primary);
+  background-color: transparent; /* Changed to transparent */
 }
 
 .app-logo__icon-container--expanded {

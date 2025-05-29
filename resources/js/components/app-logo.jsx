@@ -6,8 +6,9 @@ export default function AppLogo() {
     const isCollapsed = state === "collapsed" && !isMobile;
     
     return (
-        <div className="app-logo">
-            <div className={`app-logo__icon-container ${isCollapsed ? 'app-logo__icon-container--collapsed' : 'app-logo__icon-container--expanded'}`}>
+        <div className="app-logo" style={{ backgroundColor: 'transparent' }}>
+            <div className={`app-logo__icon-container ${isCollapsed ? 'app-logo__icon-container--collapsed' : 'app-logo__icon-container--expanded'}`}
+                 style={{ backgroundColor: 'transparent' }}>
                 <AppLogoIcon 
                     variant="sidebar" 
                     className={`app-logo__icon ${isCollapsed ? 'app-logo__icon--collapsed' : 'app-logo__icon--expanded'}`}

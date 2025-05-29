@@ -1067,7 +1067,6 @@
 .qindred-logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .qindred-logo-text {
@@ -1079,7 +1078,7 @@
 }
 
 .qindred-logo-icon {
-  height: 4rem;
+  height: 6rem;
   width: auto;
 }
 
