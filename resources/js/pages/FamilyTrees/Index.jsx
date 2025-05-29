@@ -51,7 +51,7 @@ export default function Index({ familyTrees }) {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="My Family Trees" />
 
-      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree relative">
+      <div className="family-trees-page family-tree">
         {/* Add blur overlay */}
         {/* <div className="absolute inset-0 backdrop-blur-sm bg-white/30 dark:bg-black/30 z-50 flex items-center justify-center">
           <div className="text-4xl font-bold text-qindred-green-900 dark:text-qindred-green-500">
@@ -59,71 +59,69 @@ export default function Index({ familyTrees }) {
           </div>
         </div> */}
 
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-qindred-green-900 dark:text-qindred-green-500">My Family Trees</h1>
+        <div className="family-trees-header">
+          <h1 className="family-trees-header__title">My Family Trees</h1>
           <Link href={route('family-trees.create')}>
-            <Button
-              className="flex items-center gap-1 text-white bg-qindred-green-600 hover:bg-qindred-green-700"
-            >
+            <Button className="family-trees-header__new-button">
               <Plus size={20} /> New Family Tree
             </Button>
           </Link>
         </div>
 
-        {/* inline flash block */}
+        {/* Flash alert messages */}
         {flash.success && (
-          <div role="alert" className="bg-qindred-green-100 dark:bg-qindred-green-800 border-l-4 border-qindred-green-500 dark:border-qindred-green-600 p-4 mb-6">
-            <p className="text-qindred-green-700 dark:text-qindred-green-100">{flash.success}</p>
+          <div role="alert" className="flash-alert flash-alert--success">
+            <p className="flash-alert__text">{flash.success}</p>
           </div>
         )}
         {flash.error && (
-          <div role="alert" className="bg-red-100 dark:bg-red-800 border-l-4 border-red-500 dark:border-red-600 p-4 mb-6">
-            <p className="text-red-700 dark:text-red-100">{flash.error}</p>
+          <div role="alert" className="flash-alert flash-alert--error">
+            <p className="flash-alert__text">{flash.error}</p>
           </div>
         )}
 
         {familyTrees.length === 0 ? (
-          <div className="text-center py-16 bg-qindred-green-50/50 dark:bg-qindred-green-900/10 rounded-lg border border-qindred-green-100 dark:border-qindred-green-800/30">
-            <h3 className="text-xl font-medium mb-2 text-qindred-green-800 dark:text-qindred-green-500">No Family Trees Found</h3>
-            <p className="text-qindred-green-700/70 dark:text-qindred-green-600/70 mb-6">
+          <div className="family-trees-empty">
+            <h3 className="family-trees-empty__title">No Family Trees Found</h3>
+            <p className="family-trees-empty__description">
               Create your first family tree to get started.
             </p>
             <Link href={route('family-trees.create')}>
-              <Button className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white">
+              <Button className="family-trees-empty__button">
                 <Plus size={20} className="mr-2" />
                 Create Your First Family Tree
               </Button>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="family-trees-grid">
             {familyTrees.map(tree => (
-              <Card key={tree.id} className="border-qindred-green-100 dark:border-qindred-green-800/30 hover:shadow-md hover:shadow-qindred-green-100/50 dark:hover:shadow-qindred-green-900/20 transition-all">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-qindred-green-800 dark:text-qindred-green-500">{tree.name}</CardTitle>
-                  <CardDescription className="text-qindred-green-700/70 dark:text-qindred-green-600/70">
+              <Card key={tree.id} className="family-tree-card">
+                <CardHeader className="family-tree-card__header">
+                  <CardTitle className="family-tree-card__title">{tree.name}</CardTitle>
+                  <CardDescription className="family-tree-card__description">
                     {tree.description || 'No description provided'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-sm text-qindred-green-700/70 dark:text-qindred-green-500/70">
+                  <div className="family-tree-card__info">
                     <p>Created: {tree.created_at}</p>
                     <p>Members: {tree.member_count || 0}</p>
                     <p>
                       Privacy:{' '}
-                      <span className="ml-1 capitalize font-medium text-qindred-green-700 dark:text-qindred-green-500">
+                      <span className="family-tree-card__privacy">
                         {tree.privacy || 'private'}
                       </span>
                     </p>
                   </div>
                 </CardContent>
-                <CardFooter className="flex justify-between pt-4 border-t border-qindred-green-100 dark:border-qindred-green-800/20">
-                  <div className="flex gap-2">
+                <CardFooter className="family-tree-card__footer">
+                  <div className="family-tree-card__actions">
                     <Link href={route('family-trees.show', { family_tree: tree.id })}>
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500"
+                        className="family-tree-card__action-button"
                       >
                         <Eye size={18} className="mr-1" /> View
                       </Button>
@@ -133,7 +131,7 @@ export default function Index({ familyTrees }) {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          className="border-qindred-green-500 text-qindred-green-700 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 dark:text-qindred-green-500"
+                          className="family-tree-card__action-button"
                         >
                           <Edit size={16} className="mr-1" /> Edit
                         </Button>
@@ -144,7 +142,7 @@ export default function Index({ familyTrees }) {
                   {tree.can_delete && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
+                        <Button variant="destructive" size="sm" className="family-tree-card__delete-button">
                           <Trash size={16} className="mr-1" /> Delete
                         </Button>
                       </AlertDialogTrigger>
@@ -163,7 +161,7 @@ export default function Index({ familyTrees }) {
                             method="delete"
                             as="button"
                           >
-                            <AlertDialogAction className="bg-red-600 hover:bg-red-700">
+                            <AlertDialogAction className="family-tree-card__delete-button">
                               Delete
                             </AlertDialogAction>
                           </Link>

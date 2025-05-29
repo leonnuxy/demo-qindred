@@ -4,7 +4,7 @@ export function NavFooter({ items, className, ...props }) {
     return (<SidebarGroup {...props} className={`group-data-[collapsible=icon]:p-0 ${className || ''}`}>
             <SidebarGroupContent>
                 <SidebarMenu>
-                    {items.map((item) => (<SidebarMenuItem key={item.title}>
+                    {items.map((item, index) => (<SidebarMenuItem key={item.href || `footer-item-${index}`}>
                             <SidebarMenuButton asChild className="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
                                 <a href={item.href} target="_blank" rel="noopener noreferrer">
                                     {item.icon && <Icon iconNode={item.icon} className="h-5 w-5"/>}

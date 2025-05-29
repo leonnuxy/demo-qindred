@@ -1,14 +1,115 @@
-/* Forest page styling */
+/* forest.css - Forest page styles */
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Variables and Theme
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.forest-page-container {
+  --qindred-green-50: oklch(97.3% 0.013 166.107);
+  --qindred-green-100: oklch(94.5% 0.027 166.107);
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(72.3% 0.219 149.579);
+  --qindred-green-600: oklch(62.7% 0.194 149.214);
+  --qindred-green-700: oklch(52.7% 0.154 150.069);
+  --qindred-green-800: oklch(44.8% 0.119 151.328);
+  --qindred-green-900: oklch(39.3% 0.095 152.535);
+  --qindred-green-950: oklch(27.1% 0.065 152.535);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Layout & Container
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.forest-page-container {
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 0.75rem; /* rounded-xl equivalent */
+  padding: 1rem; /* p-4 equivalent */
+  background: linear-gradient(to bottom, white, color-mix(in oklch, var(--qindred-green-50) 30%, transparent));
+}
+
+.dark .forest-page-container {
+  background: linear-gradient(to bottom, rgb(15 23 42), color-mix(in oklch, var(--qindred-green-950) 10%, transparent));
+}
+
 .forest-page {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Header Section
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
 .forest-header {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.forest-header__title {
+  font-size: 1.5rem; /* text-2xl equivalent */
+  font-weight: 600; /* font-semibold equivalent */
+  margin-bottom: 0.5rem; /* mb-2 equivalent */
+  color: var(--qindred-green-900);
+}
+
+.dark .forest-header__title {
+  color: var(--qindred-green-400);
+}
+
+.forest-header__description {
+  color: color-mix(in oklch, var(--qindred-green-700) 70%, transparent);
+}
+
+.dark .forest-header__description {
+  color: color-mix(in oklch, var(--qindred-green-500) 70%, transparent);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Coming Soon Section
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.forest-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+  text-align: center;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--qindred-green-100);
+}
+
+.dark .forest-coming-soon {
+  background-color: #1e293b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  border-color: color-mix(in oklch, var(--qindred-green-800) 30%, transparent);
+}
+
+.forest-coming-soon__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--qindred-green-900);
+}
+
+.dark .forest-coming-soon__title {
+  color: var(--qindred-green-400);
+}
+
+.forest-coming-soon__description {
+  font-size: 1.1rem;
+  max-width: 600px;
+  line-height: 1.6;
+  color: color-mix(in oklch, var(--qindred-green-700) 70%, transparent);
+}
+
+.dark .forest-coming-soon__description {
+  color: color-mix(in oklch, var(--qindred-green-500) 70%, transparent);
 }
 
 .post-editor {

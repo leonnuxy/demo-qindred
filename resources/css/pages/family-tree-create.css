@@ -1,0 +1,152 @@
+/* family-tree-create.css - Create page styles */
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Variables and Theme
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-create-page {
+  --qindred-green-50: oklch(97.3% 0.013 166.107);
+  --qindred-green-100: oklch(94.5% 0.027 166.107);
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(72.3% 0.219 149.579);
+  --qindred-green-600: oklch(62.7% 0.194 149.214);
+  --qindred-green-700: oklch(52.7% 0.154 150.069);
+  --qindred-green-800: oklch(44.8% 0.119 151.328);
+  --qindred-green-900: oklch(39.3% 0.095 152.535);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Layout & Container
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-create-page {
+  @apply flex h-full flex-1 flex-col gap-4 rounded-xl p-4;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Header Section
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-create-header {
+  @apply text-3xl font-bold mb-6;
+  color: var(--qindred-green-900);
+}
+
+.dark .family-tree-create-header {
+  color: var(--qindred-green-500);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Form Sections
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-form-section {
+  @apply mb-8;
+  border-color: var(--qindred-green-100);
+}
+
+.dark .family-tree-form-section {
+  border-color: color-mix(in oklch, var(--qindred-green-800) 30%, transparent);
+}
+
+.family-tree-form-section__header {
+  @apply pb-3;
+}
+
+.family-tree-form-section__title {
+  color: var(--qindred-green-800);
+}
+
+.dark .family-tree-form-section__title {
+  color: var(--qindred-green-500);
+}
+
+.family-tree-form-section__description {
+  color: color-mix(in oklch, var(--qindred-green-700) 70%, transparent);
+}
+
+.dark .family-tree-form-section__description {
+  color: color-mix(in oklch, var(--qindred-green-600) 70%, transparent);
+}
+
+.family-tree-form-section__content {
+  @apply space-y-4;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Form Elements
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-form-field {
+  @apply space-y-2;
+}
+
+.family-tree-form-label {
+  @apply block text-sm font-medium;
+  color: var(--qindred-green-800);
+}
+
+.dark .family-tree-form-label {
+  color: var(--qindred-green-400);
+}
+
+.family-tree-form-input {
+  @apply mt-1 w-full;
+}
+
+.family-tree-form-textarea {
+  @apply mt-1 w-full;
+}
+
+.family-tree-form-select {
+  @apply mt-1 w-full;
+}
+
+.family-tree-form-helper {
+  @apply text-xs;
+  color: color-mix(in oklch, var(--qindred-green-600) 70%, transparent);
+}
+
+.dark .family-tree-form-helper {
+  color: color-mix(in oklch, var(--qindred-green-500) 70%, transparent);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Grid Layouts
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-form-grid {
+  @apply grid grid-cols-1 gap-4;
+}
+
+@media (min-width: 768px) {
+  .family-tree-form-grid--two-cols {
+    @apply md:grid-cols-2;
+  }
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Error States
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-form-error {
+  @apply mt-1 text-sm text-red-600 dark:text-red-400;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Action Buttons
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-form-actions {
+  @apply flex justify-end gap-3;
+}
+
+.family-tree-form-actions__back {
+  @apply border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30;
+}
+
+.family-tree-form-actions__submit {
+  @apply text-white;
+  background-color: var(--qindred-green-600);
+}
+
+.family-tree-form-actions__submit:hover {
+  background-color: var(--qindred-green-700);
+}
+
+.family-tree-form-actions__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

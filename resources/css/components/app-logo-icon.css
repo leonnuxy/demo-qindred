@@ -29,6 +29,14 @@
   flex-shrink: 0;
 }
 
+.app-logo-icon--footer {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: inherit;
+  object-fit: contain;
+}
+
 /* Enhanced hover effects */
 .app-logo-icon:hover {
   transform: scale(1.02);
@@ -59,6 +67,12 @@
   .app-logo-icon--header {
     width: 28px;
     height: 28px;
+  }
+  
+  .app-logo-icon--footer {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
   }
 }
 

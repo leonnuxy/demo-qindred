@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useToast } from '@/components/ui/use-toast';
 import AppLayout from '@/layouts/app-layout';
 import { 
@@ -74,56 +74,56 @@ export default function Create() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Create New Family Tree" />
       
-      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 family-tree">
-        <h1 className="text-3xl font-bold mb-6 text-qindred-green-900 dark:text-qindred-green-500">Create New Family Tree</h1>
+      <div className="family-tree-create-page family-tree">
+        <h1 className="family-tree-create-header">Create New Family Tree</h1>
         
         <form onSubmit={handleSubmit}>
-          <Card className="mb-8 border-qindred-green-100 dark:border-qindred-green-800/30">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-qindred-green-800 dark:text-qindred-green-500">Tree Details</CardTitle>
-              <CardDescription className="text-qindred-green-700/70 dark:text-qindred-green-600/70">
+          <Card className="family-tree-form-section">
+            <CardHeader className="family-tree-form-section__header">
+              <CardTitle className="family-tree-form-section__title">Tree Details</CardTitle>
+              <CardDescription className="family-tree-form-section__description">
                 Enter the basic information for your family tree.
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="name">Tree Name *</Label>
+            <CardContent className="family-tree-form-section__content">
+              <div className="family-tree-form-field">
+                <Label htmlFor="name" className="family-tree-form-label">Tree Name *</Label>
                 <Input
                   id="name"
                   type="text"
                   value={data.name}
                   onChange={e => setData('name', e.target.value)}
-                  className="mt-1"
+                  className="family-tree-form-input"
                   placeholder="e.g., Smith Family Tree"
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  <p className="family-tree-form-error">{errors.name}</p>
                 )}
               </div>
               
-              <div>
-                <Label htmlFor="description">Description</Label>
+              <div className="family-tree-form-field">
+                <Label htmlFor="description" className="family-tree-form-label">Description</Label>
                 <Textarea
                   id="description"
                   value={data.description}
                   onChange={e => setData('description', e.target.value)}
-                  className="mt-1"
+                  className="family-tree-form-textarea"
                   placeholder="Add a brief description of your family tree..."
                   rows={3}
                 />
                 {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                  <p className="family-tree-form-error">{errors.description}</p>
                 )}
               </div>
               
-              <div>
-                <Label htmlFor="privacy">Privacy Setting</Label>
+              <div className="family-tree-form-field">
+                <Label htmlFor="privacy" className="family-tree-form-label">Privacy Setting</Label>
                 <Select
                   value={data.privacy}
                   onValueChange={value => setData('privacy', value)}
                 >
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger className="family-tree-form-select">
                     <SelectValue placeholder="Select privacy level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -132,73 +132,73 @@ export default function Create() {
                   </SelectContent>
                 </Select>
                 {errors.privacy && (
-                  <p className="mt-1 text-sm text-red-600">{errors.privacy}</p>
+                  <p className="family-tree-form-error">{errors.privacy}</p>
                 )}
               </div>
             </CardContent>
           </Card>
           
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle>First Family Member</CardTitle>
-              <CardDescription>
+          <Card className="family-tree-form-section">
+            <CardHeader className="family-tree-form-section__header">
+              <CardTitle className="family-tree-form-section__title">First Family Member</CardTitle>
+              <CardDescription className="family-tree-form-section__description">
                 Add yourself or another person as the first member of this tree.
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name *</Label>
+            <CardContent className="family-tree-form-section__content">
+              <div className="family-tree-form-grid family-tree-form-grid--two-cols">
+                <div className="family-tree-form-field">
+                  <Label htmlFor="firstName" className="family-tree-form-label">First Name *</Label>
                   <Input
                     id="firstName"
                     type="text"
                     value={data.firstName}
                     onChange={e => setData('firstName', e.target.value)}
-                    className="mt-1"
+                    className="family-tree-form-input"
                   />
                   {errors.firstName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                    <p className="family-tree-form-error">{errors.firstName}</p>
                   )}
                 </div>
                 
-                <div>
-                  <Label htmlFor="lastName">Last Name *</Label>
+                <div className="family-tree-form-field">
+                  <Label htmlFor="lastName" className="family-tree-form-label">Last Name *</Label>
                   <Input
                     id="lastName"
                     type="text"
                     value={data.lastName}
                     onChange={e => setData('lastName', e.target.value)}
-                    className="mt-1"
+                    className="family-tree-form-input"
                   />
                   {errors.lastName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                    <p className="family-tree-form-error">{errors.lastName}</p>
                   )}
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+              <div className="family-tree-form-grid family-tree-form-grid--two-cols">
+                <div className="family-tree-form-field">
+                  <Label htmlFor="dateOfBirth" className="family-tree-form-label">Date of Birth</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
                     value={data.dateOfBirth}
                     onChange={e => setData('dateOfBirth', e.target.value)}
-                    className="mt-1"
+                    className="family-tree-form-input"
                   />
                   {errors.dateOfBirth && (
-                    <p className="mt-1 text-sm text-red-600">{errors.dateOfBirth}</p>
+                    <p className="family-tree-form-error">{errors.dateOfBirth}</p>
                   )}
                 </div>
                 
-                <div>
-                  <Label htmlFor="gender">Gender</Label>
+                <div className="family-tree-form-field">
+                  <Label htmlFor="gender" className="family-tree-form-label">Gender</Label>
                   <Select
                     value={data.gender}
                     onValueChange={value => setData('gender', value)}
                   >
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="family-tree-form-select">
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
@@ -208,14 +208,14 @@ export default function Create() {
                     </SelectContent>
                   </Select>
                   {errors.gender && (
-                    <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
+                    <p className="family-tree-form-error">{errors.gender}</p>
                   )}
                 </div>
               </div>
               
-              <div>
-                <Label htmlFor="email">Email (Optional)</Label>
-                <p className="text-xs text-gray-500">
+              <div className="family-tree-form-field">
+                <Label htmlFor="email" className="family-tree-form-label">Email (Optional)</Label>
+                <p className="family-tree-form-helper">
                   If provided, this person will be invited to join the family tree.
                 </p>
                 <Input
@@ -223,30 +223,31 @@ export default function Create() {
                   type="email"
                   value={data.email}
                   onChange={e => setData('email', e.target.value)}
-                  className="mt-1"
+                  className="family-tree-form-input"
                   placeholder="email@example.com"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  <p className="family-tree-form-error">{errors.email}</p>
                 )}
               </div>
             </CardContent>
           </Card>
           
-          <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => window.history.back()}
-              disabled={processing}
-              className="border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900/30"
-            >
-              Cancel
-            </Button>
+          <div className="family-tree-form-actions">
+            <Link href={route('family-trees.index')}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={processing}
+                className="family-tree-form-actions__back"
+              >
+                Back to Family Trees
+              </Button>
+            </Link>
             <Button 
               type="submit" 
               disabled={processing}
-              className="bg-qindred-green-600 hover:bg-qindred-green-700 text-white"
+              className="family-tree-form-actions__submit"
             >
               {processing ? 'Creating...' : 'Create Family Tree'}
             </Button>

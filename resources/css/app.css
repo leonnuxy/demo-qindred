@@ -58,33 +58,21 @@
   @import '@css/ui/button.css';
   @import '@css/pages/invitations.css';
   @import '@css/pages/family-tree.css';
+  @import '@css/pages/family-trees.css';
+  @import '@css/pages/family-tree-create.css';
   @import '@css/pages/dashboard.css';
   @import '@css/sidebar.css';
   @import '@css/header.css';
   @import '@css/floating-header.css';
+  @import '@css/footer.css';
   @import '@css/setup/wizard.css';
   @import '@css/components/app-logo.css';
 
-  /* any inline component overrides: */
+  /* Component overrides for global app logo behavior */
   .app-logo-icon {
     height: 100%;
     object-fit: contain;
-    background: #ffffff;
-  }
-  .app-logo-icon--auth { width: 30%; }
-  .app-logo-icon--sidebar { width: 100%; }
-  .app-logo-icon--header { width: auto; }
-  .app-logo-icon--footer { 
-    width: 48px; 
-    height: 48px; 
-    border-radius: 8px;
-  }
-  @media (max-width: 768px) {
-    .app-logo-icon--footer {
-      width: 40px;
-      height: 40px;
-      border-radius: 6px;
-    }
+    background-color: inherit;
   }
 }
 

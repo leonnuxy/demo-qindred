@@ -1,0 +1,225 @@
+/* family-trees.css - Index/Listing page styles */
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Variables and Theme
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-trees-page {
+  --qindred-green-50: oklch(97.3% 0.013 166.107);
+  --qindred-green-100: oklch(94.5% 0.027 166.107);
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(72.3% 0.219 149.579);
+  --qindred-green-600: oklch(62.7% 0.194 149.214);
+  --qindred-green-700: oklch(52.7% 0.154 150.069);
+  --qindred-green-800: oklch(44.8% 0.119 151.328);
+  --qindred-green-900: oklch(39.3% 0.095 152.535);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Layout & Container
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-trees-page {
+  @apply flex h-full flex-1 flex-col gap-4 rounded-xl p-4 relative;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Header Section
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-trees-header {
+  @apply flex justify-between items-center mb-6;
+}
+
+.family-trees-header__title {
+  @apply text-3xl font-bold;
+  color: var(--qindred-green-900);
+}
+
+.dark .family-trees-header__title {
+  color: var(--qindred-green-500);
+}
+
+.family-trees-header__new-button {
+  @apply flex items-center gap-1 text-white;
+  background-color: var(--qindred-green-600);
+}
+
+.family-trees-header__new-button:hover {
+  background-color: var(--qindred-green-700);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Alert Messages
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.flash-alert {
+  @apply border-l-4 p-4 mb-6;
+}
+
+.flash-alert--success {
+  background-color: var(--qindred-green-100);
+  border-color: var(--qindred-green-500);
+}
+
+.dark .flash-alert--success {
+  background-color: var(--qindred-green-800);
+  border-color: var(--qindred-green-600);
+}
+
+.flash-alert--success .flash-alert__text {
+  color: var(--qindred-green-700);
+}
+
+.dark .flash-alert--success .flash-alert__text {
+  color: var(--qindred-green-100);
+}
+
+.flash-alert--error {
+  @apply bg-red-100 dark:bg-red-800 border-red-500 dark:border-red-600;
+}
+
+.flash-alert--error .flash-alert__text {
+  @apply text-red-700 dark:text-red-100;
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Empty State
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-trees-empty {
+  @apply text-center py-16 rounded-lg border;
+  background-color: color-mix(in oklch, var(--qindred-green-50) 50%, transparent);
+  border-color: var(--qindred-green-100);
+}
+
+.dark .family-trees-empty {
+  background-color: color-mix(in oklch, var(--qindred-green-900) 10%, transparent);
+  border-color: color-mix(in oklch, var(--qindred-green-800) 30%, transparent);
+}
+
+.family-trees-empty__title {
+  @apply text-xl font-medium mb-2;
+  color: var(--qindred-green-800);
+}
+
+.dark .family-trees-empty__title {
+  color: var(--qindred-green-500);
+}
+
+.family-trees-empty__description {
+  @apply mb-6;
+  color: color-mix(in oklch, var(--qindred-green-700) 70%, transparent);
+}
+
+.dark .family-trees-empty__description {
+  color: color-mix(in oklch, var(--qindred-green-600) 70%, transparent);
+}
+
+.family-trees-empty__button {
+  background-color: var(--qindred-green-600);
+  @apply text-white;
+}
+
+.family-trees-empty__button:hover {
+  background-color: var(--qindred-green-700);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Tree Cards Grid
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-trees-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.family-tree-card {
+  @apply transition-all;
+  border-color: var(--qindred-green-100);
+}
+
+.dark .family-tree-card {
+  border-color: color-mix(in oklch, var(--qindred-green-800) 30%, transparent);
+}
+
+.family-tree-card:hover {
+  @apply shadow-md;
+  box-shadow: 0 4px 6px -1px color-mix(in oklch, var(--qindred-green-100) 50%, transparent);
+}
+
+.dark .family-tree-card:hover {
+  box-shadow: 0 4px 6px -1px color-mix(in oklch, var(--qindred-green-900) 20%, transparent);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Card Content
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-card__header {
+  @apply pb-3;
+}
+
+.family-tree-card__title {
+  color: var(--qindred-green-800);
+}
+
+.dark .family-tree-card__title {
+  color: var(--qindred-green-500);
+}
+
+.family-tree-card__description {
+  color: color-mix(in oklch, var(--qindred-green-700) 70%, transparent);
+}
+
+.dark .family-tree-card__description {
+  color: color-mix(in oklch, var(--qindred-green-600) 70%, transparent);
+}
+
+.family-tree-card__info {
+  @apply text-sm;
+  color: color-mix(in oklch, var(--qindred-green-700) 70%, transparent);
+}
+
+.dark .family-tree-card__info {
+  color: color-mix(in oklch, var(--qindred-green-500) 70%, transparent);
+}
+
+.family-tree-card__privacy {
+  @apply ml-1 capitalize font-medium;
+  color: var(--qindred-green-700);
+}
+
+.dark .family-tree-card__privacy {
+  color: var(--qindred-green-500);
+}
+
+/* ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+   Card Actions
+   –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+.family-tree-card__footer {
+  @apply flex justify-between pt-4 border-t;
+  border-color: var(--qindred-green-100);
+}
+
+.dark .family-tree-card__footer {
+  border-color: color-mix(in oklch, var(--qindred-green-800) 20%, transparent);
+}
+
+.family-tree-card__actions {
+  @apply flex gap-2;
+}
+
+.family-tree-card__action-button {
+  @apply border text-sm;
+  border-color: var(--qindred-green-500);
+  color: var(--qindred-green-700);
+}
+
+.family-tree-card__action-button:hover {
+  background-color: var(--qindred-green-50);
+}
+
+.dark .family-tree-card__action-button {
+  color: var(--qindred-green-500);
+}
+
+.dark .family-tree-card__action-button:hover {
+  background-color: color-mix(in oklch, var(--qindred-green-900) 20%, transparent);
+}
+
+.family-tree-card__delete-button {
+  @apply bg-red-600 hover:bg-red-700;
+}
