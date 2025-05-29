@@ -3,10 +3,10 @@ import * as d3 from 'd3';
 
 const NODE_WIDTH = 120;
 const NODE_HEIGHT = 130;
-const SPOUSE_GAP = 40;
-const GENERATION_GAP = 150;
+const SPOUSE_GAP = 20;
+const GENERATION_GAP = 60;
 
-const TreeComponent = ({ initialData, onNodeClick }) => {
+const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
   const svgRef = useRef();
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
@@ -66,19 +66,20 @@ const TreeComponent = ({ initialData, onNodeClick }) => {
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    // Create a group for the entire tree that will be centered
+    // Create a group for the entire tree that will be centered and scaled
     const g = svg.append("g")
-      .attr("transform", `translate(${dimensions.width / 2}, 70)`);
+      .attr("transform", `translate(${dimensions.width / 2}, 10) scale(${zoom})`);
 
     const root = d3.hierarchy(processNode(initialData));
     const treeLayout = d3.tree().nodeSize([NODE_WIDTH, GENERATION_GAP]);
     
     treeLayout(root);
 
-    // Adjust coordinates for vertical layout
+    // Adjust coordinates for vertical layout with balanced spacing
     root.descendants().forEach(d => {
       d.y = d.depth * (NODE_HEIGHT + GENERATION_GAP);
-      d.x = d.x * (NODE_WIDTH + SPOUSE_GAP);
+      // Use moderate horizontal spacing to accommodate grandchildren
+      d.x = d.x * 1.0;
     });
 
     // Draw links
@@ -228,7 +229,7 @@ const TreeComponent = ({ initialData, onNodeClick }) => {
       `;
     });
 
-  }, [initialData, dimensions, onNodeClick]);
+  }, [initialData, dimensions, zoom, onNodeClick]);
 
   useEffect(() => {
     const handleResize = () => {

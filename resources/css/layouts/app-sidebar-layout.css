@@ -1,0 +1,19 @@
+/* App Sidebar Layout Styles */
+
+.app-sidebar-layout__content {
+  padding-top: 0rem; /* pt-16 equivalent */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem);
+}
+
+.app-sidebar-layout__main {
+  flex: 1;
+  padding-bottom: 1rem; /* pb-4 equivalent */
+}
+
+.app-sidebar-layout .floating-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}

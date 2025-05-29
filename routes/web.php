@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\FamilyTreeController;
 use App\Http\Controllers\FamilyTreeLogController;
@@ -18,14 +19,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        // force redirect incomplete users
-        if (! Auth::user()->setup_completed) {
-            return redirect()->route('setup.index');
-        }
-
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Family tree routes
     Route::resource('family-trees', FamilyTreeController::class);

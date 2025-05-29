@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ManageFamilyMembersButton from '@/features/FamilyTree/components/ManageFamilyMembersButton';
+import Avatar from '@/components/Avatar';
 import '@css/pages/invitations.css';
 import FamilyMemberList from '@/features/FamilyTree/components/FamilyMemberList';
 
@@ -253,8 +254,12 @@ export default function Show({
                   Error loading tree: {typeof treeError === 'object' ? JSON.stringify(treeError) : treeError}
                 </div>
               ) : displayTreeData && !displayTreeData.error ? (
-                <div className="h-full flex items-center justify-center" style={{ transform: `scale(${zoom})`, transformOrigin: 'center' }}>
-                  <TreeComponent initialData={displayTreeData} onNodeClick={(node) => console.log('Node clicked:', node)} />
+                <div className="h-full w-full">
+                  <TreeComponent 
+                    initialData={displayTreeData} 
+                    zoom={zoom}
+                    onNodeClick={(node) => console.log('Node clicked:', node)} 
+                  />
                 </div>
               ) : displayTreeData?.error && (
                 <p role="alert" className="p-4 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
@@ -318,24 +323,11 @@ export default function Show({
               {activityLog.length ? activityLog.map(entry => (
                 <div key={entry.id} className="border dark:border-gray-700 rounded-lg p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {entry.author?.avatar ? (
-                        <img
-                          src={entry.author.avatar}
-                          alt={entry.author.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => { 
-                            e.target.onerror = null;
-                            e.target.src = '';
-                            e.target.parentElement.innerHTML = entry.author.name.charAt(0).toUpperCase();
-                          }}
-                        />
-                      ) : (
-                        <span className="text-lg font-medium">
-                          {(entry.author?.name || 'U').charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
+                    <Avatar 
+                      src={entry.author?.avatar || entry.user?.avatar_url}
+                      name={entry.author?.name || entry.user?.name || 'Unknown User'}
+                      className="w-10 h-10"
+                    />
                     <div>
                       <div className="font-medium">{entry.author?.name || 'Unknown User'}</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">{entry.timestamp || entry.created_at}</div>
