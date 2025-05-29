@@ -63,6 +63,7 @@
   @import '@css/header.css';
   @import '@css/floating-header.css';
   @import '@css/setup/wizard.css';
+  @import '@css/components/app-logo.css';
 
   /* any inline component overrides: */
   .app-logo-icon {

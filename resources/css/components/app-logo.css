@@ -1,0 +1,85 @@
+/* App Logo Component Styles */
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  background-color: var(--sidebar-primary) !important;
+}
+
+.app-logo__icon-container {
+  display: flex;
+  aspect-ratio: 1/1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+  transition: all 0.3s ease-in-out;
+}
+
+.app-logo__icon-container:hover {
+  background-color: color-mix(in oklch, var(--sidebar-accent), transparent 20%);
+  transform: scale(1.05);
+}
+
+.app-logo__icon-container--collapsed {
+  width: 3.5rem;
+  height: 2rem;
+  background-color: var(--sidebar-primary);
+}
+
+.app-logo__icon-container--expanded {
+  width: 3rem;
+  height: 3rem;
+}
+
+.app-logo__icon {
+  fill: currentColor;
+  color: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.dark .app-logo__icon {
+  color: black;
+}
+
+.app-logo__icon--collapsed {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.app-logo__icon--expanded {
+  width: 2rem;
+  height: 2rem;
+}
+
+.app-logo__text-container {
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.app-logo__text-container--collapsed {
+  width: 0;
+  opacity: 0;
+}
+
+.app-logo__text-container--expanded {
+  flex: 1;
+  opacity: 1;
+}
+
+.app-logo__text {
+  font-weight: 700;
+  color: var(--foreground);
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+}
+
+.dark .app-logo__text {
+  color: white;
+}

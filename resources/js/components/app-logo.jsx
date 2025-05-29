@@ -5,20 +5,19 @@ export default function AppLogo() {
     const { state, isMobile } = useSidebar();
     const isCollapsed = state === "collapsed" && !isMobile;
     
-    return (<>
-            <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-12 items-center justify-center rounded-md transition-all duration-200 hover:bg-sidebar-accent/80">
+    return (
+        <div className="app-logo">
+            <div className={`app-logo__icon-container ${isCollapsed ? 'app-logo__icon-container--collapsed' : 'app-logo__icon-container--expanded'}`}>
                 <AppLogoIcon 
-                  variant="sidebar" 
-                  className="size-8 fill-current text-white dark:text-black"
+                    variant="sidebar" 
+                    className={`app-logo__icon ${isCollapsed ? 'app-logo__icon--collapsed' : 'app-logo__icon--expanded'}`}
                 />
             </div>
-            <div className={`transition-all duration-200 ${isCollapsed ? 'w-0 opacity-0' : 'opacity-100'}`}>
-                <span
-                    className="font-bold text-foreground dark:text-white text-[1.5rem] leading-none tracking-wide"
-                >
+            <div className={`app-logo__text-container ${isCollapsed ? 'app-logo__text-container--collapsed' : 'app-logo__text-container--expanded'}`}>
+                <span className="app-logo__text">
                     Qindred
                 </span>
             </div>
-        </>);
+        </div>
+    );
 }
-

@@ -13,10 +13,8 @@ import {
     SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Users, UserRound, Mail, Settings, LayoutPanelTop } from 'lucide-react';
-import { Network } from 'lucide-react';
+import { LayoutGrid, Users, Mail, Network, Search } from 'lucide-react';
 import AppLogo from './app-logo';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import '@css/sidebar.css';
 
@@ -63,34 +61,7 @@ const mainNavItems = [
 ];
 
 const footerNavItems = [
-    {
-        title: 'Help & Support',
-        href: '',
-        icon: BookOpen,
-    },
-    {
-        title: 'About Us',
-        href: '',
-        icon: Folder,
-    },
-    {
-        // Contact Us
-        title: 'Contact Us',
-        href: '',
-        icon: UserRound,
-    },
-    {
-        // Privacy Policy
-        title: 'Privacy Policy',
-        href: '',
-        icon: Settings,
-    },
-    {
-        // Terms of Service
-        title: 'Terms of Service',
-        href: '',
-        icon: LayoutPanelTop,
-    },
+    {}
 ];
 
 export function AppSidebar() {

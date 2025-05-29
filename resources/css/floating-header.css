@@ -1,343 +1,479 @@
-/* Floating header base */
+/* Floating Header for Qindred Application */
+
+:root {
+  --qindred-green-50: oklch(97.5% 0.04 151.711);
+  --qindred-green-100: oklch(95.0% 0.06 151.711);
+  --qindred-green-400: oklch(79.2% 0.209 151.711);
+  --qindred-green-500: oklch(75.0% 0.209 151.711);
+  --qindred-green-700: oklch(50.0% 0.209 151.711);
+  --qindred-green-800: oklch(40.0% 0.209 151.711);
+}
+
+/* ==========================================================================
+   FLOATING HEADER BASE
+   ========================================================================== */
+
 .floating-header {
   position: fixed;
   top: 0;
-  /* left: var(--sidebar-width); */
-  left: calc(var(--sidebar-width) + var(--sidebar-width-icon));
   right: 0;
   height: 4rem;
   display: flex;
   align-items: center;
   background: transparent;
-  backdrop-filter: none; 
+  backdrop-filter: none;
   box-shadow: none;
-  transition:
-    left 0.2s ease-in-out,
-    transform 0.3s ease-in-out;
-  z-index: 40;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 30; /* Lowered from 40 to avoid blocking sidebar controls */
+  border: none;
+  pointer-events: none; /* Allow clicks to pass through when transparent */
 }
 
-/* Collapsed vs expanded sidebar */
-.floating-header.sidebar-collapsed {
-  left: var(--sidebar-width);
+/* Enable pointer events when scrolled (when visible) */
+.floating-header.scrolled {
+  pointer-events: auto;
 }
 
-.floating-header.sidebar-expanded {
-  left: calc(var(--sidebar-width) + var(--sidebar-width-icon));
+/* Desktop positioning - adjust based on sidebar state with margin for toggle */
+.floating-header.desktop-header {
+  left: calc(var(--sidebar-width) + 1rem); /* Add margin to avoid sidebar toggle */
 }
 
-/* Hide on scroll up */
+.floating-header.desktop-header.sidebar-collapsed {
+  left: calc(var(--sidebar-width-icon) + 1rem); /* Add margin for collapsed state */
+}
+
+/* Mobile positioning - full width but avoid top-left area */
+.floating-header.mobile-header {
+  left: 0;
+  right: 0;
+  padding: 0 1rem;
+}
+
+/* Hide on scroll (mobile only) */
 .floating-header.hidden {
   transform: translateY(-100%);
 }
 
-/* Darken / solidify on scroll past threshold */
+/* Scrolled state - glassmorphism effect */
 .floating-header.scrolled {
-  background: hsl(var(--background) / 0.8);
-  backdrop-filter: blur(8px);
-  box-shadow: var(--shadow-sm);
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  pointer-events: auto; /* Re-enable when visible */
 }
 
-/* Desktop and mobile header separation */
-.desktop-header {
-  display: none;
-}
+/* ==========================================================================
+   CONTENT WRAPPER
+   ========================================================================== */
 
-.mobile-header {
-  display: flex;
-}
-
-@media (min-width: 769px) {
-  .desktop-header {
-    display: flex;
-  }
-  
-  .mobile-header {
-    display: none;
-  }
-}
-
-/* Mobile header specific positioning */
-@media (max-width: 768px) {
-  .mobile-header {
-    left: 0;
-    padding: 0 0.5rem;
-    z-index: 40;
-  }
-  .mobile-header.sidebar-collapsed,
-  .mobile-header.sidebar-expanded {
-    left: 0;
-  }
-
-  .floating-header.scrolled {
-    background: hsl(var(--background) / 0.8);
-    backdrop-filter: blur(8px);
-    box-shadow: var(--shadow-sm);
-    border-radius: 10%;
-  }
-}
-
-/* Content wrapper */
 .floating-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
   width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
+  pointer-events: auto; /* Always allow interaction with content */
 }
 
-@media (max-width: 768px) {
-  .mobile-header .floating-header-content {
-    padding: 0 0.5rem;
-    justify-content: flex-end; /* Align actions to the right on mobile */
-  }
+/* Mobile content adjustments */
+.floating-header.mobile-header .floating-header-content {
+  padding: 0 0.5rem;
+  justify-content: flex-end;
+  margin-left: 3.5rem; /* Leave space for mobile menu button */
 }
 
-/* Search wrapper - desktop only */
+/* ==========================================================================
+   SEARCH BAR (DESKTOP ONLY)
+   ========================================================================== */
+
 .desktop-search.search-wrapper {
   position: relative;
   flex: 1;
   display: flex;
   justify-content: center;
-  max-width: 600px;
+  max-width: 380px;
   margin: 0 auto;
-}
-
-/* Search box - desktop only */
-.desktop-search .search-input {
-  width: 100%;
-  max-width: 400px;
-  height: 2.25rem;
-  padding-left: 2.25rem;
-  border-radius: 0.375rem;
-  border: 1px solid hsl(var(--input));
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  transition: all 0.2s ease-in-out;
+  pointer-events: auto;
 }
 
 .desktop-search .search-icon {
-  position: relative;
-  left: 1.75rem;
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
   height: 1rem;
   width: 1rem;
-  color: var(--qindred-green-700);
+  color: hsl(var(--muted-foreground));
   opacity: 0.8;
   pointer-events: none;
   z-index: 2;
+  transition: color 0.2s ease-in-out;
+}
+
+.desktop-search .search-input {
+  width: 100%;
+  max-width: 400px;
+  height: 2.5rem;
+  padding-left: 2.75rem;
+  padding-right: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--border) / 0.6);
+  background: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .desktop-search .search-input:focus {
-  box-shadow: 0 0 0 2px hsl(var(--qindred-green-500) / 0.2);
+  box-shadow: 0 0 0 2px hsl(var(--qindred-green-400) / 0.2);
   border-color: var(--qindred-green-500);
   outline: none;
+  background: hsl(var(--background) / 0.95);
 }
 
-/* Action buttons */
+.desktop-search .search-input:focus + .search-icon,
+.desktop-search .search-input:hover + .search-icon {
+  color: var(--qindred-green-700);
+  opacity: 1;
+}
+
+.desktop-search .search-input::placeholder {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   ACTION BUTTONS
+   ========================================================================== */
+
 .actions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  pointer-events: auto;
 }
 
-@media (max-width: 768px) {
-  .mobile-header .actions {
-    gap: 0.5rem; /* Consistent spacing on mobile */
-    width: 100%; /* Take full width on mobile when search is hidden */
-    justify-content: flex-end; /* Align to the right */
-  }
-  .mobile-header .actions button {
-    height: 2.75rem; /* Larger touch targets */
-    width: 2.75rem;
-    padding: 0.5rem;
-  }
-  .desktop-search .search-input {
-    display: none; /* Hide search on mobile */
-  }
-  .desktop-search .search-icon {
-    display: none; /* Hide search icon on mobile */
-  }
-  .floating-header .search-wrapper {
-    display: none; /* Hide header search on mobile */
-  }
+/* Base action button styling */
+.action-button,
+.notification-trigger,
+.profile-trigger {
+  background-color: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid hsl(var(--border) / 0.4);
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  pointer-events: auto;
+}
+
+.action-button:hover,
+.notification-trigger:hover,
+.profile-trigger:hover {
+  background-color: hsl(var(--qindred-green-50));
+  color: var(--qindred-green-700);
+  border-color: hsl(var(--qindred-green-400) / 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Notification button specific styling */
+.notification-trigger {
+  border-radius: 0.5rem;
+  height: 2.25rem;
+  width: 2.25rem;
 }
 
 /* Notification badge */
-.notification-button {
-  position: relative;
-}
-
 .notification-badge {
   position: absolute;
   top: -0.25rem;
   right: -0.25rem;
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  background: hsl(var(--qindred-green-700));
+  color: white;
   border-radius: 9999px;
   font-size: 0.625rem;
   line-height: 1;
-  padding: 0;
-  width: 1.25rem;
+  font-weight: 600;
+  min-width: 1.25rem;
   height: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid hsl(var(--background));
 }
 
-/* Dropdown content widths and backgrounds */
-.notifications-content {
-  width: 20rem;
-  background-color: hsl(var(--popover)) !important;
-  border: 1px solid hsl(var(--border)) !important;
-  box-shadow: var(--shadow-md) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-@media (max-width: 768px) {
-  .mobile-header .notifications-content {
-    width: calc(100vw - 2rem);
-    max-width: 20rem;
-    right: 0;
-    left: auto;
-  }
-}
-
-.profile-menu {
-  width: 14rem;
-  background-color: hsl(var(--popover)) !important;
-  border: 1px solid hsl(var(--border)) !important;
-  box-shadow: var(--shadow-md) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-@media (max-width: 768px) {
-  .mobile-header .profile-menu {
-    width: calc(100vw - 2rem);
-    max-width: 14rem;
-    right: 0;
-    left: auto;
-  }
-}
-
-/* Avatar trigger */
-.avatar-button {
-  padding: 0.25rem;
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-@media (max-width: 768px) {
-  .mobile-header .avatar-button {
-    padding: 0;
-  }
-  .mobile-header .avatar-button img {
-    width: 2rem;
-    height: 2rem;
-  }
-}
-
-/* Override button styles for dropdown triggers */
-.notification-trigger {
-  position: relative !important;
-  background-color: hsl(var(--background) / 0.8) !important;
-  backdrop-filter: blur(8px) !important;
-  border: 1px solid hsl(var(--border) / 0.4) !important;
-  transition: all 0.2s ease-in-out !important;
-}
-
-.notification-trigger:hover {
-  background-color: hsl(var(--accent)) !important;
-  color: hsl(var(--accent-foreground)) !important;
-  border-color: hsl(var(--border)) !important;
-}
-
+/* Profile button specific styling */
 .profile-trigger {
-  position: relative !important;
-  background-color: hsl(var(--background) / 0.8) !important;
-  backdrop-filter: blur(8px) !important;
-  border: 1px solid hsl(var(--border) / 0.4) !important;
-  padding: 0.25rem !important;
-  border-radius: 9999px !important;
-  transition: all 0.2s ease-in-out !important;
-  overflow: hidden !important;
+  border-radius: 9999px;
+  padding: 0.125rem;
+  height: 2.5rem;
+  width: 2.5rem;
 }
 
 .profile-trigger:hover {
-  background-color: hsl(var(--accent)) !important;
-  color: hsl(var(--accent-foreground)) !important;
-  border-color: hsl(var(--border)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--qindred-green-400) / 0.3);
+}
+
+/* ==========================================================================
+   DROPDOWN MENUS
+   ========================================================================== */
+
+/* Notifications dropdown */
+.notifications-content {
+  background-color: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.8);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border-radius: 0.75rem;
+  max-width: 20rem;
+  min-width: 18rem;
+  z-index: 50; /* Higher z-index for dropdowns */
+}
+
+/* Profile dropdown */
+.profile-menu {
+  background-color: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.8);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border-radius: 0.75rem;
+  min-width: 14rem;
+  z-index: 50; /* Higher z-index for dropdowns */
+}
+
+/* ==========================================================================
+   SIDEBAR INTEGRATION FIXES
+   ========================================================================== */
+
+/* Ensure floating header doesn't interfere with sidebar toggle */
+.floating-header.desktop-header {
+  /* Create exclusion zone for sidebar toggle */
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* On mobile, ensure header doesn't block hamburger menu */
+.floating-header.mobile-header {
+  /* Leave space for mobile menu button */
+  padding-left: 4rem;
+}
+
+.floating-header.mobile-header .floating-header-content {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .floating-header.mobile-header {
+    height: 3.5rem;
+    padding: 0 0.75rem 0 4rem; /* Extra left padding for mobile menu */
+  }
+
+  .floating-header.mobile-header .floating-header-content {
+    padding: 0 0.25rem;
+    margin-left: 0;
+  }
+
+  /* Hide search on mobile */
+  .desktop-search {
+    display: none !important;
+  }
+
+  /* Mobile action buttons */
+  .floating-header.mobile-header .actions {
+    gap: 0.75rem;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .floating-header.mobile-header .notification-trigger,
+  .floating-header.mobile-header .action-button {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 0.625rem;
+  }
+
+  .floating-header.mobile-header .profile-trigger {
+    height: 2.75rem;
+    width: 2.75rem;
+  }
+
+  /* Mobile dropdown adjustments */
+  .floating-header.mobile-header .notifications-content,
+  .floating-header.mobile-header .profile-menu {
+    width: calc(100vw - 2rem);
+    max-width: 20rem;
+    margin: 0.5rem;
+  }
+
+  /* Enhanced scrolled state for mobile */
+  .floating-header.mobile-header.scrolled {
+    background: hsl(var(--background) / 0.9);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-header.mobile-header {
+    padding: 0 0.5rem 0 3.5rem;
+  }
+
+  .floating-header.mobile-header .notifications-content,
+  .floating-header.mobile-header .profile-menu {
+    width: calc(100vw - 1rem);
+    margin: 0.25rem;
+  }
+}
+
+/* ==========================================================================
+   DESKTOP RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+@media (min-width: 769px) {
+  /* Show desktop search */
+  .desktop-search {
+    display: flex !important;
+  }
+
+  /* Hide mobile-only elements */
+  .mobile-header {
+    display: none;
+  }
+
+  .desktop-header {
+    display: flex;
+  }
+
+  /* Ensure proper spacing from sidebar toggle on desktop */
+  .floating-header.desktop-header {
+    left: calc(var(--sidebar-width) + 1rem);
+  }
+
+  .floating-header.desktop-header.sidebar-collapsed {
+    left: calc(var(--sidebar-width-icon) + 1rem);
+  }
 }
 
 @media (max-width: 768px) {
-  .mobile-header .notification-trigger,
-  .mobile-header .profile-trigger {
-    height: 2.75rem !important;
-    width: 2.75rem !important;
+  /* Show mobile header */
+  .mobile-header {
+    display: flex;
   }
-  
-  .mobile-header .profile-trigger {
-    padding: 0 !important;
-  }
-}
 
-/* Ensure dropdown menus are visible with proper backgrounds */
-[data-radix-popper-content-wrapper] [role="menu"] {
-  background-color: hsl(var(--popover)) !important;
-  color: hsl(var(--popover-foreground)) !important;
-  border: 1px solid hsl(var(--border)) !important;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-  backdrop-filter: blur(8px) !important;
-}
-
-/* Specific fixes for floating header dropdowns */
-.floating-header [data-radix-popper-content-wrapper] [role="menu"] {
-  background-color: hsl(var(--background) / 0.95) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid hsl(var(--border) / 0.8) !important;
-}
-
-/* Enhanced dropdown positioning and mobile fixes */
-[data-radix-popper-content-wrapper] {
-  z-index: 50 !important;
-}
-
-/* Mobile dropdown positioning improvements */
-@media (max-width: 768px) {
-  .mobile-header [data-radix-popper-content-wrapper] {
-    position: fixed !important;
-  }
-  
-  .mobile-header [data-radix-popper-content-wrapper] [role="menu"] {
-    position: relative !important;
-    transform: none !important;
-    max-width: calc(100vw - 2rem) !important;
-    margin: 0.5rem !important;
-  }
-  
-  /* Ensure dropdowns don't overflow on mobile */
-  .mobile-header .notifications-content,
-  .mobile-header .profile-menu {
-    max-height: 70vh !important;
-    overflow-y: auto !important;
+  /* Hide desktop header */
+  .desktop-header {
+    display: none;
   }
 }
 
-/* Touch-friendly menu items on mobile */
-@media (max-width: 768px) {
-  .mobile-header [role="menu"] [role="menuitem"] {
-    min-height: 2.75rem !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 1rem !important; /* Prevent iOS zoom */
+/* ==========================================================================
+   ACCESSIBILITY AND FOCUS STATES
+   ========================================================================== */
+
+.action-button:focus-visible,
+.notification-trigger:focus-visible,
+.profile-trigger:focus-visible {
+  outline: 2px solid var(--qindred-green-400);
+  outline-offset: 2px;
+  border-color: var(--qindred-green-400);
+  z-index: 35; /* Ensure focused elements are visible */
+}
+
+.desktop-search .search-input:focus-visible {
+  outline: 2px solid var(--qindred-green-400);
+  outline-offset: 2px;
+  z-index: 35; /* Ensure focused elements are visible */
+}
+
+/* ==========================================================================
+   Z-INDEX HIERARCHY DOCUMENTATION
+   ========================================================================== */
+
+/*
+  Z-Index Layer Structure:
+  - 50: Dropdown menus (notifications, profile)
+  - 45: Sidebar and sidebar controls
+  - 35: Focused floating header elements
+  - 30: Floating header (lowered to avoid blocking sidebar)
+  - 20: Sidebar content
+  - 10: Main content
+  - 1: Background elements
+*/
+
+/* ==========================================================================
+   DARK MODE ADJUSTMENTS
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .floating-header.scrolled {
+    background: hsl(var(--background) / 0.8);
+    border-bottom-color: hsl(var(--border) / 0.3);
+  }
+
+  .desktop-search .search-input {
+    background: hsl(var(--background) / 0.7);
+    border-color: hsl(var(--border) / 0.4);
+  }
+
+  .action-button,
+  .notification-trigger,
+  .profile-trigger {
+    background-color: hsl(var(--background) / 0.7);
+    border-color: hsl(var(--border) / 0.3);
+  }
+
+  .notifications-content,
+  .profile-menu {
+    background-color: hsl(var(--background) / 0.9);
+    border-color: hsl(var(--border) / 0.6);
   }
 }
 
-/* Ensure proper button spacing and sizing consistency */
-@media (max-width: 768px) {
-  .mobile-header .actions button {
-    min-width: 2.75rem !important;
-    min-height: 2.75rem !important;
-    border-radius: 0.5rem !important;
+/* ==========================================================================
+   HIGH CONTRAST MODE
+   ========================================================================== */
+
+@media (prefers-contrast: high) {
+  .floating-header.scrolled {
+    background: hsl(var(--background));
+    backdrop-filter: none;
+  }
+
+  .desktop-search .search-input,
+  .action-button,
+  .notification-trigger,
+  .profile-trigger {
+    background: hsl(var(--background));
+    backdrop-filter: none;
+    border-width: 2px;
+  }
+}
+
+/* ==========================================================================
+   ANIMATION OPTIMIZATIONS
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-header,
+  .action-button,
+  .notification-trigger,
+  .profile-trigger,
+  .desktop-search .search-input {
+    transition: none;
+  }
+
+  .action-button:hover,
+  .notification-trigger:hover,
+  .profile-trigger:hover {
+    transform: none;
   }
 }
