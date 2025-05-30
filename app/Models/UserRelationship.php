@@ -21,12 +21,20 @@ class UserRelationship extends Model
         'related_user_id',
         'relationship_type',
         'family_tree_id',
+        'marriage_id',
+        'other_parent_id',
+        'relationship_start_date',
+        'relationship_end_date',
+        'is_current',
     ];
 
     protected $casts = [
         'relationship_type' => RelationshipType::class,
-        'created_at'        => 'datetime',
-        'updated_at'        => 'datetime',
+        'relationship_start_date' => 'date',
+        'relationship_end_date' => 'date',
+        'is_current' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
@@ -54,5 +62,23 @@ class UserRelationship extends Model
     public function familyTree(): BelongsTo
     {
         return $this->belongsTo(FamilyTree::class);
+    }
+
+    public function marriage(): BelongsTo
+    {
+        return $this->belongsTo(Marriage::class);
+    }
+
+    public function otherParent(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'other_parent_id');
+    }
+
+    /**
+     * Scope to get current relationships
+     */
+    public function scopeCurrent($query)
+    {
+        return $query->where('is_current', true);
     }
 }

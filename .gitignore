@@ -94,3 +94,16 @@ build/
 composer.phar
 composer.lock
 package-lock.json
+debug*
+*test*
+*txt
+data_basic.json
+resources/js/pages/FamilyTrees/mock/data_basic.json
+enhance_family.php
+resources/js/pages/FamilyTrees/mock/data_basic.json
+verify_family.php
+verify_enhanced_frontend_data.php
+remove_sibling_relationship.php
+.gitignore
+ENHANCEMENT_SUMMARY.pdf
+fix_shared_child_relationship.php

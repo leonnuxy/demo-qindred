@@ -16,7 +16,33 @@
     "gender": "male",
     "isCurrentUser": true,
     "relationshipToUser": "self",
-    "partners": [],
+    "partners": [
+      {
+        "id": "partner-1",
+        "firstName": "Taylor",
+        "lastName": "Smith",
+        "dateOfBirth": "1992-08-20",
+        "dateOfDeath": null,
+        "isDeceased": false,
+        "gender": "male",
+        "marriageDate": "2014-09-12",
+        "children": [
+          {
+            "id": "child-1",
+            "firstName": "Jamie",
+            "lastName": "Smith",
+            "gender": "female",
+            "dateOfBirth": "2015-06-15",
+            "dateOfDeath": null,
+            "isDeceased": false,
+            "isCurrentUser": false,
+            "relationshipToUser": "child",
+            "partners": [],
+            "children": []
+          }
+        ]
+      }
+    ],
     "children": []
   },
   
@@ -32,6 +58,30 @@
       "relationshipToUser": "self",
       "email": "alex.smith@example.com",
       "profilePhoto": "/storage/profile-photos/alex-smith.jpg"
+    },
+    {
+      "id": "child-1",
+      "firstName": "Jamie",
+      "lastName": "Smith",
+      "dateOfBirth": "2015-06-15",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "female",
+      "relationshipToUser": "child",
+      "email": "jamie.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/jamie-smith.jpg"
+    },
+    {
+      "id": "partner-1",
+      "firstName": "Taylor",
+      "lastName": "Smith",
+      "dateOfBirth": "1992-08-20",
+      "dateOfDeath": null,
+      "isDeceased": false,
+      "gender": "male",
+      "relationshipToUser": "partner",
+      "email": "taylor.smith@example.com",
+      "profilePhoto": "/storage/profile-photos/taylor-smith.jpg"
     }
   ],
   

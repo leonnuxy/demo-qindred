@@ -25,7 +25,8 @@ export function MemberForm({
   isLoading,
   mode = 'add',
   relationshipTypes = [],
-  validationErrors = null
+  validationErrors = null,
+  familyMembers = [] // Add family members for spouse selection
 }) {
   const formPrefix = mode === 'edit' ? 'edit-' : 'new-';
   const isEditMode = mode === 'edit';
@@ -100,6 +101,46 @@ export function MemberForm({
       )}
     </div>
   );
+
+  const renderSpouseSelection = () => {
+    // Only show spouse selection for child relationships
+    if (member.relationshipToUser !== 'child') return null;
+
+    // Filter family members to show potential spouses (excluding current user's children and siblings)
+    const potentialSpouses = familyMembers.filter(fm => 
+      fm.relationshipToUser === 'spouse' && fm.id !== member.id
+    );
+
+    if (potentialSpouses.length === 0) return null;
+
+    return (
+      <div className="member-form-section">
+        <Label htmlFor={`${formPrefix}spouseId`} className="member-form-label">
+          Other Parent (Optional)
+        </Label>
+        <Select
+          name="spouseId"
+          value={member.spouseId || undefined}
+          onValueChange={(value) => onSelectChange('spouseId', value)}
+        >
+          <SelectTrigger id={`${formPrefix}spouseId`} className="member-form-select-full-width">
+            <SelectValue placeholder="Select other parent" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">None</SelectItem>
+            {potentialSpouses.map((spouse) => (
+              <SelectItem key={spouse.id} value={spouse.id}>
+                {spouse.firstName} {spouse.lastName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="member-form-help-text">
+          Select the other parent if this child has two parents in the family tree.
+        </p>
+      </div>
+    );
+  };
 
   const renderMemberTypeSelect = () => {
     if (isEditMode) return null;
@@ -256,6 +297,7 @@ export function MemberForm({
       )}
 
       {renderRelationshipSelect()}
+      {renderSpouseSelection()}
 
       <div className="member-form-actions">
         <Button

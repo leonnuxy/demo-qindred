@@ -254,13 +254,73 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function spousesInTree($familyTreeId)
     {
-        return $this->getRelatedUsersInTree($familyTreeId, RelationshipType::SPOUSE)
-                    ->get();
+        // Use Marriage model for more accurate spouse tracking
+        $marriages = \App\Models\Marriage::where('family_tree_id', $familyTreeId)
+            ->where(function($q) {
+                $q->where('spouse1_id', $this->id)
+                  ->orWhere('spouse2_id', $this->id);
+            })
+            ->with(['spouse1', 'spouse2'])
+            ->get();
+            
+        $spouses = collect();
+        foreach ($marriages as $marriage) {
+            $spouse = $marriage->spouse1_id === $this->id ? $marriage->spouse2 : $marriage->spouse1;
+            if ($spouse) {
+                // Add marriage context to the spouse
+                $spouse->marriage_context = [
+                    'marriage_id' => $marriage->id,
+                    'marriage_date' => $marriage->marriage_date,
+                    'divorce_date' => $marriage->divorce_date,
+                    'is_current' => $marriage->is_current,
+                ];
+                $spouses->push($spouse);
+            }
+        }
+        
+        return $spouses;
     }
 
     public function childrenInTree($familyTreeId)
     {
-        return $this->getRelatedUsersInTree($familyTreeId, RelationshipType::CHILD)
-                    ->get();
+        $children = $this->getRelatedUsersInTree($familyTreeId, RelationshipType::CHILD)
+                         ->get();
+                         
+        // Enhance children with marriage context
+        return $children->map(function($child) use ($familyTreeId) {
+            $relationship = \App\Models\UserRelationship::where('family_tree_id', $familyTreeId)
+                ->where('user_id', $this->id)
+                ->where('related_user_id', $child->id)
+                ->where('relationship_type', RelationshipType::CHILD->value)
+                ->first();
+                
+            if ($relationship && $relationship->marriage_id) {
+                $marriage = \App\Models\Marriage::find($relationship->marriage_id);
+                if ($marriage) {
+                    $child->marriage_context = [
+                        'marriage_id' => $marriage->id,
+                        'other_parent_id' => $relationship->other_parent_id,
+                        'other_parent' => $relationship->other_parent_id ? 
+                            User::find($relationship->other_parent_id) : null,
+                    ];
+                }
+            }
+            
+            return $child;
+        });
+    }
+    
+    /**
+     * Get children from a specific marriage
+     */
+    public function childrenFromMarriage($familyTreeId, $marriageId)
+    {
+        $childIds = \App\Models\UserRelationship::where('family_tree_id', $familyTreeId)
+            ->where('user_id', $this->id)
+            ->where('relationship_type', RelationshipType::CHILD->value)
+            ->where('marriage_id', $marriageId)
+            ->pluck('related_user_id');
+            
+        return User::whereIn('id', $childIds)->get();
     }
 }

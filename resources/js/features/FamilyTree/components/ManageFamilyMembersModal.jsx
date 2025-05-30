@@ -72,7 +72,8 @@ export default function ManageFamilyMembersModal({
     }
   }, [isOpen, familyTreeId]);
 
-  // Default relationship types based on the backend enum
+  // Core relationship types that match the backend enum exactly
+  // Focusing on immediate family relationships only
 const DEFAULT_RELATIONSHIP_TYPES = [
   { value: 'father', label: 'Father' },
   { value: 'mother', label: 'Mother' },
@@ -80,19 +81,6 @@ const DEFAULT_RELATIONSHIP_TYPES = [
   { value: 'spouse', label: 'Spouse' },
   { value: 'child', label: 'Child' },
   { value: 'sibling', label: 'Sibling' },
-  { value: 'grandparent', label: 'Grandparent' },
-  { value: 'grandchild', label: 'Grandchild' },
-  { value: 'aunt_uncle', label: 'Aunt/Uncle' },
-  { value: 'niece_nephew', label: 'Niece/Nephew' },
-  { value: 'cousin', label: 'Cousin' },
-  { value: 'in_law', label: 'In-Law' },
-  { value: 'step_parent', label: 'Step Parent' },
-  { value: 'step_child', label: 'Step Child' },
-  { value: 'step_sibling', label: 'Step Sibling' },
-  { value: 'foster_parent', label: 'Foster Parent' },
-  { value: 'foster_child', label: 'Foster Child' },
-  { value: 'adoptive_parent', label: 'Adoptive Parent' },
-  { value: 'adoptive_child', label: 'Adoptive Child' },
   { value: 'other', label: 'Other' }
 ];
 
@@ -115,18 +103,6 @@ const availableRelationshipTypes = useMemo(() => {
 
   return validTypes.length > 0 ? validTypes : DEFAULT_RELATIONSHIP_TYPES;
 }, [relationshipTypes]);
-
-  // Default relationship types if none are available
-  const defaultRelationshipTypes = [
-    { value: 'child', label: 'Child' },
-    { value: 'parent', label: 'Parent' },
-    { value: 'spouse', label: 'Spouse' },
-    { value: 'sibling', label: 'Sibling' }
-  ];
-
-  const relationshipTypesToShow = availableRelationshipTypes.length > 0 
-    ? availableRelationshipTypes 
-    : defaultRelationshipTypes;
 
   // This is a duplicate and can be removed since we already have filteredMembers working
   // Keep this commented out for reference
@@ -278,25 +254,6 @@ const availableRelationshipTypes = useMemo(() => {
           </p>
         )}
       </div>
-      <div>
-        <Label htmlFor={`${formPrefix}relationshipType`} className="form-label">Relationship Type</Label>
-        <Select 
-          name="relationshipType" 
-          value={memberData.relationshipType || undefined} 
-          onValueChange={(value) => handleSelectChange('relationshipType', value, setMemberDataFunction)}
-        >
-          <SelectTrigger className="member-form-select-trigger">
-            <SelectValue placeholder="Select relationship type" />
-          </SelectTrigger>
-          <SelectContent>
-            {relationshipTypesToShow.map((type) => (
-              <SelectItem key={type.value} value={type.value}>
-                {type.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
     </>
   );
 
@@ -377,6 +334,7 @@ const availableRelationshipTypes = useMemo(() => {
                 isLoading={isLoading}
                 mode="add"
                 relationshipTypes={availableRelationshipTypes}
+                familyMembers={familyMembers}
               />
             </TabsContent>
             
@@ -429,6 +387,7 @@ const availableRelationshipTypes = useMemo(() => {
                   isLoading={isLoading}
                   mode="edit"
                   relationshipTypes={availableRelationshipTypes}
+                  familyMembers={familyMembers}
                 />
               </TabsContent>
             )}

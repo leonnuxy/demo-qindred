@@ -144,7 +144,7 @@ class FamilyTreeController extends Controller
                     'first_name'    => $m->user->first_name,
                     'last_name'     => $m->user->last_name,
                     'email'         => $m->user->email,
-                    'gender'        => $m->user->gender?->value,
+                    'gender'        => $m->user->gender?->name,
                     'date_of_birth' => $m->user->date_of_birth?->toDateString(),
                     'date_of_death' => $m->user->date_of_death?->toDateString(),
                     'role_in_tree'  => $m->role,

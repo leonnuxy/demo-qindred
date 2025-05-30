@@ -3,21 +3,21 @@ import * as d3 from 'd3';
 
 const NODE_WIDTH = 120;
 const NODE_HEIGHT = 130;
-const SPOUSE_GAP = 20;
-const GENERATION_GAP = 60;
+const SPOUSE_GAP = 160; // Increased gap for side-by-side positioning
+const GENERATION_GAP = 120; // Increased for partnership connection lines
+const MARRIAGE_LINE_HEIGHT = 20; // Height of horizontal marriage connection line
 
 const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
   const svgRef = useRef();
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [tooltip, setTooltip] = useState({ visible: false, content: '', x: 0, y: 0 });
 
-  const processNode = (node, depth = 0) => {
+  const processNode = (node, depth = 0, partnerOffset = 0) => {
     if (!node) return null;
     
     console.log('Processing node:', node);
     
     // Map the backend data format to the format needed for the tree
-    // Preserve all data and add fallbacks where needed
     const processedNode = {
       ...node,
       // Use provided fields or extract from name as fallback
@@ -34,25 +34,12 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
       isCreator: node.isCreator || node.attributes?.isCreator || false,
       roleInTree: node.roleInTree || node.attributes?.roleInTree || '',
       depth,
-      // Process children and partners if available
-      children: [
-        ...(node.partners?.flatMap(partner => partner ? [
-          { 
-            ...(partner || {}), 
-            firstName: partner.firstName || (partner.name ? partner.name.split(' ')[0] : '?'), 
-            lastName: partner.lastName || (partner.name && partner.name.split(' ').length > 1 
-              ? partner.name.split(' ').slice(1).join(' ') 
-              : ''), 
-            dateOfBirth: partner.dateOfBirth || (partner.attributes?.birth_date || ''),
-            dateOfDeath: partner.dateOfDeath || (partner.attributes?.death_date || ''),
-            gender: partner.gender || (partner.attributes?.gender || 'other'),
-            relationshipToUser: partner.relationshipToUser || (partner.attributes?.relationship_to_user || ''),
-            isPartner: true 
-          },
-          ...(partner.children?.map(child => processNode(child, depth + 1)).filter(Boolean) || [])
-        ] : []) || []),
-        ...(node.children?.map(child => processNode(child, depth + 1)).filter(Boolean) || [])
-      ]
+      partnerOffset, // Track horizontal offset for partner positioning
+      // Store raw partners and children data for custom positioning
+      rawPartners: node.partners || [],
+      rawChildren: node.children || [],
+      // For D3 hierarchy, we'll handle partners and children separately
+      children: (node.children || []).map(child => processNode(child, depth + 1))
     };
 
     console.log('Processed node:', processedNode);
@@ -70,75 +57,186 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
 
     // Create a group for the entire tree that will be centered and scaled
     const g = svg.append("g")
-      .attr("transform", `translate(${dimensions.width / 2}, 10) scale(${zoom})`);
+      .attr("transform", `translate(${dimensions.width / 2}, 50) scale(${zoom})`);
 
-    const root = d3.hierarchy(processNode(initialData));
-    const treeLayout = d3.tree().nodeSize([NODE_WIDTH, GENERATION_GAP]);
+    // Build custom node positioning for partners structure
+    const allNodes = [];
+    const allLinks = [];
+    const partnershipLinks = [];
+    const sharedChildrenLinks = [];
+
+    const buildCustomTree = (node, x = 0, y = 0, depth = 0) => {
+      const nodeData = {
+        ...node,
+        x,
+        y,
+        depth
+      };
+      allNodes.push(nodeData);
+
+      // Handle partners (spouses) - position them side by side
+      if (node.rawPartners && node.rawPartners.length > 0) {
+        node.rawPartners.forEach((partner, index) => {
+          const partnerX = x + SPOUSE_GAP; // Position partner to the right
+          const partnerY = y; // Same vertical level as main person
+          
+          const partnerData = {
+            ...processNode(partner, depth, 1),
+            x: partnerX,
+            y: partnerY,
+            depth,
+            isPartner: true,
+            partnerId: node.id,
+            partnershipIndex: index
+          };
+          allNodes.push(partnerData);
+
+          // Create partnership connection line
+          partnershipLinks.push({
+            source: { x, y: y + NODE_HEIGHT / 2 },
+            target: { x: partnerX, y: partnerY + NODE_HEIGHT / 2 },
+            type: 'partnership'
+          });
+
+          // Handle shared children from this partnership
+          if (partner.children && partner.children.length > 0) {
+            const partnershipCenterX = (x + partnerX) / 2; // Middle point between partners
+            const childrenStartY = y + NODE_HEIGHT + GENERATION_GAP;
+
+            // Create vertical line from partnership to children level
+            const partnershipChildConnector = {
+              source: { x: partnershipCenterX, y: y + NODE_HEIGHT / 2 + MARRIAGE_LINE_HEIGHT },
+              target: { x: partnershipCenterX, y: childrenStartY - 20 },
+              type: 'partnership-to-children'
+            };
+            sharedChildrenLinks.push(partnershipChildConnector);
+
+            // Create horizontal connector line for all children
+            if (partner.children.length > 1) {
+              const leftmostChildX = partnershipCenterX - ((partner.children.length - 1) / 2) * (NODE_WIDTH + 40);
+              const rightmostChildX = partnershipCenterX + ((partner.children.length - 1) / 2) * (NODE_WIDTH + 40);
+              
+              sharedChildrenLinks.push({
+                source: { x: leftmostChildX, y: childrenStartY - 10 },
+                target: { x: rightmostChildX, y: childrenStartY - 10 },
+                type: 'children-horizontal-connector'
+              });
+            }
+
+            // Position shared children horizontally distributed
+            partner.children.forEach((child, childIndex) => {
+              const childX = partnershipCenterX + (childIndex - (partner.children.length - 1) / 2) * (NODE_WIDTH + 40);
+              const childY = childrenStartY;
+
+              // Create vertical connector from main horizontal line to child
+              sharedChildrenLinks.push({
+                source: { x: childX, y: childrenStartY - 10 },
+                target: { x: childX, y: childrenStartY },
+                type: 'child-vertical-connector'
+              });
+
+              // Connect partnership center to horizontal line
+              sharedChildrenLinks.push({
+                source: { x: partnershipCenterX, y: childrenStartY - 20 },
+                target: { x: partnershipCenterX, y: childrenStartY - 10 },
+                type: 'partnership-vertical-connector'
+              });
+
+              // Recursively build subtree for child
+              buildCustomTree(processNode(child, depth + 1), childX, childY, depth + 1);
+            });
+          }
+        });
+      }
+
+      // Handle individual children (not shared with partners)
+      if (node.rawChildren && node.rawChildren.length > 0) {
+        const individualChildrenStartY = y + NODE_HEIGHT + GENERATION_GAP;
+        
+        node.rawChildren.forEach((child, childIndex) => {
+          const childX = x + (childIndex - (node.rawChildren.length - 1) / 2) * (NODE_WIDTH + 40);
+          const childY = individualChildrenStartY;
+
+          // Create link from parent to individual child
+          allLinks.push({
+            source: { x, y: y + NODE_HEIGHT },
+            target: { x: childX, y: childY },
+            type: 'parent-child'
+          });
+
+          // Recursively build subtree for child
+          buildCustomTree(processNode(child, depth + 1), childX, childY, depth + 1);
+        });
+      }
+    };
+
+    // Start building the tree from root
+    buildCustomTree(processNode(initialData), 0, 0, 0);
+
+    console.log('Generated nodes:', allNodes);
+    console.log('Generated links:', allLinks);
+    console.log('Partnership links:', partnershipLinks);
+    console.log('Shared children links:', sharedChildrenLinks);
+
+    // Draw all link types
     
-    treeLayout(root);
-
-    // Adjust coordinates for vertical layout with balanced spacing
-    root.descendants().forEach(d => {
-      d.y = d.depth * (NODE_HEIGHT + GENERATION_GAP);
-      // Use moderate horizontal spacing to accommodate grandchildren
-      d.x = d.x * 1.0;
-    });
-
-    // Draw links
+    // Regular parent-child links
     g.selectAll('.link')
-      .data(root.links())
+      .data(allLinks)
       .enter().append('path')
       .attr('class', 'link')
-      .attr('d', d3.linkVertical()
-        .x(d => d.x)
-        .y(d => d.y))
+      .attr('d', d => `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`)
       .attr('fill', 'none')
       .attr('stroke', '#94a3b8')
       .attr('stroke-width', 2);
 
-    // Draw spouse connections
-    root.descendants().forEach(node => {
-      if (node.data.partners?.length) {
-        node.data.partners.forEach(partner => {
-          g.append('path')
-            .attr('class', 'spouse-link')
-            .attr('d', `M${node.x},${node.y + NODE_HEIGHT} L${node.x},${node.y + NODE_HEIGHT + 25} L${partner.x},${partner.y + NODE_HEIGHT + 25} L${partner.x},${partner.y + NODE_HEIGHT}`)
-            .attr('stroke', '#94a3b8')
-            .attr('stroke-width', 2)
-            .attr('fill', 'none');
-        });
-      }
-    });
+    // Partnership connection lines (horizontal between spouses)
+    g.selectAll('.partnership-link')
+      .data(partnershipLinks)
+      .enter().append('path')
+      .attr('class', 'partnership-link')
+      .attr('d', d => {
+        const midY = d.source.y;
+        return `M${d.source.x},${midY} L${d.target.x},${midY}`;
+      })
+      .attr('fill', 'none')
+      .attr('stroke', '#dc2626') // Red color for marriage lines
+      .attr('stroke-width', 3);
+
+    // Shared children connection lines
+    g.selectAll('.shared-children-link')
+      .data(sharedChildrenLinks)
+      .enter().append('path')
+      .attr('class', 'shared-children-link')
+      .attr('d', d => `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`)
+      .attr('fill', 'none')
+      .attr('stroke', '#059669') // Green color for shared children lines
+      .attr('stroke-width', 2);
 
     // Draw nodes
     const nodes = g.selectAll('.node')
-      .data(root.descendants())
+      .data(allNodes)
       .enter().append('foreignObject')
-      .attr('class', d => `node ${d.data.isPartner ? 'partner' : ''}`)
+      .attr('class', d => `node ${d.isPartner ? 'partner' : 'primary'}`)
       .attr('x', d => d.x - NODE_WIDTH/2)
       .attr('y', d => d.y)
       .attr('width', NODE_WIDTH)
       .attr('height', NODE_HEIGHT)
       .on('mouseover', (event, d) => {
-        // Extract name from either firstName/lastName or from name property
-        const firstName = d.data.firstName || (d.data.name ? d.data.name.split(' ')[0] : '?');
-        const lastName = d.data.lastName || (d.data.name && d.data.name.split(' ').length > 1 
-          ? d.data.name.split(' ').slice(1).join(' ') 
-          : '');
-        
-        // Extract dates from direct fields or attributes
-        const birthDate = d.data.dateOfBirth || (d.data.attributes && d.data.attributes.birth_date) || 'Unknown';
-        const deathDate = d.data.dateOfDeath || (d.data.attributes && d.data.attributes.death_date) || 'Present';
+        const firstName = d.firstName || '?';
+        const lastName = d.lastName || '';
+        const birthDate = d.dateOfBirth || 'Unknown';
+        const deathDate = d.dateOfDeath || 'Present';
         
         setTooltip({
           visible: true,
-          content: `${firstName || '?'} ${lastName || ''}\n${birthDate} - ${deathDate}`,
+          content: `${firstName} ${lastName}\n${birthDate} - ${deathDate}`,
           x: event.pageX,
           y: event.pageY
         });
       })
       .on('mouseout', () => setTooltip({ visible: false }))
-      .on('click', (event, d) => onNodeClick?.(d.data));
+      .on('click', (event, d) => onNodeClick?.(d));
 
     nodes.html(d => {
       // Format dates properly
@@ -147,8 +245,8 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
       let dateDisplay = '';
       
       // Use either direct field or from attributes
-      const birthDate = d.data.dateOfBirth || (d.data.attributes && d.data.attributes.birth_date);
-      const deathDate = d.data.dateOfDeath || (d.data.attributes && d.data.attributes.death_date);
+      const birthDate = d.dateOfBirth || (d.attributes && d.attributes.birth_date);
+      const deathDate = d.dateOfDeath || (d.attributes && d.attributes.death_date);
       
       if (birthDate) {
         try {
@@ -175,9 +273,9 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
       }
 
       // Extract name from either direct fields or from name field
-      const firstName = d.data.firstName || (d.data.name ? d.data.name.split(' ')[0] : '?');
-      const lastName = d.data.lastName || (d.data.name && d.data.name.split(' ').length > 1 
-        ? d.data.name.split(' ').slice(1).join(' ') 
+      const firstName = d.firstName || (d.name ? d.name.split(' ')[0] : '?');
+      const lastName = d.lastName || (d.name && d.name.split(' ').length > 1 
+        ? d.name.split(' ').slice(1).join(' ') 
         : '');
         
       // Generate initials for avatar placeholder
@@ -185,34 +283,39 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
       const lastInitial = lastName ? lastName[0].toUpperCase() : '';
       
       // Determine gender class - check both direct field and attributes
-      const gender = d.data.gender || (d.data.attributes && d.data.attributes.gender) || 'other';
-      const isCurrentUser = d.data.isCurrentUser || d.data.id === d.data.userId;
+      const gender = d.gender || (d.attributes && d.attributes.gender) || 'other';
+      const isCurrentUser = d.isCurrentUser || d.id === d.userId;
       
       // Get relationship info
-      const relationship = d.data.relationshipToUser || 
-        (d.data.attributes && d.data.attributes.relationship_to_user) || '';
+      const relationship = d.relationshipToUser || 
+        (d.attributes && d.attributes.relationship_to_user) || '';
+      
+      // Determine if this is a partner node
+      const isPartnerNode = d.isPartner || false;
       
       console.log('Rendering node:', {
-        name: d.data.name,
+        name: d.name,
         firstName,
         lastName,
         birthDate,
         deathDate,
         gender,
-        isCurrentUser
+        isCurrentUser,
+        isPartner: isPartnerNode
       });
       
       return `
         <div class="flex flex-col items-center p-2 h-full w-full bg-white rounded-lg border-2 ${
           isCurrentUser ? 'border-2 border-purple-500 ' : 
+          isPartnerNode ? 'border-red-200 ' : 
           gender === 'male' ? 'border-blue-200 ' : 'border-pink-200 '
         }shadow-md hover:shadow-lg transition-all cursor-pointer">
           <div class="w-16 h-16 rounded-full my-2 ${
             gender === 'male' ? 'bg-blue-100 ' : 'bg-pink-100 '
           }flex items-center justify-center overflow-hidden">
             ${
-              d.data.profilePhoto 
-                ? `<img src="${d.data.profilePhoto}" alt="${firstName || '?'}" class="w-full h-full object-cover" />`
+              d.profilePhoto 
+                ? `<img src="${d.profilePhoto}" alt="${firstName || '?'}" class="w-full h-full object-cover" />`
                 : `<span class="text-xl font-medium">${firstInitial}${lastInitial}</span>`
             }
           </div>
@@ -222,8 +325,10 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
               ${dateDisplay}
             </div>
             ${
-              relationship && !d.data.isPartner 
+              relationship && !isPartnerNode 
                 ? `<div class="text-xs text-gray-500 mt-1">${relationship}</div>`
+                : isPartnerNode 
+                ? `<div class="text-xs text-red-500 mt-1">Partner</div>`
                 : ''
             }
           </div>
