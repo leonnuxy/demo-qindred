@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { initialMemberState, MEMBER_MODES } from '../utils/constants';
+import { initialMemberState, MEMBER_MODES, MODAL_TABS } from '../utils/constants';
 import { useToast } from "@/components/ui/use-toast";
 
 export function useMemberForm(props = {}) {
@@ -33,8 +33,12 @@ export function useMemberForm(props = {}) {
       catch (e) { return ''; }
     };
 
+    console.log('Starting to edit member with original data:', member);
+    console.log('Member ID:', member.id);
+
     setEditingMember({
       ...member,
+      id: member.id, // Explicitly ensure the ID is set
       firstName: member.firstName || '',
       lastName: member.lastName || '',
       dateOfBirth: formatDate(member.dateOfBirth),
@@ -45,12 +49,20 @@ export function useMemberForm(props = {}) {
       email: member.email || '',
       addMode: MEMBER_MODES.DIRECT,
     });
+    
+    // Automatically switch to the edit tab when starting to edit a member
+    setActiveTab(MODAL_TABS.EDIT);
+    console.log(`Starting to edit member ${member.firstName} ${member.lastName} - switching to edit tab`);
   };
 
   const resetForm = () => {
-    setNewMember(initialMemberState);
+    // Make a fresh copy of initialMemberState to avoid reference issues
+    setNewMember({...initialMemberState});
     setEditingMember(null);
+    setMemberToDelete(null);
+    setDeleteDialogOpen(false);
     setActiveTab("existing");
+    console.log('Form reset complete - all form state cleared');
   };
 
   const cancelEdit = () => {

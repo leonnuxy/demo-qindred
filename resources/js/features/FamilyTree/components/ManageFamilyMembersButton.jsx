@@ -73,14 +73,46 @@ export default function ManageFamilyMembersButton({
     if (isModalOpen) fetchMembers();
   }, [isModalOpen, familyTreeId]);
   
+  // Helper function to ensure tree updates
+  const updateTreeData = () => {
+    console.log('Updating family tree data after member changes');
+    
+    // Call the provided callback to update the tree
+    if (onMembersUpdated) {
+      console.log('Calling onMembersUpdated to refresh tree data');
+      onMembersUpdated();
+    } else {
+      console.warn('No onMembersUpdated callback provided, tree may not update automatically');
+    }
+  };
+  
   const handleAddMember = async (memberData) => {
     const svc = await import(
       /* webpackChunkName: "family-member-service" */
       '../services/familyMemberService'
     );
-    const newMember = await svc.addFamilyMember(familyTreeId, memberData);
+    const response = await svc.addFamilyMember(familyTreeId, memberData);
+    
+    // Extract the member data (without hierarchicalTreeData)
+    const { hierarchicalTreeData, ...newMember } = response;
+    
+    // Add the new member to our local state
     setFamilyMembers(prev => [...prev, newMember]);
-    onMembersUpdated?.();
+    
+    // If we received hierarchical tree data from the backend, use it
+    if (hierarchicalTreeData) {
+      console.log('Received fresh hierarchical tree data from backend:', hierarchicalTreeData);
+      
+      // Trigger tree update with the fresh tree data
+      if (onMembersUpdated && typeof onMembersUpdated === 'function') {
+        console.log('Calling onMembersUpdated with fresh hierarchical tree data');
+        onMembersUpdated(hierarchicalTreeData);
+      }
+    } else {
+      // Fall back to regular update if no tree data was returned
+      updateTreeData();
+    }
+    
     return newMember;
   };
   
@@ -89,11 +121,30 @@ export default function ManageFamilyMembersButton({
       /* webpackChunkName: "family-member-service" */
       '../services/familyMemberService'
     );
-    const updated = await svc.updateFamilyMember(familyTreeId, memberData.id, memberData);
+    const response = await svc.updateFamilyMember(familyTreeId, memberData.id, memberData);
+    
+    // Extract the member data (without hierarchicalTreeData)
+    const { hierarchicalTreeData, ...updated } = response;
+    
+    // Update the member in our local state
     setFamilyMembers(prev =>
       prev.map(m => m.id === updated.id ? updated : m)
     );
-    onMembersUpdated?.();
+    
+    // If we received hierarchical tree data from the backend, use it
+    if (hierarchicalTreeData) {
+      console.log('Received fresh hierarchical tree data from backend:', hierarchicalTreeData);
+      
+      // Trigger tree update with the fresh tree data
+      if (onMembersUpdated && typeof onMembersUpdated === 'function') {
+        console.log('Calling onMembersUpdated with fresh hierarchical tree data');
+        onMembersUpdated(hierarchicalTreeData);
+      }
+    } else {
+      // Fall back to regular update if no tree data was returned
+      updateTreeData();
+    }
+    
     return updated;
   };
   
@@ -104,7 +155,9 @@ export default function ManageFamilyMembersButton({
     );
     await svc.deleteFamilyMember(familyTreeId, memberId);
     setFamilyMembers(prev => prev.filter(m => m.id !== memberId));
-    onMembersUpdated?.();
+    
+    // Trigger tree update
+    updateTreeData();
   };
 
   return (
@@ -127,7 +180,11 @@ export default function ManageFamilyMembersButton({
 
       <ManageFamilyMembersModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          // Ensure tree is updated when modal is closed
+          updateTreeData();
+        }}
         familyMembers={familyMembers}
         familyTreeId={familyTreeId}
         relationshipTypes={relationshipTypes}

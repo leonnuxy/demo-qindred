@@ -19,6 +19,8 @@ export function useFamilyTree(initialTreeData, currentUserId) {
   const markCurrentUser = useCallback((data, userId) => {
     if (!data || !userId) return data;
     
+    console.log('Full raw tree data from backend:', data);
+    
     // Create a deep copy to avoid mutating props
     const copyData = JSON.parse(JSON.stringify(data));
     
@@ -29,13 +31,21 @@ export function useFamilyTree(initialTreeData, currentUserId) {
       // Extract data from backend format
       const nameParts = node.name ? node.name.split(' ') : ['?', ''];
       
-      // Ensure all nodes have these fields with default values
+      // Preserve all original attributes from the backend
+      const attributes = {
+        ...(node.attributes || {}),
+      };
+      
+      // Ensure all nodes have these fields with default values, prioritizing actual fields from backend
       node.firstName = node.firstName || nameParts[0] || '?';
       node.lastName = node.lastName || (nameParts.length > 1 ? nameParts.slice(1).join(' ') : '');
-      node.dateOfBirth = node.dateOfBirth || (node.attributes?.birth_date || '');
-      node.dateOfDeath = node.dateOfDeath || (node.attributes?.death_date || '');
-      node.gender = node.gender || (node.attributes?.gender || 'other');
-      node.relationshipToUser = node.relationshipToUser || (node.attributes?.relationship_to_user || '');
+      node.dateOfBirth = node.dateOfBirth || attributes.birth_date || '';
+      node.dateOfDeath = node.dateOfDeath || attributes.death_date || '';
+      node.gender = node.gender || attributes.gender || 'other';
+      node.relationshipToUser = node.relationshipToUser || attributes.relationship_to_user || '';
+      
+      // Preserve any additional data that might be present
+      node.attributes = attributes;
       
       // Mark this node if it matches the current user ID
       if (node.id === userId) {
@@ -83,22 +93,23 @@ export function useFamilyTree(initialTreeData, currentUserId) {
         return;
       }
       
+      // Create a unique identifier to detect changes in content
+      // even if the reference doesn't change
+      const treeDataId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      console.log(`Processing tree data with ID: ${treeDataId}`);
+      
       // Process the tree data to mark the current user if found
       const processedData = markCurrentUser(initialTreeData, currentUserId);
       console.log('Processed tree data:', processedData);
+      
+      // Assign the unique ID to the processed data
+      processedData._treeDataId = treeDataId;
+      
       setTreeData(processedData);
       setError(null);
-    } catch (err) {
-      console.error('Error processing tree data:', err);
-      setError(err.message || 'Failed to process tree data');
-      
-      // Provide a fallback empty tree structure if there's an error
-      setTreeData({ 
-        firstName: '?', 
-        lastName: 'Error', 
-        children: [],
-        error: err.message 
-      });
+    } catch (error) {
+      console.error('Error processing tree data:', error);
+      setError(`Error processing tree data: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

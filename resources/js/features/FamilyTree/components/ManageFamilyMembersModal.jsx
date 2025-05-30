@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogPortal, DialogOverlay, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "@/components/ui/select";
 import { MembersList } from './ManageFamilyMembersModal/components/MembersList';
 import { MemberForm } from './ManageFamilyMembersModal/components/MemberForm';
 import { DeleteMemberDialog } from './ManageFamilyMembersModal/components/DeleteMemberDialog';
 import { useFamilyMembers } from './ManageFamilyMembersModal/hooks/useFamilyMembers';
 import { useMemberForm } from './ManageFamilyMembersModal/hooks/useMemberForm';
-
-// Constants have been moved to utils/constants.js
+import { initialMemberState, relationshipCategories } from './ManageFamilyMembersModal/utils/constants';
 
 export default function ManageFamilyMembersModal({ 
   isOpen, 
@@ -22,8 +25,6 @@ export default function ManageFamilyMembersModal({
   const {
     familyMembers,
     isLoading,
-    searchTerm,
-    setSearchTerm,
     relationshipFilter,
     setRelationshipFilter,
     filteredMembers,
@@ -60,9 +61,13 @@ export default function ManageFamilyMembersModal({
   // Effects for modal state management
   useEffect(() => {
     if (isOpen && familyTreeId) {
-      loadFamilyMembers();
+      console.log('Modal opened - loading fresh family members data');
+      // First reset the form to clear any old state
       resetForm();
+      // Then load fresh data from the server
+      loadFamilyMembers();
     } else if (!isOpen) {
+      // Just reset the form when closing
       resetForm();
     }
   }, [isOpen, familyTreeId]);
@@ -144,7 +149,7 @@ const availableRelationshipTypes = useMemo(() => {
             value={memberData.email} 
             onChange={(e) => handleInputChange(e, setMemberDataFunction)}
             placeholder="Enter email address to invite" 
-            className="mt-1"
+            className="member-form-input"
           />
         </div>
       )}
@@ -152,14 +157,14 @@ const availableRelationshipTypes = useMemo(() => {
       {/* Show these fields for 'direct' add mode OR when editing an existing member (editingMember is not null) */}
       {(memberData.addMode === 'direct' || formPrefix === "edit-") && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="member-form-grid">
             <div>
               <Label htmlFor={`${formPrefix}firstName`} className="form-label">First Name *</Label>
               <Input 
                 type="text" id={`${formPrefix}firstName`} name="firstName" 
                 value={memberData.firstName} 
                 onChange={(e) => handleInputChange(e, setMemberDataFunction)} 
-                className="mt-1" 
+                className="member-form-input" 
               />
             </div>
             <div>
@@ -168,7 +173,7 @@ const availableRelationshipTypes = useMemo(() => {
                 type="text" id={`${formPrefix}lastName`} name="lastName" 
                 value={memberData.lastName} 
                 onChange={(e) => handleInputChange(e, setMemberDataFunction)} 
-                className="mt-1" 
+                className="member-form-input" 
               />
             </div>
           </div>
@@ -178,16 +183,16 @@ const availableRelationshipTypes = useMemo(() => {
               type="date" id={`${formPrefix}dateOfBirth`} name="dateOfBirth" 
               value={memberData.dateOfBirth} 
               onChange={(e) => handleInputChange(e, setMemberDataFunction)} 
-              className="mt-1" 
+              className="member-form-input" 
             />
           </div>
-          <div className="flex items-center space-x-2 pt-2">
+          <div className="member-form-checkbox-container">
             <Checkbox 
               id={`${formPrefix}isDeceased`} name="isDeceased" 
               checked={memberData.isDeceased} 
               onCheckedChange={(checked) => handleSelectChange('isDeceased', Boolean(checked), setMemberDataFunction)} 
             />
-            <Label htmlFor={`${formPrefix}isDeceased`} className="mb-0 cursor-pointer form-label">Deceased</Label>
+            <Label htmlFor={`${formPrefix}isDeceased`} className="member-form-checkbox-label form-label">Deceased</Label>
           </div>
           {memberData.isDeceased && (
             <div>
@@ -196,7 +201,7 @@ const availableRelationshipTypes = useMemo(() => {
                 type="date" id={`${formPrefix}dateOfDeath`} name="dateOfDeath" 
                 value={memberData.dateOfDeath} 
                 onChange={(e) => handleInputChange(e, setMemberDataFunction)} 
-                className="mt-1" 
+                className="member-form-input" 
               />
             </div>
           )}
@@ -204,10 +209,10 @@ const availableRelationshipTypes = useMemo(() => {
             <Label htmlFor={`${formPrefix}gender`} className="form-label">Gender</Label>
             <Select 
               name="gender" 
-              value={memberData.gender || ''} 
+              value={memberData.gender || undefined} 
               onValueChange={(value) => handleSelectChange('gender', value, setMemberDataFunction)}
             >
-              <SelectTrigger className="mt-1 w-full">
+              <SelectTrigger className="member-form-select-trigger">
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
@@ -223,24 +228,26 @@ const availableRelationshipTypes = useMemo(() => {
                 <Label htmlFor={`${formPrefix}email-display`} className="form-label">Email (if applicable)</Label>
                 <Input
                     type="email" id={`${formPrefix}email-display`} name="email"
-                    value={memberData.email}
+                    value={memberData.email && memberData.email.includes('placeholder-') 
+                      ? '(Added directly - no invitation email)' 
+                      : memberData.email}
                     readOnly
-                    className="mt-1 bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
+                    className={`member-form-readonly-input ${memberData.email.includes('placeholder-') ? 'text-gray-500 italic' : ''}`}
                 />
              </div>
           )}
         </>
       )}
       {/* Relationship to user section */}
-      <div className="mb-5">
-        <Label htmlFor={`${formPrefix}relationshipToUser`} className="block mb-2">Relationship to you <span className="text-red-500">*</span></Label>
+      <div className="member-form-section">
+        <Label htmlFor={`${formPrefix}relationshipToUser`} className="member-form-label member-form-label-required">Relationship to you</Label>
         <Select 
           name="relationshipToUser" 
-          value={memberData.relationshipToUser || ''} 
+          value={memberData.relationshipToUser || undefined} 
           onValueChange={(value) => handleSelectChange('relationshipToUser', value, setMemberDataFunction)}
           required
         >
-          <SelectTrigger id={`${formPrefix}relationshipToUser`} className="w-full">
+          <SelectTrigger id={`${formPrefix}relationshipToUser`} className="member-form-select-full-width">
             <SelectValue placeholder="Select relationship" />
           </SelectTrigger>
           <SelectContent>
@@ -252,7 +259,7 @@ const availableRelationshipTypes = useMemo(() => {
               // Only render the group if it has items
               return categoryTypes.length > 0 ? (
                 <SelectGroup key={category}>
-                  <SelectLabel className="text-sm font-semibold">
+                  <SelectLabel className="member-relationship-category-label">
                     {category}
                   </SelectLabel>
                   {categoryTypes.map(rt => (
@@ -266,7 +273,7 @@ const availableRelationshipTypes = useMemo(() => {
           </SelectContent>
         </Select>
         {!memberData.relationshipToUser && (
-          <p className="text-xs text-qindred-green-600 dark:text-qindred-green-400 mt-1">
+          <p className="member-form-help-text">
             This information helps build your family tree connections.
           </p>
         )}
@@ -275,10 +282,10 @@ const availableRelationshipTypes = useMemo(() => {
         <Label htmlFor={`${formPrefix}relationshipType`} className="form-label">Relationship Type</Label>
         <Select 
           name="relationshipType" 
-          value={memberData.relationshipType || ''} 
+          value={memberData.relationshipType || undefined} 
           onValueChange={(value) => handleSelectChange('relationshipType', value, setMemberDataFunction)}
         >
-          <SelectTrigger className="mt-1 w-full">
+          <SelectTrigger className="member-form-select-trigger">
             <SelectValue placeholder="Select relationship type" />
           </SelectTrigger>
           <SelectContent>
@@ -296,16 +303,28 @@ const availableRelationshipTypes = useMemo(() => {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl w-[90vw] md:w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8" onInteractOutside={(e) => e.preventDefault()}>
-          <DialogTitle className="text-2xl font-semibold text-qindred-green-900 dark:text-qindred-green-400">
-            Manage Family Members
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground mb-6">
-            View, edit, or add members to your family tree.
-          </DialogDescription>
+        <DialogPortal>
+          {/* full-screen dimmer */}
+          <DialogOverlay className="family-members-modal-overlay" />
+
+          {/* actual modal box */}
+          <DialogContent className="family-members-modal" onInteractOutside={(e) => e.preventDefault()}>
+            <DialogTitle className="family-members-modal-title">
+              Manage Family Members
+            </DialogTitle>
+            <DialogDescription className="family-members-modal-description">
+              View, edit, or add members to your family tree.
+            </DialogDescription>
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full mb-6 ${editingMember ? 'grid-cols-3' : 'grid-cols-2'} gap-1`}>
+          <Tabs value={activeTab} onValueChange={(newTab) => {
+            // If switching to the existing tab, refresh the member list
+            if (newTab === "existing") {
+              console.log('Switching to existing tab - refreshing member list');
+              loadFamilyMembers();
+            }
+            setActiveTab(newTab);
+          }} className="w-full">
+            <TabsList className={`family-members-tabs-list ${editingMember ? 'has-edit' : 'no-edit'}`}>
               <TabsTrigger value="existing">Existing Members</TabsTrigger>
               <TabsTrigger value="add">Add New Member</TabsTrigger>
               {editingMember && (
@@ -317,13 +336,15 @@ const availableRelationshipTypes = useMemo(() => {
               <MembersList
                 members={filteredMembers}
                 onEdit={startEditMember}
-                onDelete={setMemberToDelete}
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
+                onDelete={(member) => {
+                  setMemberToDelete(member);
+                  setDeleteDialogOpen(true);
+                }}
                 relationshipFilter={relationshipFilter}
                 onRelationshipFilterChange={setRelationshipFilter}
-                relationshipTypes={relationshipTypes}
+                relationshipTypes={availableRelationshipTypes}
                 isLoading={isLoading}
+                onSwitchTab={setActiveTab} // Pass the tab switching function
               />
             </TabsContent>
             
@@ -334,8 +355,20 @@ const availableRelationshipTypes = useMemo(() => {
                 onSelectChange={(name, value) => handleSelectChange(name, value, setNewMember)}
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  await handleMemberAddition(newMember);
-                  setActiveTab("existing");
+                  try {
+                    console.log('Submitting new member form data:', newMember);
+                    const addedMember = await handleMemberAddition(newMember);
+                    console.log('Successfully added member with response:', addedMember);
+                    
+                    // Reset form after successful addition
+                    setNewMember(initialMemberState);
+                    
+                    // Switch to existing members tab to show the updated list
+                    setActiveTab("existing");
+                  } catch (error) {
+                    // Error already handled in handleMemberAddition
+                    console.error('Form submission error:', error);
+                  }
                 }}
                 onCancel={() => {
                   setNewMember(initialMemberState);
@@ -343,7 +376,7 @@ const availableRelationshipTypes = useMemo(() => {
                 }}
                 isLoading={isLoading}
                 mode="add"
-                relationshipTypes={relationshipTypes}
+                relationshipTypes={availableRelationshipTypes}
               />
             </TabsContent>
             
@@ -355,8 +388,39 @@ const availableRelationshipTypes = useMemo(() => {
                   onSelectChange={(name, value) => handleSelectChange(name, value, setEditingMember)}
                   onSubmit={async (e) => {
                     e.preventDefault();
-                    await handleMemberUpdate(editingMember);
-                    setActiveTab("existing");
+                    try {
+                      console.log('Submitting updated member data:', editingMember);
+                      console.log('Member ID before update:', editingMember.id);
+                      
+                      // Make sure gender is not an empty string (use null instead)
+                      const memberToUpdate = {
+                        ...editingMember,
+                        id: editingMember.id, // Explicitly include the ID
+                        gender: editingMember.gender || null,
+                        dateOfBirth: editingMember.dateOfBirth || null,
+                        dateOfDeath: editingMember.dateOfDeath || null
+                      };
+                      
+                      console.log('Updated member data with explicit ID:', memberToUpdate);
+                      
+                      const updatedMember = await handleMemberUpdate(memberToUpdate);
+                      console.log('Successfully updated member with response:', updatedMember);
+                      
+                      // Clear editing state after successful update
+                      setEditingMember(null);
+                      
+                      // Switch to existing members tab to show the updated list
+                      setActiveTab("existing");
+                    } catch (error) {
+                      // Error already handled in handleMemberUpdate
+                      console.error('Member update submission error:', error);
+                      
+                      // Stay on the edit tab when there are errors
+                      if (error.response?.status === 422) {
+                        // If there's validation errors, show them in the form
+                        console.log('Validation errors from backend:', error.response.data.errors);
+                      }
+                    }
                   }}
                   onCancel={() => {
                     setEditingMember(null);
@@ -364,23 +428,39 @@ const availableRelationshipTypes = useMemo(() => {
                   }}
                   isLoading={isLoading}
                   mode="edit"
-                  relationshipTypes={relationshipTypes}
+                  relationshipTypes={availableRelationshipTypes}
                 />
               </TabsContent>
             )}
           </Tabs>
-        </DialogContent>
+          </DialogContent>
+        </DialogPortal>
       </Dialog>
       
       <DeleteMemberDialog
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={async () => {
-          await handleMemberDeletion(memberToDelete.id);
-          setDeleteDialogOpen(false);
-          setMemberToDelete(null);
+          console.log('Delete confirmation received for:', memberToDelete);
+          if (!memberToDelete || !memberToDelete.id) {
+            console.error('Cannot delete member: Missing ID or member data');
+            setDeleteDialogOpen(false);
+            setMemberToDelete(null);
+            return;
+          }
+          
+          try {
+            console.log('Attempting to delete member with ID:', memberToDelete.id);
+            await handleMemberDeletion(memberToDelete.id);
+            console.log('Member deleted successfully');
+          } catch (error) {
+            console.error('Error in delete confirmation handler:', error);
+          } finally {
+            setDeleteDialogOpen(false);
+            setMemberToDelete(null);
+          }
         }}
-        memberName={memberToDelete ? `${memberToDelete.firstName} ${memberToDelete.lastName}` : ''}
+        memberName={memberToDelete ? `${memberToDelete.firstName || ''} ${memberToDelete.lastName || ''}`.trim() || 'this member' : 'this member'}
         processing={isLoading}
       />
     </>

@@ -9,10 +9,10 @@ export const initialMemberState = {
   dateOfBirth: '',
   dateOfDeath: '',
   isDeceased: false,
-  gender: '',
-  relationshipToUser: '',
+  gender: undefined,
+  relationshipToUser: undefined,
   email: '',
-  addMode: MEMBER_MODES.DIRECT
+  type: MEMBER_MODES.DIRECT
 };
 
 export const relationshipCategories = {

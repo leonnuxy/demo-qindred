@@ -2,6 +2,18 @@ import React from 'react';
 import { Link } from '@inertiajs/react'; // If you plan to link to member profiles later
 
 export default function FamilyMemberList({ membersList = [] }) {
+  // Helper function to format email addresses
+  const formatEmail = (email) => {
+    if (!email) return null;
+    
+    // Check if it's a placeholder email
+    if (email.includes('placeholder-')) {
+      return <span className="text-gray-500 italic">(Added directly)</span>;
+    }
+    
+    return email;
+  };
+
   if (!membersList || membersList.length === 0) {
     return (
       <div className="py-4 text-center">
@@ -47,8 +59,8 @@ export default function FamilyMemberList({ membersList = [] }) {
                 {member.name || `${member.firstName} ${member.lastName}` || 'Unnamed Member'}
               </p>
               {member.email && (
-                <p className="text-sm text-qindred-green-700 dark:text-qindred-green-500 truncate" title={member.email}>
-                  {member.email}
+                <p className="text-sm text-qindred-green-700 dark:text-qindred-green-500 truncate" title={member.email.includes('placeholder-') ? '(Added directly)' : member.email}>
+                  {formatEmail(member.email)}
                 </p>
               )}
               <p className="text-xs text-qindred-green-700/70 dark:text-qindred-green-500/70 mt-1">

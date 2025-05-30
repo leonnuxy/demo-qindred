@@ -213,14 +213,31 @@ class User extends Authenticatable implements MustVerifyEmail
         RelationshipType $type,
         bool $asSubject = true
     ) {
+        \Log::info("Looking for relationships", [
+            'user_id' => $this->id,
+            'tree_id' => $familyTreeId,
+            'relationship_type' => $type->value,
+            'as_subject' => $asSubject
+        ]);
+        
         $query = UserRelationship::where('family_tree_id', $familyTreeId)
                                   ->where('relationship_type', $type->value);
         if ($asSubject) {
             $query->where('user_id', $this->id);
-            return self::whereIn('id', $query->pluck('related_user_id'));
+            $relatedIds = $query->pluck('related_user_id')->toArray();
+            \Log::info("Found related users (as subject)", [
+                'count' => count($relatedIds),
+                'ids' => $relatedIds
+            ]);
+            return self::whereIn('id', $relatedIds);
         }
         $query->where('related_user_id', $this->id);
-        return self::whereIn('id', $query->pluck('user_id'));
+        $userIds = $query->pluck('user_id')->toArray();
+        \Log::info("Found users (as object)", [
+            'count' => count($userIds),
+            'ids' => $userIds
+        ]);
+        return self::whereIn('id', $userIds);
     }
 
     public function fatherInTree($familyTreeId)

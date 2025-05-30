@@ -1,7 +1,5 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,40 +12,58 @@ export function MembersList({
   members,
   onEdit,
   onDelete,
-  searchTerm,
-  onSearchChange,
   relationshipFilter,
   onRelationshipFilterChange,
   relationshipTypes,
-  isLoading
+  isLoading,
+  onSwitchTab // Add a new prop to switch tabs
 }) {
   if (isLoading) {
-    return <div className="py-4 text-center text-gray-500">Loading members...</div>;
+    return <div className="members-list-loading">Loading members...</div>;
   }
+
+  // Function that handles edit button click - calls onEdit and switches to edit tab
+  const handleEditClick = (member) => {
+    console.log('Edit button clicked for member:', member);
+    console.log('Member ID being passed to edit:', member.id);
+    
+    // Make sure the member has an ID before proceeding
+    if (!member.id) {
+      console.error('Member is missing an ID:', member);
+      return;
+    }
+    
+    onEdit(member); // Set the member to edit
+    if (onSwitchTab) {
+      onSwitchTab('edit'); // Switch to edit tab
+    }
+  };
+
+  // Helper function to display email in a user-friendly format
+  const formatEmail = (email) => {
+    if (!email) return null;
+    
+    // Check if it's a placeholder email
+    if (email.includes('placeholder-')) {
+      return <span className="text-gray-500 italic">(Added directly)</span>;
+    }
+    
+    return email;
+  };
 
   return (
     <div>
-      {/* Search and filter section */}
-      <div className="mb-4 flex flex-col sm:flex-row gap-2">
-        <div className="relative flex-grow">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search by name or email"
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+      {/* Filter section */}
+      <div className="members-list-filters">
         <Select
           value={relationshipFilter}
           onValueChange={onRelationshipFilterChange}
         >
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="members-relationship-filter">
             <SelectValue placeholder="Filter by relationship" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Relationships</SelectItem>
+            <SelectItem value="all">All Relationships</SelectItem>
             {relationshipTypes.map((type) => (
               <SelectItem key={type.value} value={type.value}>
                 {type.label}
@@ -58,36 +74,56 @@ export function MembersList({
       </div>
 
       {/* Members list */}
-      <div className="space-y-2">
+      <div className="members-list">
         {members.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="members-list-empty">
             No family members found.
           </div>
         ) : (
           members.map((member) => (
             <div
               key={member.id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+              className="member-list-item"
             >
               <div>
-                <p className="font-medium">
+                <p className="member-name">
                   {member.firstName} {member.lastName}
+                  {member.isCreator && (
+                    <span className="ml-2 text-xs bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 px-2 py-0.5 rounded-full">Creator</span>
+                  )}
                 </p>
-                {member.email && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Email: {member.email}
-                  </p>
-                )}
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {relationshipTypes.find(rt => rt.value === member.relationshipToUser)?.label || member.relationshipToUser}
+                <p className="member-relationship">
+                  {(() => {
+                    // Try to find the relationship label in the relationship types
+                    const relationshipLabel = relationshipTypes.find(rt => 
+                      rt.value === member.relationshipToUser
+                    )?.label;
+                    
+                    // If found, use the label
+                    if (relationshipLabel) {
+                      return relationshipLabel;
+                    }
+                    
+                    // If not found but we have a value, format it nicely
+                    if (member.relationshipToUser) {
+                      return member.relationshipToUser
+                        .replace(/_/g, ' ')
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                    }
+                    
+                    // Fallback
+                    return 'Other';
+                  })()}
                 </p>
               </div>
-              <div className="flex space-x-2">
+              <div className="member-actions">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onEdit(member)}
-                  className="border-qindred-green-500 hover:bg-qindred-green-50 dark:hover:bg-qindred-green-900/20 text-qindred-green-700 dark:text-qindred-green-500"
+                  onClick={() => handleEditClick(member)} // Changed to use the new handler
+                  className="member-edit-button"
                 >
                   Edit
                 </Button>
@@ -95,6 +131,7 @@ export function MembersList({
                   variant="destructive"
                   size="sm"
                   onClick={() => onDelete(member)}
+                  className="member-delete-button"
                 >
                   Delete
                 </Button>

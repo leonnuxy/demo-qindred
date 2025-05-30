@@ -67,6 +67,7 @@
   @import '@css/footer.css';
   @import '@css/setup/wizard.css';
   @import '@css/components/app-logo.css';
+  @import '@css/components/manage-family-members-modal.css';
   @import '@css/layouts/app-sidebar-layout.css';
 
   /* Component overrides for global app logo behavior */

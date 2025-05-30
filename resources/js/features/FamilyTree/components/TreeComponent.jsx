@@ -17,20 +17,22 @@ const TreeComponent = ({ initialData, zoom = 0.8, onNodeClick }) => {
     console.log('Processing node:', node);
     
     // Map the backend data format to the format needed for the tree
-    // Extract data from name and attributes fields if firstName/lastName aren't available
+    // Preserve all data and add fallbacks where needed
     const processedNode = {
       ...node,
-      // Extract first name and last name from the name field if available
+      // Use provided fields or extract from name as fallback
       firstName: node.firstName || (node.name ? node.name.split(' ')[0] : '?'),
       lastName: node.lastName || (node.name && node.name.split(' ').length > 1 
         ? node.name.split(' ').slice(1).join(' ') 
         : ''),
-      // Extract dates from attributes if available
+      // Use provided dates or extract from attributes as fallback
       dateOfBirth: node.dateOfBirth || (node.attributes?.birth_date || ''),
       dateOfDeath: node.dateOfDeath || (node.attributes?.death_date || ''),
-      // Use default values for other fields if not available
+      // Use provided fields or extract from attributes as fallback
       gender: node.gender || (node.attributes?.gender || 'other'),
       relationshipToUser: node.relationshipToUser || (node.attributes?.relationship_to_user || ''),
+      isCreator: node.isCreator || node.attributes?.isCreator || false,
+      roleInTree: node.roleInTree || node.attributes?.roleInTree || '',
       depth,
       // Process children and partners if available
       children: [

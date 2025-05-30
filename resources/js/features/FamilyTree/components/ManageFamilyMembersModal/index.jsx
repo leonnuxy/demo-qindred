@@ -159,7 +159,11 @@ export default function ManageFamilyMembersModal({
       <DeleteMemberDialog
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
-        onConfirm={handleDeleteConfirm}
+        onConfirm={async () => {
+          await handleMemberDeletion(memberToDelete.id);
+          setDeleteDialogOpen(false);
+          setMemberToDelete(null);
+        }}
         memberName={memberToDelete ? `${memberToDelete.firstName} ${memberToDelete.lastName}` : ''}
         processing={isProcessing}
       />

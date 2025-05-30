@@ -124,6 +124,42 @@ class FamilyTreeController extends Controller
             'hierarchicalTreeData' => $hierarchicalTreeData,
             'membersList'          => $membersList,
             'familyTreeLogs'       => $familyTreeLogs,
+            
+            // Enhanced data structure for frontend transformation
+            'tree_metadata' => [
+                'id'              => $familyTree->id,
+                'name'            => $familyTree->name,
+                'description'     => $familyTree->description,
+                'privacy'         => $familyTree->privacy,
+                'is_creator'      => $familyTree->creator_id === $userId,
+                'created_at'      => $familyTree->created_at->toDateTimeString(),
+                'updated_at'      => $familyTree->updated_at->toDateTimeString(),
+            ],
+            'members' => $familyTree->members()
+                ->with('user')
+                ->get()
+                ->map(fn($m) => [
+                    'id'            => $m->id,
+                    'user_id'       => $m->user_id,
+                    'first_name'    => $m->user->first_name,
+                    'last_name'     => $m->user->last_name,
+                    'email'         => $m->user->email,
+                    'gender'        => $m->user->gender?->value,
+                    'date_of_birth' => $m->user->date_of_birth?->toDateString(),
+                    'date_of_death' => $m->user->date_of_death?->toDateString(),
+                    'role_in_tree'  => $m->role,
+                    'is_creator'    => $m->user_id === $familyTree->creator_id,
+                    'profile_photo' => $m->user->avatar_url,
+                ]),
+            'relationships' => \App\Models\UserRelationship::where('family_tree_id', $familyTree->id)
+                ->with(['user', 'relatedUser'])
+                ->get()
+                ->map(fn($r) => [
+                    'id'               => $r->id,
+                    'user_id'          => $r->user_id,
+                    'related_user_id'  => $r->related_user_id,
+                    'relationship_type'=> $r->relationship_type->value,
+                ]),
         ]);
     }
 

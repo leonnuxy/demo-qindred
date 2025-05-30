@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -22,23 +24,54 @@ export function MemberForm({
   onCancel,
   isLoading,
   mode = 'add',
-  relationshipTypes = []
+  relationshipTypes = [],
+  validationErrors = null
 }) {
   const formPrefix = mode === 'edit' ? 'edit-' : 'new-';
   const isEditMode = mode === 'edit';
+  const [formErrors, setFormErrors] = useState(validationErrors);
+
+  // Handle form submission with validation
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Clear previous errors
+    setFormErrors(null);
+    
+    // Validate required fields
+    const errors = {};
+    if (!member.firstName?.trim()) {
+      errors.firstName = 'First name is required';
+    }
+    if (!member.lastName?.trim()) {
+      errors.lastName = 'Last name is required';
+    }
+    if (!member.relationshipToUser) {
+      errors.relationshipToUser = 'Relationship to you is required';
+    }
+    
+    // If there are errors, display them and prevent submission
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    
+    // Otherwise, proceed with submission
+    onSubmit(e);
+  };
 
   const renderRelationshipSelect = () => (
-    <div className="mb-5">
-      <Label htmlFor={`${formPrefix}relationshipToUser`} className="block mb-2">
-        Relationship to you <span className="text-red-500">*</span>
+    <div className="member-form-section">
+      <Label htmlFor={`${formPrefix}relationshipToUser`} className="member-form-label member-form-label-required">
+        Relationship to you
       </Label>
       <Select
         name="relationshipToUser"
-        value={member.relationshipToUser || ''}
+        value={member.relationshipToUser || undefined}
         onValueChange={(value) => onSelectChange('relationshipToUser', value)}
         required
       >
-        <SelectTrigger id={`${formPrefix}relationshipToUser`} className="w-full">
+        <SelectTrigger id={`${formPrefix}relationshipToUser`} className="member-form-select-full-width">
           <SelectValue placeholder="Select relationship" />
         </SelectTrigger>
         <SelectContent>
@@ -48,7 +81,7 @@ export function MemberForm({
             
             return (
               <SelectGroup key={category}>
-                <SelectLabel>{category}</SelectLabel>
+                <SelectLabel className="member-relationship-category-label">{category}</SelectLabel>
                 {categoryTypes.map((rt) => (
                   <SelectItem key={rt.value} value={rt.value}>
                     {rt.label}
@@ -59,6 +92,12 @@ export function MemberForm({
           })}
         </SelectContent>
       </Select>
+      {formErrors?.relationshipToUser && (
+        <Alert variant="destructive" className="mt-2">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{formErrors.relationshipToUser}</AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 
@@ -66,13 +105,13 @@ export function MemberForm({
     if (isEditMode) return null;
 
     return (
-      <div className="mb-4">
-        <Label className="block text-sm font-medium mb-1">Add Method</Label>
+      <div className="member-add-method-container">
+        <Label className="member-add-method-label">Add Method</Label>
         <Select
           value={member.type}
           onValueChange={(v) => onSelectChange('type', v)}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="member-form-select-full-width">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -85,13 +124,13 @@ export function MemberForm({
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="member-form">
       {renderMemberTypeSelect()}
 
       {member.type === MEMBER_MODES.INVITE ? (
         <div>
-          <Label htmlFor={`${formPrefix}email`} className="form-label">
-            Member's Email <span className="text-red-500">*</span>
+          <Label htmlFor={`${formPrefix}email`} className="form-label member-form-label-required">
+            Member's Email
           </Label>
           <Input
             type="email"
@@ -99,16 +138,16 @@ export function MemberForm({
             name="email"
             value={member.email}
             onChange={(e) => onInputChange(e)}
-            className="mt-1"
+            className="member-form-input"
             required
           />
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="member-form-grid-2">
             <div>
-              <Label htmlFor={`${formPrefix}firstName`} className="form-label">
-                First Name <span className="text-red-500">*</span>
+              <Label htmlFor={`${formPrefix}firstName`} className="form-label member-form-label-required">
+                First Name
               </Label>
               <Input
                 type="text"
@@ -116,13 +155,19 @@ export function MemberForm({
                 name="firstName"
                 value={member.firstName}
                 onChange={(e) => onInputChange(e)}
-                className="mt-1"
+                className="member-form-input"
                 required
               />
+              {formErrors?.firstName && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{formErrors.firstName}</AlertDescription>
+                </Alert>
+              )}
             </div>
             <div>
-              <Label htmlFor={`${formPrefix}lastName`} className="form-label">
-                Last Name <span className="text-red-500">*</span>
+              <Label htmlFor={`${formPrefix}lastName`} className="form-label member-form-label-required">
+                Last Name
               </Label>
               <Input
                 type="text"
@@ -130,9 +175,15 @@ export function MemberForm({
                 name="lastName"
                 value={member.lastName}
                 onChange={(e) => onInputChange(e)}
-                className="mt-1"
+                className="member-form-input"
                 required
               />
+              {formErrors?.lastName && (
+                <Alert variant="destructive" className="mt-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{formErrors.lastName}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
 
@@ -141,10 +192,10 @@ export function MemberForm({
               Gender
             </Label>
             <Select
-              value={member.gender || ''}
+              value={member.gender || undefined}
               onValueChange={(value) => onSelectChange('gender', value)}
             >
-              <SelectTrigger className="mt-1 w-full">
+              <SelectTrigger className="member-form-select-trigger">
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
@@ -165,11 +216,11 @@ export function MemberForm({
               name="dateOfBirth"
               value={member.dateOfBirth || ''}
               onChange={(e) => onInputChange(e)}
-              className="mt-1"
+              className="member-form-input"
             />
           </div>
 
-          <div className="flex items-center space-x-2 pt-2">
+          <div className="member-form-checkbox-container">
             <Checkbox
               id={`${formPrefix}isDeceased`}
               name="isDeceased"
@@ -180,7 +231,7 @@ export function MemberForm({
             />
             <Label
               htmlFor={`${formPrefix}isDeceased`}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="member-deceased-checkbox-label"
             >
               Deceased
             </Label>
@@ -197,7 +248,7 @@ export function MemberForm({
                 name="dateOfDeath"
                 value={member.dateOfDeath || ''}
                 onChange={(e) => onInputChange(e)}
-                className="mt-1"
+                className="member-form-input"
               />
             </div>
           )}
@@ -206,16 +257,21 @@ export function MemberForm({
 
       {renderRelationshipSelect()}
 
-      <div className="flex justify-end space-x-3 pt-4">
+      <div className="member-form-actions">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
           disabled={isLoading}
+          className="member-form-cancel-button"
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading}>
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="member-form-submit-button"
+        >
           {isLoading
             ? isEditMode
               ? "Saving..."
