@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Family tree routes
     Route::resource('family-trees', FamilyTreeController::class);
+    Route::get('family-trees/{family_tree}/root-options', [FamilyTreeController::class, 'getRootOptions'])->name('family-trees.root-options');
     Route::post('family-trees/{family_tree}/logs', [FamilyTreeLogController::class,'store'])->name('family-trees.logs.store');
     
     // Invitation routes

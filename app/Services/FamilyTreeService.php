@@ -23,7 +23,7 @@ class FamilyTreeService
             return ['error' => 'Family tree not found.'];
         }
 
-        // pick a root: perspective user if member, else creator
+        // Determine root user: perspective user if member, else creator
         $rootUser = null;
         if ($perspectiveUserId && $u = User::find($perspectiveUserId)) {
             $isMember = FamilyMember::where('family_tree_id',$familyTreeId)
@@ -389,7 +389,7 @@ class FamilyTreeService
                                 'marriage_id'      => $marriageId,
                                 'other_parent_id'  => $otherParentId,
                                 'relationship_start_date' => $marriageDate,
-                                'relationship_end_date'   => $divorceDate,
+                                'relationship_end_date' => $divorceDate,
                                 'is_current'       => $isCurrent,
                             ]);
                             Log::info("Created parent->child relationship", [
@@ -419,7 +419,7 @@ class FamilyTreeService
                                 'marriage_id'      => $marriageId,
                                 'other_parent_id'  => $otherParentId,
                                 'relationship_start_date' => $marriageDate,
-                                'relationship_end_date'   => $divorceDate,
+                                'relationship_end_date' => $divorceDate,
                                 'is_current'       => $isCurrent,
                             ]);
                             Log::info("Created child->parent relationship", [
@@ -444,7 +444,7 @@ class FamilyTreeService
                                 'marriage_id'      => $marriageId,
                                 'other_parent_id'  => $otherParentId,
                                 'relationship_start_date' => $marriageDate,
-                                'relationship_end_date'   => $divorceDate,
+                                'relationship_end_date' => $divorceDate,
                                 'is_current'       => $isCurrent,                            ]);
                             Log::info("Created child->parent relationship", [
                                 'child_id' => $me->id,
@@ -468,7 +468,7 @@ class FamilyTreeService
                                 'marriage_id'      => $marriageId,
                                 'other_parent_id'  => $otherParentId,
                                 'relationship_start_date' => $marriageDate,
-                                'relationship_end_date'   => $divorceDate,
+                                'relationship_end_date' => $divorceDate,
                                 'is_current'       => $isCurrent,
                             ]);
                             Log::info("Created parent->child relationship", [
@@ -497,7 +497,7 @@ class FamilyTreeService
                                 'marriage_id'      => $marriageId,
                                 'other_parent_id'  => $otherParentId,
                                 'relationship_start_date' => $marriageDate,
-                                'relationship_end_date'   => $divorceDate,
+                                'relationship_end_date' => $divorceDate,
                                 'is_current'       => $isCurrent,
                             ]);
                             Log::info("Created primary relationship", [
@@ -535,7 +535,7 @@ class FamilyTreeService
                                     'marriage_id'      => $reciprocalMarriageId,
                                     'other_parent_id'  => $reciprocalOtherParentId,
                                     'relationship_start_date' => $marriageDate,
-                                    'relationship_end_date'   => $divorceDate,
+                                    'relationship_end_date' => $divorceDate,
                                     'is_current'       => $isCurrent,
                                 ]);
                                 Log::info("Created reciprocal relationship", [
@@ -1250,5 +1250,102 @@ class FamilyTreeService
         ]);
         
         return $sharedChildren;
+    }
+
+    /**
+     * Find the oldest generation user(s) in the family tree to use as root.
+     * Looks for users who have no upward relationships (parents, grandparents).
+     */
+    protected function findOldestGenerationRoot(string $familyTreeId): ?User
+    {
+        // Get all family members in this tree
+        $familyMembers = FamilyMember::where('family_tree_id', $familyTreeId)
+            ->pluck('user_id')
+            ->toArray();
+        
+        if (empty($familyMembers)) {
+            return null;
+        }
+        
+        // Define relationship types that indicate someone is below another generation
+        $childRelationshipTypes = [
+            RelationshipType::CHILD,
+            RelationshipType::GRANDCHILD,
+            RelationshipType::STEP_CHILD,
+            RelationshipType::ADOPTIVE_CHILD,
+            RelationshipType::FOSTER_CHILD,
+        ];
+        
+        // Find users who have upward relationships (are children/grandchildren of someone)
+        $usersWithParents = UserRelationship::whereIn('user_id', $familyMembers)
+            ->whereIn('relationship_type', $childRelationshipTypes)
+            ->pluck('user_id')
+            ->unique()
+            ->toArray();
+        
+        // The oldest generation are those who are NOT children of anyone
+        $oldestGeneration = array_diff($familyMembers, $usersWithParents);
+        
+        if (empty($oldestGeneration)) {
+            return null;
+        }
+        
+        // Return the first user from the oldest generation
+        // In the future, we could add logic to pick the most connected one
+        return User::find(reset($oldestGeneration));
+    }
+    
+    /**
+     * Return a list of "view-as" options for this tree:
+     * – always the creator
+     * – yourself (if you're in the tree)
+     * – any direct parents (father/mother)
+     */
+    public function getPotentialRoots(string $familyTreeId, ?string $currentUserId): array
+    {
+        $tree = FamilyTree::findOrFail($familyTreeId);
+
+        $options = [];
+
+        // 1) Creator (always)
+        $creator = $tree->creator;
+        $options[] = [
+            'value' => $creator->id,
+            'label' => "Creator: {$creator->first_name} {$creator->last_name}",
+            'type'  => 'creator'
+        ];
+
+        // 2) Self (if you're a member)
+        if ($currentUserId && \App\Models\FamilyMember::where('family_tree_id', $familyTreeId)
+                                         ->where('user_id', $currentUserId)
+                                         ->exists()) {
+            $you = User::find($currentUserId);
+            $options[] = [
+                'value' => $you->id,
+                'label' => "Self: {$you->first_name} {$you->last_name}",
+                'type'  => 'self'
+            ];
+        }
+
+        // 3) Direct parents - get ALL parents, not just first father/mother
+        if ($currentUserId) {
+            $parentRelationships = UserRelationship::where('family_tree_id', $familyTreeId)
+                ->where('user_id', $currentUserId)
+                ->whereIn('relationship_type', [RelationshipType::FATHER, RelationshipType::MOTHER])
+                ->with('relatedUser')
+                ->get();
+
+            foreach ($parentRelationships as $rel) {
+                $parent = $rel->relatedUser;
+                $relationshipType = $rel->relationship_type->value;
+                $options[] = [
+                    'value' => $parent->id,
+                    'label' => ucfirst($relationshipType) . ": {$parent->first_name} {$parent->last_name}",
+                    'type'  => $relationshipType
+                ];
+            }
+        }
+
+        return $options;
     }
 }

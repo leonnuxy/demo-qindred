@@ -33,6 +33,12 @@ export default function Show({
   const [membersList, setMembersList] = useState(initialMembersList);
   const [familyTreeLogs, setFamilyTreeLogs] = useState(initialFamilyTreeLogs);
 
+  // State for root switching
+  const [rootOptions, setRootOptions] = useState([]);
+  const [currentRootId, setCurrentRootId] = useState(hierarchicalTreeData?.id);
+  const [isLoadingRootOptions, setIsLoadingRootOptions] = useState(false);
+  const [isLoadingTreeData, setIsLoadingTreeData] = useState(false);
+
   // Handle mock data changes
   const handleMockDataChange = (value) => {
     let selectedData;
@@ -85,9 +91,71 @@ export default function Show({
   const [activityLog, setActivityLog] = useState(familyTreeLogs || []);
   const [newLogEntry, setNewLogEntry] = useState('');
 
+  // Load root options when component mounts or familyTree changes
+  useEffect(() => {
+    if (familyTree?.id && mockDataType === 'real') {
+      loadRootOptions();
+    }
+  }, [familyTree?.id, mockDataType]);
+
   useEffect(() => {
     setActivityLog(familyTreeLogs || []);
   }, [familyTreeLogs]);
+
+  // Load available root options from backend
+  const loadRootOptions = async () => {
+    if (!familyTree?.id) return;
+
+    setIsLoadingRootOptions(true);
+    try {
+      const response = await fetch(route('family-trees.root-options', { family_tree: familyTree.id }), {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setRootOptions(data.data || []);
+      } else {
+        console.error('Failed to load root options');
+      }
+    } catch (error) {
+      console.error('Error loading root options:', error);
+    } finally {
+      setIsLoadingRootOptions(false);
+    }
+  };
+
+  // Handle root perspective change
+  const handleRootChange = async (newRootId) => {
+    if (!familyTree?.id || newRootId === currentRootId) return;
+
+    setIsLoadingTreeData(true);
+    setCurrentRootId(newRootId);
+
+    try {
+      // Reload the page with the new root perspective
+      router.get(route('family-trees.show', { family_tree: familyTree.id }), {
+        root_user_id: newRootId,
+      }, {
+        preserveState: false,
+        onSuccess: () => {
+          setIsLoadingTreeData(false);
+        },
+        onError: () => {
+          setIsLoadingTreeData(false);
+          // Revert the selection on error
+          setCurrentRootId(hierarchicalTreeData?.id);
+        }
+      });
+    } catch (error) {
+      console.error('Error changing root perspective:', error);
+      setIsLoadingTreeData(false);
+      setCurrentRootId(hierarchicalTreeData?.id);
+    }
+  };
 
   const handleAddLogEntry = (e) => {
     e.preventDefault();
@@ -170,21 +238,54 @@ export default function Show({
           {/* Basic Info Section */}
           <section className="mb-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-qindred-green-100 dark:border-qindred-green-800/30">
             {/* Mock Data Selector - Development Only */}
-            <div className="mb-4 w-full md:w-64">
-              <Label htmlFor="mock-data-select" className="block text-sm font-medium mb-2">
-                Select Data Source (Dev Only)
-              </Label>
-              <Select value={mockDataType} onValueChange={handleMockDataChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose data source" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="real">Real Data</SelectItem>
-                  <SelectItem value="basic">Basic Family (Self)</SelectItem>
-                  <SelectItem value="mid">Extended Family</SelectItem>
-                  <SelectItem value="max">Large Family Tree</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="mb-4 flex flex-wrap items-end gap-3">
+              <div className="w-full md:w-64">
+                <Label htmlFor="mock-data-select" className="block text-sm font-medium mb-2">
+                  Select Data Source (Dev Only)
+                </Label>
+                <Select value={mockDataType} onValueChange={handleMockDataChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose data source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="real">Real Data</SelectItem>
+                    <SelectItem value="basic">Basic Family (Self)</SelectItem>
+                    <SelectItem value="mid">Extended Family</SelectItem>
+                    <SelectItem value="max">Large Family Tree</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    // Clear browser storage
+                    if (typeof window !== 'undefined') {
+                      localStorage.clear();
+                      sessionStorage.clear();
+                    }
+                    // Force reload from server
+                    router.reload({ only: ['hierarchicalTreeData', 'membersList', 'familyTreeLogs'] });
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  🔄 Force Refresh
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    // Hard reload the entire page
+                    if (typeof window !== 'undefined') {
+                      window.location.reload();
+                    }
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  🔄 Hard Reload
+                </Button>
+              </div>
             </div>
 
             <div className="invitations-page-header mb-4">
@@ -233,13 +334,44 @@ export default function Show({
             <div className="mb-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <h3 className="text-xl font-semibold">Tree Structure</h3>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={handleZoomOut} aria-label="Zoom out">-</Button>
-                  <span className="text-sm w-16 text-center" aria-live="polite">
-                    {(zoom * 100).toFixed(0)}%
-                  </span>
-                  <Button variant="outline" size="sm" onClick={handleZoomIn} aria-label="Zoom in">+</Button>
-                  <Button variant="outline" size="sm" onClick={resetZoom}>Reset</Button>
+                <div className="flex items-center gap-4">
+                  {/* Root Perspective Selector */}
+                  {mockDataType === 'real' && rootOptions.length > 1 && (
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="root-selector" className="text-sm font-medium whitespace-nowrap">
+                        View tree as:
+                      </Label>
+                      <Select 
+                        value={currentRootId?.toString() || ''} 
+                        onValueChange={handleRootChange}
+                        disabled={isLoadingRootOptions || isLoadingTreeData}
+                      >
+                        <SelectTrigger className="w-48">
+                          <SelectValue placeholder={isLoadingRootOptions ? "Loading..." : "Select perspective"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {rootOptions.map((option) => (
+                            <SelectItem key={`${option.type}-${option.value}`} value={option.value.toString()}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {isLoadingTreeData && (
+                        <div className="text-sm text-gray-500">Loading...</div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Zoom Controls */}
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={handleZoomOut} aria-label="Zoom out">-</Button>
+                    <span className="text-sm w-16 text-center" aria-live="polite">
+                      {(zoom * 100).toFixed(0)}%
+                    </span>
+                    <Button variant="outline" size="sm" onClick={handleZoomIn} aria-label="Zoom in">+</Button>
+                    <Button variant="outline" size="sm" onClick={resetZoom}>Reset</Button>
+                  </div>
                 </div>
               </div>
             </div>

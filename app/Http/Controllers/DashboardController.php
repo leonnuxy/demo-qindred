@@ -47,7 +47,7 @@ class DashboardController extends Controller
             $query->whereHas('members', function ($memberQuery) use ($user) {
                 $memberQuery->where('user_id', $user->id);
             });
-        })->with(['user', 'familyTree'])->latest()->take(5)->get();
+        })->with(['author', 'familyTree'])->latest()->take(5)->get();
         
         // Calculate profile completion percentage
         $profileFields = [

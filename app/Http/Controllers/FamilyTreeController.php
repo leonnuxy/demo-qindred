@@ -76,9 +76,12 @@ class FamilyTreeController extends Controller
         $this->authorize('view', $familyTree);
 
         $userId = Auth::id();
+        
+        // Check if a specific root perspective is requested
+        $perspectiveUserId = request('root_user_id', $userId);
 
         $hierarchicalTreeData = $this->trees
-            ->getTreeForDisplay($familyTree->id, $userId);
+            ->getTreeForDisplay($familyTree->id, $perspectiveUserId);
 
         // prepare member list for web view
         $membersList = $familyTree->members()
@@ -205,5 +208,18 @@ class FamilyTreeController extends Controller
         return redirect()
             ->route('family-trees.index')
             ->with('success','Family tree deleted.');
+    }
+
+    /** Get root options for tree perspective switching */
+    public function getRootOptions(FamilyTree $familyTree)
+    {
+        $this->authorize('view', $familyTree);
+
+        $userId = Auth::id();
+        $options = $this->trees->getPotentialRoots($familyTree->id, $userId);
+
+        return response()->json([
+            'data' => $options
+        ]);
     }
 }

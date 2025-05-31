@@ -107,3 +107,12 @@ remove_sibling_relationship.php
 .gitignore
 ENHANCEMENT_SUMMARY.pdf
 fix_shared_child_relationship.php
+check_parent_relationships.php
+find_admin_tree.php
+investigate_as_ds.php
+.gitignore
+final_verification.php
+.gitignore
+fix_orphaned_relationships.php
+cleanup_orphaned.php
+force_refresh_tree.php
